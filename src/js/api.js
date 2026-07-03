@@ -87,7 +87,7 @@ export function initDiscover() {
   let discoverStartIndex = 0;
   let currentDiscoverIds = [];
   let discoverSearchQuery = '';
-  let activeDiscoverGenre = '';
+  let activeDiscoverGenre = 'fantasy';
   let activeDiscoverMood = '';
 
   const scrollTrigger = document.createElement('div');

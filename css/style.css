@@ -6,22 +6,29 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
 
+@font-face {
+  font-family: 'Pixel Operator';
+  src: url('../assets/fonts/PixelOperator.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 /* === CSS Variables === */
 :root {
-  --cream: #fdf5f8;
-  --blush: #f8c8dc;
-  --sage: #f2e1ed;
-  --lavender: #d8c3e8;
-  --peach: #eebfdd;
-  --dusty-rose: #d69db4;
-  --ink: #3b2834;
-  --ink-light: #705868;
+  --cream: #fbf3f8;
+  --blush: #ffb8d6;
+  --sage: #a5cfb2;
+  --lavender: #d1a5e1;
+  --peach: #ffe8d1;
+  --dusty-rose: #e69ab8;
+  --ink: #5b4165;
+  --ink-light: #897092;
   --warm-white: #ffffff;
-  --amber: #cca9dd;
-  --amber-glow: rgba(204, 169, 221, 0.15);
-  --shadow-soft: 0 4px 24px rgba(59, 40, 52, 0.06);
-  --shadow-med: 0 8px 40px rgba(59, 40, 52, 0.10);
-  --shadow-warm: 0 8px 32px rgba(216, 195, 232, 0.25);
+  --amber: #ffedb3;
+  --amber-glow: rgba(255, 237, 179, 0.25);
+  --shadow-soft: 0 4px 24px rgba(91, 65, 101, 0.06);
+  --shadow-med: 0 8px 40px rgba(91, 65, 101, 0.10);
+  --shadow-warm: 0 8px 32px rgba(209, 165, 225, 0.25);
   --radius-sm: 12px;
   --radius-md: 20px;
   --radius-lg: 28px;
@@ -67,7 +74,8 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Pixel Operator', monospace;
+  font-weight: bold;
   color: var(--ink);
   line-height: 1.2;
 }
@@ -236,7 +244,7 @@ p {
 }
 
 .nav-logo-text {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Pixel Operator', monospace;
   font-size: 1.4rem;
   font-weight: 700;
   color: var(--ink);
@@ -468,7 +476,7 @@ p {
 }
 
 .hero-stat-num {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Pixel Operator', monospace;
   font-size: 1.6rem;
   font-weight: 700;
   color: var(--ink);
@@ -498,16 +506,16 @@ p {
   display: block;
 }
 
-.hero-floating-card {
+.stats-float-wrapper {
   position: absolute;
-  background: var(--warm-white);
-  border-radius: var(--radius-md);
-  padding: 0.9rem 1.1rem;
-  box-shadow: var(--shadow-med);
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  animation: cardFloat 4s ease-in-out infinite;
+  animation: cardFloat 5s ease-in-out infinite;
+  pointer-events: auto;
+  transition: transform 0.3s ease;
+  z-index: 2;
+}
+
+.stats-float-wrapper:hover {
+  transform: scale(1.05);
 }
 
 .hero-floating-card.card-now-reading {
@@ -1557,7 +1565,7 @@ p {
 }
 
 .thread-title {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Pixel Operator', monospace;
   font-size: 0.95rem;
   margin-bottom: 0.5rem;
   color: var(--ink);
@@ -1707,7 +1715,7 @@ p {
 }
 
 .dashboard-title {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Pixel Operator', monospace;
   font-size: 1rem;
   color: var(--warm-white);
 }
@@ -2266,7 +2274,7 @@ p {
 }
 
 .footer-brand .footer-logo {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Pixel Operator', monospace;
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--ink);
@@ -2483,6 +2491,8 @@ p {
   background: var(--cream);
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow: hidden;
 }
 
 #page-stats {
@@ -2503,6 +2513,17 @@ p {
   background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   pointer-events: none;
   opacity: 0.6;
+}
+
+.stats-mockup-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 2rem;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  align-items: start;
 }
 
 .wrapped-grid {
@@ -2608,7 +2629,7 @@ p {
 }
 
 .wrap-value {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Pixel Operator', monospace;
   font-size: 4rem;
   font-weight: 800;
   color: var(--ink);
@@ -2640,7 +2661,7 @@ p {
 }
 
 .goal-title {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Pixel Operator', monospace;
   font-size: 2rem;
   color: var(--ink);
   font-weight: 700;
@@ -2810,14 +2831,17 @@ p {
 
 /* === Mockup Layout Styles === */
 .stat-mockup-container {
+  width: 100%;
   max-width: 600px;
   margin: 0 auto;
-  padding: 1rem 1rem 2rem 1rem;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   background: var(--warm-white);
-  min-height: 100vh;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-med);
+  min-height: 75vh;
 }
 
 .mockup-header {
@@ -2835,7 +2859,7 @@ p {
 }
 
 .mockup-header-title {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Pixel Operator', monospace;
   font-size: 1.6rem;
   font-weight: 700;
   color: var(--dusty-rose);
@@ -2874,8 +2898,8 @@ p {
   background: var(--cream);
   border-radius: 16px;
   padding: 1.25rem;
-  border: 1px solid rgba(0,0,0,0.03);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
 }
 
 .mockup-reading-card {
@@ -2893,7 +2917,7 @@ p {
   height: 140px;
   border-radius: 8px;
   background: var(--dusty-rose);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2911,7 +2935,7 @@ p {
 }
 
 .mockup-reading-title {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Pixel Operator', monospace;
   font-size: 1.4rem;
   font-weight: 700;
   color: var(--ink);
@@ -2935,7 +2959,7 @@ p {
 .mockup-reading-progress-bar {
   width: 100%;
   height: 8px;
-  background: rgba(0,0,0,0.05);
+  background: rgba(0, 0, 0, 0.05);
   border-radius: 4px;
   margin-bottom: 0.75rem;
   overflow: hidden;
@@ -2976,7 +3000,7 @@ p {
 }
 
 .mockup-goal-title {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Pixel Operator', monospace;
   font-size: 1.4rem;
   color: var(--ink);
 }
@@ -2988,7 +3012,7 @@ p {
 
 .mockup-goal-pill {
   display: inline-block;
-  background: rgba(255,255,255,0.4);
+  background: rgba(255, 255, 255, 0.4);
   color: var(--ink);
   font-size: 0.75rem;
   font-weight: 700;
@@ -3012,7 +3036,7 @@ p {
 
 .circle-bg {
   fill: none;
-  stroke: rgba(0,0,0,0.05);
+  stroke: rgba(0, 0, 0, 0.05);
   stroke-width: 3.5;
 }
 
@@ -3058,7 +3082,7 @@ p {
   height: 180px;
   border-radius: 8px;
   background: var(--lavender);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   background-size: cover;
   background-position: center;
 }
@@ -3095,7 +3119,7 @@ p {
 }
 
 .mockup-stat-val {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Pixel Operator', monospace;
   font-size: 1.8rem;
   font-weight: 700;
   color: var(--dusty-rose);
@@ -3106,5 +3130,3 @@ p {
   font-weight: 700;
   color: var(--ink-light);
 }
-
-

@@ -567,8 +567,38 @@
        ======================================================== -->
   <div id="page-stats" class="page-section">
     <section class="stats-section" id="stats">
-      <div class="stat-mockup-container">
+      
+      <!-- Scalable Grid of Mockups -->
+      <div class="stats-mockup-grid">
         
+        <!-- Left Container: Reading Stats -->
+        <div class="stat-mockup-container">
+          <div class="mockup-header">
+            <div class="mockup-header-left">
+              <h1 class="mockup-header-title" style="color: var(--lavender);">Reading Stats</h1>
+            </div>
+            <div class="mockup-header-icon">📈</div>
+          </div>
+          
+          <div class="mockup-simple-stats" style="grid-template-columns: 1fr; gap: 1.5rem; flex: 1; align-content: center;">
+            <div class="mockup-stat-box" style="background: var(--blush);">
+              <div class="mockup-stat-val" style="color: var(--ink);">842</div>
+              <div class="mockup-stat-label" style="color: var(--ink-light);">Longest Book (pgs)</div>
+            </div>
+            <div class="mockup-stat-box" style="background: var(--lavender);">
+              <div class="mockup-stat-val" style="color: var(--ink);">124h</div>
+              <div class="mockup-stat-label" style="color: var(--ink-light);">Time Reading</div>
+            </div>
+            <div class="mockup-stat-box" style="background: var(--sage);">
+              <div class="mockup-stat-val" style="color: var(--ink);">4.2</div>
+              <div class="mockup-stat-label" style="color: var(--ink-light);">Average Rating</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Center Container: My Library (Original) -->
+        <div class="stat-mockup-container">
+
         <!-- Header -->
         <div class="mockup-header">
           <div class="mockup-header-left">
@@ -598,22 +628,18 @@
         <div class="mockup-card mockup-goal-card">
           <div class="mockup-goal-info">
             <div class="mockup-goal-title">2024 Goals</div>
-            <div class="mockup-goal-text"><span id="mockup-goal-current">0</span> of <span id="mockup-goal-total">25</span> books completed</div>
+            <div class="mockup-goal-text"><span id="mockup-goal-current">0</span> of <span
+                id="mockup-goal-total">25</span> books completed</div>
             <div class="mockup-goal-pill">On Track ✨</div>
           </div>
           <div class="mockup-goal-chart">
             <svg viewBox="0 0 36 36" class="circular-chart">
-              <path class="circle-bg"
-                d="M18 2.0845
+              <path class="circle-bg" d="M18 2.0845
                   a 15.9155 15.9155 0 0 1 0 31.831
-                  a 15.9155 15.9155 0 0 1 0 -31.831"
-              />
-              <path class="circle" id="mockup-goal-circle"
-                stroke-dasharray="0, 100"
-                d="M18 2.0845
+                  a 15.9155 15.9155 0 0 1 0 -31.831" />
+              <path class="circle" id="mockup-goal-circle" stroke-dasharray="0, 100" d="M18 2.0845
                   a 15.9155 15.9155 0 0 1 0 31.831
-                  a 15.9155 15.9155 0 0 1 0 -31.831"
-              />
+                  a 15.9155 15.9155 0 0 1 0 -31.831" />
               <text x="18" y="20.35" class="percentage" id="mockup-goal-percentage">0%</text>
             </svg>
           </div>
@@ -646,6 +672,33 @@
           📸
         </button>
       </div>
+
+      <!-- Right Container: Milestones -->
+      <div class="stat-mockup-container">
+        <div class="mockup-header">
+          <div class="mockup-header-left">
+            <h1 class="mockup-header-title" style="color: var(--amber);">Milestones</h1>
+          </div>
+          <div class="mockup-header-icon">🏆</div>
+        </div>
+
+        <div class="mockup-simple-stats" style="grid-template-columns: 1fr; gap: 1.5rem; flex: 1; align-content: center;">
+          <div class="mockup-stat-box" style="background: var(--peach);">
+            <div class="mockup-stat-val" style="color: var(--ink); font-size: 1.6rem; padding-bottom: 0.2rem;">Fantasy</div>
+            <div class="mockup-stat-label" style="color: var(--ink-light);">Top Genre</div>
+          </div>
+          <div class="mockup-stat-box" style="background: var(--cream); border: 2px solid var(--dusty-rose);">
+            <div class="mockup-stat-val" style="color: var(--ink);">14</div>
+            <div class="mockup-stat-label" style="color: var(--ink-light);">Reviews Written</div>
+          </div>
+          <div class="mockup-stat-box" style="background: var(--amber);">
+            <div class="mockup-stat-val" style="color: var(--ink); font-size: 1.6rem; padding-bottom: 0.2rem;">October</div>
+            <div class="mockup-stat-label" style="color: var(--ink-light);">Best Month</div>
+          </div>
+        </div>
+      </div>
+
+      </div> <!-- End stats-mockup-grid -->
     </section>
   </div>
 
