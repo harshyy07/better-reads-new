@@ -3,23 +3,50 @@
 BetterReads is a beautiful, cozy, and highly interactive Single Page Application (SPA) designed as a modern, aesthetic alternative to Goodreads. It leverages a custom vanilla design system inspired by cottagecore and lofi aesthetics, offering a seamless and gamified reading tracker experience.
 
 ## 🛠️ Technology Stack
-- **Frontend**: Vanilla HTML5, CSS3, JavaScript (ES6+) bundled with Vite. No heavy UI frameworks.
-- **Backend & Auth**: Supabase (PostgreSQL, Google OAuth, Magic Links) & `localStorage` cache.
+- **Frontend**: Vanilla HTML5, CSS3, JavaScript (ES6+) bundled with **Vite**. No heavy UI frameworks.
+- **Backend & Auth**: [Supabase](https://supabase.com/) (PostgreSQL, Google OAuth, Magic Links / OTP) with `localStorage` as a fallback cache for unauthenticated users.
 - **Data Source**: [OpenLibrary API](https://openlibrary.org/dev/docs/api/search) (Real-time, rate-limit-friendly book fetching).
-- **Architecture**: Custom Hash-based SPA Router (`#home`, `#library`, `#discover`, `#stats`, etc.).
+- **Architecture**: Custom Hash-based SPA Router (`#home`, `#library`, `#discover`, `#stats`, `#discourse`, `#rating`, `#book-<id>`).
+- **Typography**: Custom `Pixel Operator` bitmap font via `@font-face` for the Stats/Wrapped page.
+
+## 📂 File Structure
+```text
+/
+├── index.html              # Main SPA container holding all #page-section elements
+├── vite.config.js          # Vite build configuration
+├── supabase_schema.sql     # Supabase DB schema (profiles + shelves tables)
+├── assets/
+│   └── fonts/
+│       └── PixelOperator.ttf  # Custom pixel font for the Stats page
+├── css/
+│   └── style.css           # Design system, variables, animations, and responsive UI
+└── src/js/
+    ├── main.js             # Entry point — bootstraps auth, router, discover & UI
+    ├── store.js            # Global state, Supabase client, shelf sync (cloud + local)
+    ├── auth.js             # Supabase Auth: Google OAuth, Magic Link OTP, profile setup
+    ├── router.js           # Hash-based SPA router and page navigation
+    ├── api.js              # OpenLibrary API fetching and book caching
+    ├── db.js               # Legacy local DB helpers and library/stats rendering
+    ├── ui.js               # Core UI rendering: library, stats, discourse, book clubs
+    ├── ui2.js              # Additional UI helpers and misc interactions
+    ├── spotify.js          # Simulated lofi/ambient music player logic
+    └── details.js          # Book details page rendering
+```
 
 ## ✨ Core Features
 
 ### 1. 🏡 Gamified Library Room
 - An interactive, 2D "room" interface with absolute-positioned, clickable hotspots over a sketched background.
-- Clicking a specific shelf in the drawing instantly opens up the user's `TBR` (To Be Read), `Currently Reading`, or `Completed` shelves.
-- Dynamically renders books saved in `localStorage` into a clean CSS grid.
+- Clicking a specific shelf instantly opens the user's `TBR`, `Currently Reading`, `Completed`, or `DNF` shelves.
+- Dynamically renders books fetched from OpenLibrary and synced per-user from Supabase.
+- Remove books from any shelf via the inline `−` button on each book card.
 
 ### 2. 🌌 Infinite Discover & Search
 - **Live Search**: Debounced search bar that queries the OpenLibrary API to fetch real book data instantly.
-- **Mood & Genre Filters**: Quick-filter pill buttons to narrow down books by traditional genres (Fantasy, Sci-Fi) or aesthetic moods (Cozy, Dark Academia, Heartbreaking).
+- **Mood & Genre Filters**: Quick-filter pill buttons for traditional genres (Fantasy, Sci-Fi, Romance) and aesthetic moods (Cozy, Dark Academia, Heartbreaking, Ethereal).
 - **Infinite Scrolling**: Automatically loads more books as you scroll down the page.
-- **One-Click Add**: "+ TBR" buttons on every discovered book that immediately injects the book into your local library.
+- **One-Click Add**: "+ TBR" buttons on every discovered book that immediately injects the book into your library.
+- **Fixed Initial Load**: The Discover page now correctly pre-loads a curated list of books on first visit.
 
 ### 3. 💬 Interactive Discourse & Book Clubs
 - **Community Threads**: A fully localized forum where users can create new discussion threads, select spoiler tags, and read preview snippets.
@@ -31,35 +58,70 @@ BetterReads is a beautiful, cozy, and highly interactive Single Page Application
 - Supports hovering over the left half or right half of a star to register half-star ratings (e.g., 4.5 stars).
 - Includes an animated breakdown bar chart simulating community rating distributions.
 
-### 5. 🎧 Cozy Spotify/Lofi Player
+### 5. 🎧 Cozy Lofi Player
 - An embedded, interactive mini-player widget designed to play ambient reading music.
 - Features a simulated tracklist, progress bar, and play/pause toggles to complete the cozy reading nook vibe.
 
 ### 6. 📊 Reading Stats (Wrapped)
 - A highly shareable, Spotify Wrapped-inspired aesthetic page (`#stats`).
-- Automatically calculates and dynamically updates "Books Devoured," "Pages Turned," and "Top Vibe (Genre)" based on the books inside your Completed shelf.
+- Automatically calculates and dynamically updates "Books Devoured," "Pages Turned," "Top Vibe (Genre)," and "Reading Streak" from your Completed shelf.
+- Redesigned layout uses a responsive `stats-mockup-grid` with floating, hover-animated stat cards.
+- Stats cards use the `Pixel Operator` pixel font for a retro-chic Wrapped aesthetic.
+
+### 7. 🔐 Authentication (Supabase)
+- **Google OAuth**: One-click sign-in via Google with automatic profile completion for new users.
+- **Magic Link / OTP**: Email-based passwordless login via Supabase `signInWithOtp` + `verifyOtp`.
+- **Profile Setup**: New users choose a username and emoji avatar (🍵, 📚, 🌙, etc.) on first sign-in.
+- Shelf data syncs to Supabase when logged in; falls back to `localStorage` for guests.
+
+### 8. 📖 Book Details Page
+- Dedicated `#book-<id>` route rendering a full details view for any book.
+- Shows cover art, title, author, description, page count, publish year, and categories.
+- Includes the fractional star rating component and Add-to-Shelf action.
 
 ## 🎨 Design System & Palette
-The app uses a carefully curated, pastel-heavy color palette defined in `style.css` via CSS Variables to evoke a warm, welcoming feeling:
-- `--cream`: `#FFF8F0`
-- `--blush`: `#FADADD`
-- `--sage`: `#C8DFC8`
-- `--lavender`: `#DDD5F3`
-- `--peach`: `#FECBA1`
-- `--dusty-rose`: `#E8A598`
-- `--ink`: `#3B2F2F`
+The app uses a carefully curated, pastel-heavy color palette defined in `style.css` via CSS Variables:
+
+| Variable | Value | Use |
+|---|---|---|
+| `--cream` | `#fbf3f8` | Page backgrounds |
+| `--blush` | `#ffb8d6` | Accent highlights |
+| `--sage` | `#a5cfb2` | Positive actions |
+| `--lavender` | `#d1a5e1` | Primary brand color |
+| `--peach` | `#ffe8d1` | Warm accents |
+| `--dusty-rose` | `#e69ab8` | Destructive / remove actions |
+| `--ink` | `#5b4165` | Primary text |
+| `--ink-light` | `#897092` | Secondary text |
+| `--amber` | `#ffedb3` | Warm glows / highlights |
+
+## 🚀 Getting Started
+
+```bash
+# Install dependencies
+npm install
+
+# Run the dev server
+npm run dev
+
+# Build for production
+npm run build
+```
 
 ## 📈 Recent Updates & Changelog
-- **Security Audit & XSS Patch**: Sanitized and escaped API/user-generated interpolations to prevent Cross-Site Scripting.
-- **Spotify Wrapped Aesthetic**: Built a dynamic, gorgeous Reading Stats page calculating metrics directly from the user's completed shelf.
-- **Google OAuth & Supabase Auth**: Fully integrated a scalable authentication flow using Supabase. Replaced the dummy auth wizard with robust Magic Links and Google Login, seamlessly handling new profile creations.
-- **Mood Filters**: Added aesthetic mood filters (Cozy, Dark Academia, Ethereal) alongside the standard genre filters on the Discover page.
-- **Simulated Spotify Player**: Restored footer styling and added a cozy integrated lofi player.
-- **Aesthetic Overhaul**: Implemented a pastel pink/purple palette along with hand-drawn library buttons for a more aesthetic experience.
-- **Vite Migration & Architecture**: Refactored the app to use Vite, modularized JS components, and improved load times.
-- **Stats & Discover Refinements**: Updated the Stats page layout to match mobile mockups, applied the global color palette, and fixed broken tags on the Discover page.
+- **Stats Page Overhaul (Latest)**: Redesigned the Reading Stats page with a responsive `stats-mockup-grid`, floating animated stat cards, and the `Pixel Operator` custom bitmap font for a retro Wrapped aesthetic. Fixed an initial load bug on the Discover page that caused a blank state on first visit.
+- **Stats & Discover Refinements**: Updated Stats page layout to match mobile mockup, applied the global color palette, and fixed broken genre tags on the Discover page.
+- **Vite Migration & Modularization**: Refactored the entire codebase to use Vite. Split the monolithic script into focused ES modules: `store.js`, `auth.js`, `router.js`, `api.js`, `ui.js`, `ui2.js`, `spotify.js`, `details.js`.
+- **Supabase Integration**: Replaced localStorage-only persistence with a full Supabase backend. Shelf data syncs to the cloud for authenticated users and falls back to localStorage for guests.
+- **Security Audit & XSS Patch**: Sanitized and escaped all API/user-generated content interpolations to prevent Cross-Site Scripting attacks.
+- **Google OAuth & Magic Links**: Integrated Supabase auth with Google OAuth and email OTP login, plus seamless new-profile creation flow.
+- **Reading Stats (Wrapped)**: Built a dynamic Reading Stats page calculating real metrics from the user's completed shelf.
+- **Mood Filters**: Added aesthetic mood filters (Cozy, Dark Academia, Ethereal, Heartbreaking) alongside genre filters on the Discover page.
+- **Lofi Player**: Restored footer styling and added a cozy integrated lofi ambient player.
+- **Aesthetic Overhaul**: Implemented a pastel pink/purple palette with custom pixel font support and hand-drawn library buttons.
 
 ## 🚀 Future Roadmap (v2 Ideas)
-- Migrate the core `localStorage` book library to a cloud database (Supabase PostgreSQL) for seamless cross-device syncing.
 - Add user-to-user replying and nested comment threads in the Discourse tab.
 - Integrate the Spotify Web Playback SDK for real, authenticated audio streaming instead of simulated ambient tracks.
+- Add reading progress tracking (pages read, percentage complete) per book.
+- Social features: follow friends, see their shelves, and share Wrapped stats cards as images.
+- PWA support for offline access and home screen installation.
