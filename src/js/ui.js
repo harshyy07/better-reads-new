@@ -88,6 +88,10 @@ export function initUI() {
       if (value >= full) {
         star.textContent = '★';
         star.style.color = 'var(--amber)';
+        star.style.background = 'none';
+        star.style.webkitBackgroundClip = 'unset';
+        star.style.webkitTextFillColor = 'unset';
+        star.style.backgroundClip = 'unset';
       } else if (value >= half) {
         star.textContent = '★';
         star.style.background = `linear-gradient(90deg, var(--amber) 50%, #ddd 50%)`;
@@ -121,10 +125,6 @@ export function initUI() {
       ratingDisplay.textContent = labels[rating] || `${rating} stars`;
     });
     star.addEventListener('click', e => {
-      if (!store.isLoggedIn && window.showAuthModal) {
-        window.showAuthModal();
-        return;
-      }
       const rating = getRatingFromEvent(e, star);
       lockedRating = rating;
       isLocked = true;

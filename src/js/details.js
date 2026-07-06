@@ -28,7 +28,6 @@ export async function renderBookDetails(bookId) {
   document.getElementById('bd-description').textContent = book.description || 'No description available for this book.';
 
   const userRating = store.userRatings ? store.userRatings[bookId] : null;
-  const stars = document.querySelectorAll('#bd-star-widget .star');
   const ratingDisplay = document.getElementById('bd-rating-display');
   let lockedRating = userRating || 0;
   let isLocked = !!userRating;
@@ -41,8 +40,18 @@ export async function renderBookDetails(bookId) {
     4.5: '4.5 — Loved It 🤩', 5: '5.0 — It Was Amazing ✨'
   };
 
+  // Clone the rating widget container once to strip previous event listeners
+  const starWidget = document.getElementById('bd-star-widget');
+  let activeWidget = starWidget;
+  if (starWidget) {
+    const newWidget = starWidget.cloneNode(true);
+    starWidget.parentNode.replaceChild(newWidget, starWidget);
+    activeWidget = newWidget;
+  }
+  const activeStars = activeWidget ? activeWidget.querySelectorAll('.star') : [];
+
   function renderDetailsStars(value) {
-    stars.forEach((star, i) => {
+    activeStars.forEach((star, i) => {
       const full = i + 1;
       const half = i + 0.5;
       if (value >= full) {
@@ -50,6 +59,8 @@ export async function renderBookDetails(bookId) {
         star.style.color = 'var(--amber)';
         star.style.background = 'none';
         star.style.webkitTextFillColor = 'unset';
+        star.style.webkitBackgroundClip = 'unset';
+        star.style.backgroundClip = 'unset';
       } else if (value >= half) {
         star.textContent = '★';
         star.style.background = `linear-gradient(90deg, var(--amber) 50%, #ddd 50%)`;
@@ -61,6 +72,8 @@ export async function renderBookDetails(bookId) {
         star.style.color = '#ddd';
         star.style.background = 'none';
         star.style.webkitTextFillColor = 'unset';
+        star.style.webkitBackgroundClip = 'unset';
+        star.style.backgroundClip = 'unset';
       }
     });
   }
@@ -75,26 +88,23 @@ export async function renderBookDetails(bookId) {
 
   renderDetailsStars(lockedRating);
   if (lockedRating) {
-      ratingDisplay.textContent = `You rated: ${lockedRating} ★`;
-      ratingDisplay.style.color = 'var(--dusty-rose)';
+    ratingDisplay.textContent = `You rated: ${lockedRating} ★`;
+    ratingDisplay.style.color = 'var(--dusty-rose)';
   } else {
-      ratingDisplay.textContent = 'Hover to rate ✦';
-      ratingDisplay.style.color = '';
+    ratingDisplay.textContent = 'Hover to rate ✦';
+    ratingDisplay.style.color = '';
   }
 
-  stars.forEach(star => {
-    const newStar = star.cloneNode(true);
-    star.parentNode.replaceChild(newStar, star);
-    
-    newStar.addEventListener('mousemove', e => {
+  activeStars.forEach(star => {
+    star.addEventListener('mousemove', e => {
       if (isLocked) return;
-      const rating = getRatingFromEvent(e, newStar);
+      const rating = getRatingFromEvent(e, star);
       renderDetailsStars(rating);
       ratingDisplay.textContent = ratingLabels[rating] || `${rating} stars`;
     });
 
-    newStar.addEventListener('click', e => {
-      const rating = getRatingFromEvent(e, newStar);
+    star.addEventListener('click', e => {
+      const rating = getRatingFromEvent(e, star);
       lockedRating = rating;
       isLocked = true;
       renderDetailsStars(rating);
@@ -102,25 +112,21 @@ export async function renderBookDetails(bookId) {
       ratingDisplay.style.color = 'var(--dusty-rose)';
       
       store.userRatings[bookId] = rating;
-      // In a real app we would sync ratings to DB
       
-      newStar.style.transform = 'scale(1.4)';
-      setTimeout(() => { newStar.style.transform = ''; }, 300);
+      star.style.transform = 'scale(1.4)';
+      setTimeout(() => { star.style.transform = ''; }, 300);
     });
   });
 
-  const starWidget = document.getElementById('bd-star-widget');
-  const newWidget = starWidget.cloneNode(true);
-  starWidget.parentNode.replaceChild(newWidget, starWidget);
-  
-  newWidget.addEventListener('mouseleave', () => {
-    if (!isLocked) {
-      renderDetailsStars(0);
-      const disp = document.getElementById('bd-rating-display');
-      disp.textContent = 'Hover to rate ✦';
-      disp.style.color = '';
-    }
-  });
+  if (activeWidget) {
+    activeWidget.addEventListener('mouseleave', () => {
+      if (!isLocked) {
+        renderDetailsStars(0);
+        ratingDisplay.textContent = 'Hover to rate ✦';
+        ratingDisplay.style.color = '';
+      }
+    });
+  }
 
   updateBdShelfButtons(bookId);
   renderBdReviews(bookId);
@@ -152,14 +158,19 @@ function updateBdShelfButtons(bookId) {
   }
 
   const setShelf = (shelfName) => {
+    const isAlreadyOnShelf = store.shelves[shelfName] && store.shelves[shelfName].includes(bookId);
+
     ['reading', 'tbr', 'completed', 'dnf'].forEach(s => {
        const filtered = store.shelves[s].filter(id => id !== bookId);
        if (filtered.length !== store.shelves[s].length) {
          updateShelf(s, filtered);
        }
     });
-    const newShelf = [...store.shelves[shelfName], bookId];
-    updateShelf(shelfName, newShelf);
+
+    if (!isAlreadyOnShelf) {
+      const newShelf = [...(store.shelves[shelfName] || []), bookId];
+      updateShelf(shelfName, newShelf);
+    }
     updateBdShelfButtons(bookId);
   };
 
