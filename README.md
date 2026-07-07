@@ -108,7 +108,13 @@ npm run build
 ```
 
 ## 📈 Recent Updates & Changelog
-- **Stats Page Overhaul (Latest)**: Redesigned the Reading Stats page with a responsive `stats-mockup-grid`, floating animated stat cards, and the `Pixel Operator` custom bitmap font for a retro Wrapped aesthetic. Fixed an initial load bug on the Discover page that caused a blank state on first visit.
+- **UX Enhancements & Bug Fixes (Latest)**: 
+  - **Home & Discover Search Routing**: Integrated the Home page marquee search bar with the Discover page, enabling instant routing, auto-filling the search query, and clearing active filters.
+  - **Discover Shelf Operations & Sync**: Implemented toggleable `+ TBR` shelf additions directly on Discover book cards. Custom event listeners synchronize button states in real-time if a book is added or removed elsewhere.
+  - **3D Card Hover Effects**: Added a dynamic, smooth 3D tilt hover animation to book cards in the Discover grid.
+  - **Filter Pill Toggling**: Enabled deselecting genre and mood filters by clicking active pills again, and automatically clear filters during a text search.
+  - **Star Rating Widget Polish**: Fixed event listener accumulation (memory leaks) on book details and main rating components by cloning elements before rebinding. Reset CSS gradient properties properly to resolve fractional star render glitches.
+- **Stats Page Overhaul**: Redesigned the Reading Stats page with a responsive `stats-mockup-grid`, floating animated stat cards, and the `Pixel Operator` custom bitmap font for a retro Wrapped aesthetic. Fixed an initial load bug on the Discover page that caused a blank state on first visit.
 - **Stats & Discover Refinements**: Updated Stats page layout to match mobile mockup, applied the global color palette, and fixed broken genre tags on the Discover page.
 - **Vite Migration & Modularization**: Refactored the entire codebase to use Vite. Split the monolithic script into focused ES modules: `store.js`, `auth.js`, `router.js`, `api.js`, `ui.js`, `ui2.js`, `spotify.js`, `details.js`.
 - **Supabase Integration**: Replaced localStorage-only persistence with a full Supabase backend. Shelf data syncs to the cloud for authenticated users and falls back to localStorage for guests.
