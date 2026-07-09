@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BetterReads — Your Cozy Corner for Every Story</title>
+  <meta name="description"
+    content="BetterReads is a cozy, pastel-hued social reading platform for book lovers and authors. Track your reads, discover new books, and connect with a warm community." />
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>" />
+</head>
+
+<body>
+
+  <!-- ========================================================
+       NAVBAR
+       ======================================================== -->
+  <nav class="navbar" id="navbar">
+    <div class="container nav-inner">
+      <a href="#" class="nav-logo" id="nav-logo">
+        <span class="nav-logo-icon">📚</span>
+        <span class="nav-logo-text">Better<span>Reads</span></span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#discover" id="nav-discover">Discover</a></li>
+        <li><a href="#library" id="nav-library">My Library</a></li>
+        <li><a href="#discourse" id="nav-discourse">Discourse</a></li>
+        <li><a href="#stats" id="nav-stats">My Stats</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="#cta" class="btn btn-primary" id="nav-get-started">Get Started</a>
+        <div class="nav-avatar" id="nav-avatar" title="Sign in">🌸</div>
+      </div>
+      <div class="nav-hamburger" id="nav-hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========================================================
+       PAGE 1: HOME
+       ======================================================== -->
+  <div id="page-home" class="page-section active">
+    <!-- HERO -->
+    <section class="hero" id="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-blobs">
+        <div class="hero-blob hero-blob-1"></div>
+        <div class="hero-blob hero-blob-2"></div>
+        <div class="hero-blob hero-blob-3"></div>
+      </div>
+      <div class="container hero-inner">
+        <div class="hero-content">
+          <div class="hero-eyebrow">
+            <span>🍵</span> Your cozy reading corner awaits
+          </div>
+          <h1 class="hero-title">
+            Every story deserves a <em>warm home</em>
+          </h1>
+          <p class="hero-subtitle">
+            BetterReads is the reading platform reimagined as a cozy drawing room — track your books, discover new
+            favourites, and connect with readers who get it.
+          </p>
+          <div class="hero-actions">
+            <a href="#cta" class="btn btn-primary" id="hero-cta-primary">Start Reading Free ✦</a>
+            <a href="#library" class="btn btn-secondary" id="hero-cta-secondary">Tour My Library</a>
+          </div>
+          <div class="hero-stats">
+            <div>
+              <div class="hero-stat-num" id="stat-books">120k+</div>
+              <div class="hero-stat-label">Books catalogued</div>
+            </div>
+            <div>
+              <div class="hero-stat-num" id="stat-readers">48k+</div>
+              <div class="hero-stat-label">Cozy readers</div>
+            </div>
+            <div>
+              <div class="hero-stat-num" id="stat-reviews">310k+</div>
+              <div class="hero-stat-label">Honest reviews</div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-image-wrapper">
+            <img src="assets/library_room.png" alt="Cozy reading nook with armchair, books, and warm light"
+              id="hero-image" />
+          </div>
+          <!-- Floating Cards Removed -->
+        </div>
+      </div>
+    </section>
+
+    <!-- BOOK MARQUEE SECTION -->
+    <section class="book-marquee-section" id="book-marquee">
+      <div class="book-marquee-search reveal">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Search for books, authors, or genres..." />
+      </div>
+
+      <div class="marquee-container reveal reveal-delay-1">
+        <div class="marquee-row">
+          <div class="marquee-content">
+            <a href="#book-8225261" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/8225261-L.jpg"
+                alt="Book cover"></a>
+            <a href="#book-10521270" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/10521270-L.jpg"
+                alt="Book cover"></a>
+            <a href="#book-12845610" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/12845610-L.jpg"
+                alt="Book cover"></a>
+            <a href="#book-8226191" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/8226191-L.jpg"
+                alt="Book cover"></a>
+            <a href="#book-10548174" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/10548174-L.jpg"
+                alt="Book cover"></a>
+            <a href="#book-8268686" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/8268686-L.jpg"
+                alt="Book cover"></a>
+            <a href="#book-12555621" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/12555621-L.jpg"
+                alt="Book cover"></a>
+            <a href="#book-10419213" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/10419213-L.jpg"
+                alt="Book cover"></a>
+          </div>
+          <div class="marquee-content">
+            <a href="#book-8225261" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/8225261-L.jpg"
+                alt="Book cover"></a>
+            <a href="#book-10521270" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/10521270-L.jpg"
+                alt="Book cover"></a>
+            <a href="#book-12845610" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/12845610-L.jpg"
+                alt="Book cover"></a>
+            <a href="#book-8226191" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/8226191-L.jpg"
+                alt="Book cover"></a>
+            <a href="#book-10548174" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/10548174-L.jpg"
+                alt="Book cover"></a>
+            <a href="#book-8268686" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/8268686-L.jpg"
+                alt="Book cover"></a>
+            <a href="#book-12555621" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/12555621-L.jpg"
+                alt="Book cover"></a>
+            <a href="#book-10419213" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/10419213-L.jpg"
+                alt="Book cover"></a>
+          </div>
+        </div>
+        <div class="marquee-row reverse">
+          <div class="marquee-content">
+            <a href="#book-12814881" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/12814881-L.jpg"
+                alt="Book cover"></a>
+            <a href="#book-14467551" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/14467551-L.jpg"
+                alt="Book cover"></a>
+            <a href="#book-8259431" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/8259431-L.jpg"
+                alt="Book cover"></a>
+            <a href="#book-12792611" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/12792611-L.jpg"
+                alt="Book cover"></a>
+            <a href="#book-10522198" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/10522198-L.jpg"
+                alt="Book cover"></a>
+            <a href="#book-8227361" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/8227361-L.jpg"
+                alt="Book cover"></a>
+            <a href="#book-13190848" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/13190848-L.jpg"
+                alt="Book cover"></a>
+            <a href="#book-14421111" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/14421111-L.jpg"
+                alt="Book cover"></a>
+          </div>
+          <div class="marquee-content">
+            <a href="#book-12814881" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/12814881-L.jpg"
+                alt="Book cover"></a>
+            <a href="#book-14467551" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/14467551-L.jpg"
+                alt="Book cover"></a>
+            <a href="#book-8259431" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/8259431-L.jpg"
+                alt="Book cover"></a>
+            <a href="#book-12792611" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/12792611-L.jpg"
+                alt="Book cover"></a>
+            <a href="#book-10522198" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/10522198-L.jpg"
+                alt="Book cover"></a>
+            <a href="#book-8227361" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/8227361-L.jpg"
+                alt="Book cover"></a>
+            <a href="#book-13190848" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/13190848-L.jpg"
+                alt="Book cover"></a>
+            <a href="#book-14421111" class="marquee-book"><img src="https://covers.openlibrary.org/b/id/14421111-L.jpg"
+                alt="Book cover"></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA SECTION -->
+    <section class="cta-section" id="cta">
+      <div class="container">
+        <div class="section-label reveal">Join the Community</div>
+        <h2 class="reveal">Ready for your <em>cozy corner?</em></h2>
+        <p class="reveal reveal-delay-1">Join thousands of readers who've made BetterReads their reading home. Free
+          forever, no credit card needed.</p>
+        <div class="cta-actions reveal reveal-delay-2">
+          <a href="#" class="btn btn-primary" id="cta-signup">Create Free Account ✦</a>
+          <a href="#discover" class="btn btn-secondary" id="cta-browse">Browse Books First</a>
+        </div>
+        <p class="cta-note reveal reveal-delay-3">Already a member? <a href="#"
+            style="color:var(--dusty-rose);font-weight:600" id="cta-signin">Sign in →</a></p>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer" id="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <div class="footer-logo">📚 Better<span>Reads</span></div>
+            <p>A cozy, pastel-hued social reading platform for book lovers and authors. Your drawing room for every
+              story.
+            </p>
+          </div>
+          <div class="footer-col">
+            <h4>Platform</h4>
+            <ul>
+              <li><a href="#discover" id="footer-discover">Discover</a></li>
+              <li><a href="#library" id="footer-library">My Library</a></li>
+              <li><a href="#discourse" id="footer-discourse">Discourse</a></li>
+              <li><a href="#rating" id="footer-rating">Star Ratings</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h4>Company</h4>
+            <ul>
+              <li><a href="#" id="footer-about">About</a></li>
+              <li><a href="#" id="footer-blog">Blog</a></li>
+              <li><a href="#" id="footer-privacy">Privacy</a></li>
+              <li><a href="#" id="footer-contact">Contact</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>© 2025 BetterReads. Made with 🍵 for book lovers everywhere.</p>
+          <div class="footer-socials">
+            <a href="#" class="footer-social-link" id="social-twitter" title="Twitter">𝕏</a>
+            <a href="#" class="footer-social-link" id="social-instagram" title="Instagram">📷</a>
+            <a href="#" class="footer-social-link" id="social-discord" title="Discord">💬</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ========================================================
+       PAGE 2: LIBRARY
+       ======================================================== -->
+  <div id="page-library" class="page-section">
+    <section class="library-section" id="library">
+      <!-- Full-bleed background image -->
+      <div class="library-bg">
+        <img src="assets/library_room.png" alt="Illustrated cozy library drawing room" id="library-room-img" />
+        <div class="fireplace-glow" id="fireplace-glow"></div>
+      </div>
+
+      <!-- Interactive Room Hotspots (moved outside library-bg for z-index) -->
+      <div class="library-hotspots" style="position: absolute; inset: 0; z-index: 10; pointer-events: none;">
+        <button class="room-hotspot hotspot-tbr" data-shelf="tbr" title="Click to view To-Be-Read shelf"
+          style="position: absolute; top: 25%; left: 68%; background: none; border: none; padding: 0; box-shadow: none; transition: transform 0.2s; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); cursor: pointer; pointer-events: auto;"
+          onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+          <img src="assets/btn_tbr.png" alt="TBR Bookshelf" style="height: 60px; object-fit: contain;">
+        </button>
+        <button class="room-hotspot hotspot-reading" data-shelf="reading" title="Click to view Currently Reading shelf"
+          style="position: absolute; top: 62%; left: 38%; background: none; border: none; padding: 0; box-shadow: none; transition: transform 0.2s; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); cursor: pointer; pointer-events: auto;"
+          onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+          <img src="assets/btn_read.png" alt="Reading Chair" style="height: 60px; object-fit: contain;">
+        </button>
+        <button class="room-hotspot hotspot-dnf" data-shelf="dnf" title="Click to view Did-Not-Finish shelf"
+          style="position: absolute; top: 65%; right: 15%; background: none; border: none; padding: 0; box-shadow: none; transition: transform 0.2s; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); cursor: pointer; pointer-events: auto;"
+          onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+          <img src="assets/btn_dnf.png" alt="DNF Cabinet" style="height: 60px; object-fit: contain;">
+        </button>
+      </div>
+
+      <!-- Content overlay on the room -->
+      <div class="library-content-overlay">
+        <div class="container">
+          <div class="library-header reveal">
+            <div class="section-label">My Library</div>
+            <h2>Your books, beautifully <em>at home</em></h2>
+            <p>Drag books between shelves, track your reading progress, and let the fireplace glow while Spotify plays
+              in the corner.</p>
+          </div>
+
+          <div class="library-main">
+            <!-- Shelf Panel (Left Column) -->
+            <!-- Left Column removed as requested -->
+            <div class="library-info-placeholder">
+              <div class="hero-floating-card card-streak"
+                style="position: relative; top: auto; right: auto; animation: none; max-width: 320px; display: inline-flex; margin-top: 1rem;">
+                <div class="fc-icon">🔥</div>
+                <div>
+                  <div class="fc-label">Reading streak</div>
+                  <div class="fc-value">12 days</div>
+                  <div class="fc-stars mono" style="font-size:0.7rem; color: var(--ink-light);">Keep it up!</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Spotify Widget (Right Column) -->
+            <div class="spotify-float reveal reveal-delay-2">
+              <div class="spotify-card" id="spotify-widget">
+                <!-- Header -->
+                <div class="spotify-header">
+                  <div class="spotify-album-art">🎵</div>
+                  <div class="spotify-header-info">
+                    <div class="spotify-playlist-name">
+                      <svg viewBox="0 0 24 24">
+                        <path
+                          d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424c-.18.295-.565.387-.86.207-2.377-1.454-5.37-1.783-8.894-.982-.336.076-.67-.135-.746-.47-.077-.337.135-.67.472-.747 3.854-.88 7.15-.508 9.822 1.13.294.18.385.564.206.86zm1.226-2.72c-.226.367-.707.487-1.074.26-2.72-1.672-6.87-2.157-10.08-1.182-.413.125-.845-.107-.97-.52-.125-.413.107-.847.52-.973 3.67-1.114 8.24-.57 11.35 1.345.366.226.486.708.26 1.075zm.106-2.828C14.568 8.94 8.974 8.755 5.73 9.74c-.5.15-1.025-.137-1.176-.637-.152-.5.137-1.024.637-1.175 3.73-1.133 9.897-.922 13.75 1.366.45.267.6.845.333 1.296-.268.453-.846.6-1.296.333z" />
+                      </svg>
+                      Cozy Reading Mode
+                    </div>
+                    <div class="spotify-current-track" id="sp-track">Cozy Rain Lofi</div>
+                    <div class="spotify-current-artist" id="sp-artist">ChillHop Music</div>
+                  </div>
+                </div>
+                <!-- Playback controls -->
+                <div class="spotify-playback">
+                  <div class="spotify-controls-row">
+                    <button class="sp-ctrl" id="sp-prev" title="Previous">⏮</button>
+                    <button class="sp-ctrl-play" id="sp-play" title="Pause">⏸</button>
+                    <button class="sp-ctrl" id="sp-next" title="Next">⏭</button>
+                  </div>
+                  <div class="spotify-progress">
+                    <span class="sp-time" id="sp-time-cur">0:00</span>
+                    <div class="sp-bar-track" id="sp-progress-track">
+                      <div class="sp-bar-fill" id="sp-bar-fill" style="width: 35%"></div>
+                    </div>
+                    <span class="sp-time" id="sp-time-dur">2:45</span>
+                  </div>
+                </div>
+                <!-- Tracklist -->
+                <div class="spotify-tracklist" id="sp-tracklist">
+                  <div class="sp-track-item sp-active" data-index="0">
+                    <div class="sp-track-num">01</div>
+                    <div class="sp-track-info">
+                      <div class="sp-track-name">Cozy Rain Lofi</div>
+                      <div class="sp-track-artist-name">ChillHop Music</div>
+                    </div>
+                    <div class="sp-track-dur">2:45</div>
+                  </div>
+                  <div class="sp-track-item" data-index="1">
+                    <div class="sp-track-num">02</div>
+                    <div class="sp-track-info">
+                      <div class="sp-track-name">Autumn Library Jazz</div>
+                      <div class="sp-track-artist-name">Cafe Music BGM</div>
+                    </div>
+                    <div class="sp-track-dur">3:12</div>
+                  </div>
+                  <div class="sp-track-item" data-index="2">
+                    <div class="sp-track-num">03</div>
+                    <div class="sp-track-info">
+                      <div class="sp-track-name">Cottagecore Afternoon</div>
+                      <div class="sp-track-artist-name">Ambiance Sounds</div>
+                    </div>
+                    <div class="sp-track-dur">4:05</div>
+                  </div>
+                  <div class="sp-track-item" data-index="3">
+                    <div class="sp-track-num">04</div>
+                    <div class="sp-track-info">
+                      <div class="sp-track-name">Candlelit Classical</div>
+                      <div class="sp-track-artist-name">Study with Me</div>
+                    </div>
+                    <div class="sp-track-dur">3:30</div>
+                  </div>
+                </div>
+                <!-- Login CTA -->
+                <div class="spotify-login-cta">
+                  <p>Connect your Spotify account for reading playlists</p>
+                  <button class="spotify-login-btn" id="sp-login-btn">Connect Spotify</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ========================================================
+       PAGE 3: DISCOVER
+       ======================================================== -->
+  <div id="page-discover" class="page-section">
+    <section class="discover-section" id="discover">
+      <div class="container">
+        <div class="section-header reveal">
+          <div class="section-label">Discover</div>
+          <h2>Find your next <em>favourite</em></h2>
+          <p>Search millions of books, filter by mood, genre, or page count, and find your community's top picks.</p>
+        </div>
+        <div class="discover-search-bar reveal">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="discover-search" placeholder="Search books, authors, or series…"
+            aria-label="Search books" />
+        </div>
+        <div class="filter-groups-container reveal"
+          style="display:flex; flex-direction:column; align-items:center; gap: 1.25rem; margin-bottom: 2.5rem;">
+          <div style="display:flex; flex-direction:column; align-items:center; gap: 0.5rem; width: 100%;">
+            <div
+              style="font-size:0.7rem; font-family:'DM Mono', monospace; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-light);">
+              By Genre</div>
+            <div class="genre-pills" id="genre-pills" style="margin-bottom:0;">
+              <button class="genre-pill gp-fantasy active" id="pill-fantasy" data-genre="fantasy">🔮 Fantasy</button>
+              <button class="genre-pill gp-romance" id="pill-romance" data-genre="romance">💌 Romance</button>
+              <button class="genre-pill gp-mystery" id="pill-mystery" data-genre="mystery">🕵️ Mystery</button>
+              <button class="genre-pill gp-scifi" id="pill-scifi" data-genre="scifi">🚀 Sci-Fi</button>
+              <button class="genre-pill gp-nonfiction" id="pill-nonfiction" data-genre="nonfiction">🌿
+                Non-Fiction</button>
+              <button class="genre-pill gp-literary" id="pill-literary" data-genre="literary">✍️ Literary</button>
+              <button class="genre-pill gp-historical" id="pill-historical" data-genre="historical">📜
+                Historical</button>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; align-items:center; gap: 0.5rem; width: 100%;">
+            <div
+              style="font-size:0.7rem; font-family:'DM Mono', monospace; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-light);">
+              By Mood</div>
+            <div class="genre-pills" id="mood-pills" style="margin-bottom:0;">
+              <button class="genre-pill gp-cozy" data-mood="cozy">🍵 Cozy</button>
+              <button class="genre-pill gp-dark-academia" data-mood="dark-academia">🕰️ Dark Academia</button>
+              <button class="genre-pill gp-heartbreaking" data-mood="heartbreaking">💔 Heartbreaking</button>
+              <button class="genre-pill gp-ethereal" data-mood="ethereal">✨ Ethereal</button>
+              <button class="genre-pill gp-wholesome" data-mood="wholesome">🌻 Wholesome</button>
+            </div>
+          </div>
+        </div>
+        <div class="discover-books-grid reveal" id="discover-books-grid">
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ========================================================
+       PAGE 4: RATING DEMO
+       ======================================================== -->
+  <div id="page-rating" class="page-section">
+    <section class="rating-section" id="rating">
+      <div class="container rating-inner">
+        <div class="reveal">
+          <div class="section-label">Rating System</div>
+          <h2>Rate how you <em>really</em> feel</h2>
+          <p style="margin:1rem 0 1.5rem">Half-star support because sometimes 3 stars isn't the full story. Hover to
+            preview, click to lock your rating.</p>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:0.75rem;margin-bottom:2rem">
+            <li style="display:flex;gap:0.75rem;align-items:flex-start;font-size:0.95rem;color:var(--ink)">✦ <span>Hover
+                over the <strong>left half</strong> of a star for a half rating</span></li>
+            <li style="display:flex;gap:0.75rem;align-items:flex-start;font-size:0.95rem;color:var(--ink)">✦ <span>Click
+                to <strong>lock</strong> your rating anytime</span></li>
+            <li style="display:flex;gap:0.75rem;align-items:flex-start;font-size:0.95rem;color:var(--ink)">✦
+              <span>Community average is <strong>outlier-weighted</strong></span>
+            </li>
+          </ul>
+        </div>
+        <div class="reveal reveal-delay-1">
+          <div class="rating-demo-card" id="rating-demo-card">
+            <div class="rating-book-cover">📚</div>
+            <div class="rating-book-title">The Midnight Library</div>
+            <div class="rating-book-author">Matt Haig · 2020</div>
+            <div class="star-widget" id="star-widget" role="group" aria-label="Rate this book">
+              <span class="star" data-value="1" id="star-1">★</span>
+              <span class="star" data-value="2" id="star-2">★</span>
+              <span class="star" data-value="3" id="star-3">★</span>
+              <span class="star" data-value="4" id="star-4">★</span>
+              <span class="star" data-value="5" id="star-5">★</span>
+            </div>
+            <div class="rating-value-display" id="rating-value-display">Hover to rate ✦</div>
+            <div class="rating-breakdown">
+              <div class="rating-bar-row"><span class="rating-bar-label">5★</span>
+                <div class="rating-bar-track">
+                  <div class="rating-bar-fill" style="width:62%"></div>
+                </div><span class="rating-bar-count">62%</span>
+              </div>
+              <div class="rating-bar-row"><span class="rating-bar-label">4★</span>
+                <div class="rating-bar-track">
+                  <div class="rating-bar-fill" style="width:24%"></div>
+                </div><span class="rating-bar-count">24%</span>
+              </div>
+              <div class="rating-bar-row"><span class="rating-bar-label">3★</span>
+                <div class="rating-bar-track">
+                  <div class="rating-bar-fill" style="width:9%"></div>
+                </div><span class="rating-bar-count">9%</span>
+              </div>
+              <div class="rating-bar-row"><span class="rating-bar-label">2★</span>
+                <div class="rating-bar-track">
+                  <div class="rating-bar-fill" style="width:3%"></div>
+                </div><span class="rating-bar-count">3%</span>
+              </div>
+              <div class="rating-bar-row"><span class="rating-bar-label">1★</span>
+                <div class="rating-bar-track">
+                  <div class="rating-bar-fill" style="width:2%"></div>
+                </div><span class="rating-bar-count">2%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ========================================================
+       PAGE 5: DISCOURSE
+       ======================================================== -->
+  <div id="page-discourse" class="page-section">
+    <section class="discourse-section" id="discourse">
+      <div class="container">
+        <div class="section-header reveal">
+          <div class="section-label">Discourse & Clubs</div>
+          <h2>A book club that never <em>ends</em></h2>
+          <p>Reading groups, theories, AMAs, spoiler-tagged threads, and monthly picks — all in one cozy corner of the
+            internet.</p>
+        </div>
+
+        <div class="discourse-tabs reveal" style="display:flex;gap:1rem;margin-bottom:2rem;justify-content:center;">
+          <button class="btn btn-primary" id="btn-tab-threads">Community Threads</button>
+          <button class="btn btn-secondary" id="btn-tab-clubs">Book Clubs</button>
+        </div>
+
+        <!-- THREADS VIEW -->
+        <div id="view-threads">
+          <div class="create-post-card reveal"
+            style="background: white; padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);">
+            <h3 style="margin-top: 0; margin-bottom: 1rem; font-size: 1.1rem;">Create a New Thread</h3>
+            <input type="text" id="new-thread-title" placeholder="Thread Title..."
+              style="width: 100%; padding: 0.75rem; border: 1px solid #eee; border-radius: 8px; margin-bottom: 0.5rem; font-family: 'Inter', sans-serif;">
+            <textarea id="new-thread-content" placeholder="Share your thoughts, theories, or questions..." rows="3"
+              style="width: 100%; padding: 0.75rem; border: 1px solid #eee; border-radius: 8px; margin-bottom: 1rem; font-family: 'Inter', sans-serif; resize: vertical;"></textarea>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <select id="new-thread-tag"
+                style="padding: 0.5rem; border: 1px solid #eee; border-radius: 8px; font-family: 'Inter', sans-serif; color: var(--ink);">
+                <option value="Discussion">Discussion</option>
+                <option value="Spoilers ⚠️">Spoilers</option>
+                <option value="Theory">Theory</option>
+                <option value="Recommendation">Recommendation</option>
+              </select>
+              <button class="btn btn-primary" id="btn-create-thread" style="padding: 0.5rem 1.5rem;">Post
+                Thread</button>
+            </div>
+          </div>
+
+          <div class="discourse-grid" id="discourse-grid">
+            <!-- Threads populated by JS -->
+          </div>
+        </div>
+
+        <!-- CLUBS VIEW -->
+        <div id="view-clubs" style="display: none;">
+          <div class="create-post-card reveal"
+            style="background: white; padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);">
+            <h3 style="margin-top: 0; margin-bottom: 1rem; font-size: 1.1rem;">Start a Book Club</h3>
+            <input type="text" id="new-club-name" placeholder="Club Name (e.g. The Midnight Readers)..."
+              style="width: 100%; padding: 0.75rem; border: 1px solid #eee; border-radius: 8px; margin-bottom: 0.5rem; font-family: 'Inter', sans-serif;">
+            <textarea id="new-club-desc" placeholder="What is this club about? What are you reading?" rows="2"
+              style="width: 100%; padding: 0.75rem; border: 1px solid #eee; border-radius: 8px; margin-bottom: 1rem; font-family: 'Inter', sans-serif; resize: vertical;"></textarea>
+            <div style="display: flex; justify-content: flex-end;">
+              <button class="btn btn-secondary" id="btn-create-club"
+                style="padding: 0.5rem 1.5rem; background: var(--sage); color: #2d5a2d; border: none;">Create
+                Club</button>
+            </div>
+          </div>
+
+          <div class="discourse-grid" id="clubs-grid">
+            <!-- Clubs populated by JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ========================================================
+       PAGE 6: READING STATS (WRAPPED)
+       ======================================================== -->
+  <div id="page-stats" class="page-section">
+    <section class="stats-section" id="stats">
+      
+      <!-- Scalable Grid of Mockups -->
+      <div class="stats-mockup-grid">
+        
+        <!-- Left Container: Reading Stats -->
+        <div class="stat-mockup-container">
+          <div class="mockup-header">
+            <div class="mockup-header-left">
+              <h1 class="mockup-header-title" style="color: var(--lavender);">Reading Stats</h1>
+            </div>
+            <div class="mockup-header-icon">📈</div>
+          </div>
+          
+          <div class="mockup-simple-stats" style="grid-template-columns: 1fr; gap: 1.5rem; flex: 1; align-content: center;">
+            <div class="mockup-stat-box" style="background: var(--blush);">
+              <div class="mockup-stat-val" style="color: var(--ink);">842</div>
+              <div class="mockup-stat-label" style="color: var(--ink-light);">Longest Book (pgs)</div>
+            </div>
+            <div class="mockup-stat-box" style="background: var(--lavender);">
+              <div class="mockup-stat-val" style="color: var(--ink);">124h</div>
+              <div class="mockup-stat-label" style="color: var(--ink-light);">Time Reading</div>
+            </div>
+            <div class="mockup-stat-box" style="background: var(--sage);">
+              <div class="mockup-stat-val" style="color: var(--ink);">4.2</div>
+              <div class="mockup-stat-label" style="color: var(--ink-light);">Average Rating</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Center Container: My Library (Original) -->
+        <div class="stat-mockup-container">
+
+        <!-- Header -->
+        <div class="mockup-header">
+          <div class="mockup-header-left">
+            <h1 class="mockup-header-title">My Library</h1>
+          </div>
+          <div class="mockup-header-icon">⚙️</div>
+        </div>
+
+        <!-- Section 1: Currently Reading -->
+        <div class="mockup-section-title">CURRENTLY READING</div>
+        <div class="mockup-card mockup-reading-card" id="mockup-reading-card">
+          <div class="mockup-reading-content">
+            <div class="mockup-reading-cover" id="mockup-reading-cover">📚</div>
+            <div class="mockup-reading-info">
+              <div class="mockup-reading-title" id="mockup-reading-title">No book currently</div>
+              <div class="mockup-reading-author" id="mockup-reading-author">by Author</div>
+              <div class="mockup-reading-progress-text" id="mockup-reading-progress-text">0% Complete</div>
+              <div class="mockup-reading-progress-bar">
+                <div class="mockup-reading-progress-fill" id="mockup-reading-progress-fill" style="width: 0%;"></div>
+              </div>
+              <button class="mockup-btn-primary">▷ Continue Reading</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Goals -->
+        <div class="mockup-card mockup-goal-card">
+          <div class="mockup-goal-info">
+            <div class="mockup-goal-title">2024 Goals</div>
+            <div class="mockup-goal-text"><span id="mockup-goal-current">0</span> of <span
+                id="mockup-goal-total">25</span> books completed</div>
+            <div class="mockup-goal-pill">On Track ✨</div>
+          </div>
+          <div class="mockup-goal-chart">
+            <svg viewBox="0 0 36 36" class="circular-chart">
+              <path class="circle-bg" d="M18 2.0845
+                  a 15.9155 15.9155 0 0 1 0 31.831
+                  a 15.9155 15.9155 0 0 1 0 -31.831" />
+              <path class="circle" id="mockup-goal-circle" stroke-dasharray="0, 100" d="M18 2.0845
+                  a 15.9155 15.9155 0 0 1 0 31.831
+                  a 15.9155 15.9155 0 0 1 0 -31.831" />
+              <text x="18" y="20.35" class="percentage" id="mockup-goal-percentage">0%</text>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Section 3: Recent Additions -->
+        <div class="mockup-section-header">
+          <div class="mockup-section-title" style="margin-bottom:0;">RECENT ADDITIONS</div>
+          <a href="#library" class="mockup-see-all">See All</a>
+        </div>
+        <div class="mockup-horizontal-scroll" id="mockup-recent-additions">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Section 4: Simple Stats -->
+        <div class="mockup-simple-stats">
+          <div class="mockup-stat-box">
+            <div class="mockup-stat-val" id="mockup-pages-read">0</div>
+            <div class="mockup-stat-label">Pages Read</div>
+          </div>
+          <div class="mockup-stat-box">
+            <div class="mockup-stat-val" id="mockup-day-streak">0</div>
+            <div class="mockup-stat-label">Day Streak</div>
+          </div>
+        </div>
+
+        <!-- Fixed Share Button -->
+        <button class="fixed-share-btn" title="Share to Insta"
+          onclick="alert('Screenshot mode activated! (Mock sharing)')">
+          📸
+        </button>
+      </div>
+
+      <!-- Right Container: Milestones -->
+      <div class="stat-mockup-container">
+        <div class="mockup-header">
+          <div class="mockup-header-left">
+            <h1 class="mockup-header-title" style="color: var(--amber);">Milestones</h1>
+          </div>
+          <div class="mockup-header-icon">🏆</div>
+        </div>
+
+        <div class="mockup-simple-stats" style="grid-template-columns: 1fr; gap: 1.5rem; flex: 1; align-content: center;">
+          <div class="mockup-stat-box" style="background: var(--peach);">
+            <div class="mockup-stat-val" style="color: var(--ink); font-size: 1.6rem; padding-bottom: 0.2rem;">Fantasy</div>
+            <div class="mockup-stat-label" style="color: var(--ink-light);">Top Genre</div>
+          </div>
+          <div class="mockup-stat-box" style="background: var(--cream); border: 2px solid var(--dusty-rose);">
+            <div class="mockup-stat-val" style="color: var(--ink);">14</div>
+            <div class="mockup-stat-label" style="color: var(--ink-light);">Reviews Written</div>
+          </div>
+          <div class="mockup-stat-box" style="background: var(--amber);">
+            <div class="mockup-stat-val" style="color: var(--ink); font-size: 1.6rem; padding-bottom: 0.2rem;">October</div>
+            <div class="mockup-stat-label" style="color: var(--ink-light);">Best Month</div>
+          </div>
+        </div>
+      </div>
+
+      </div> <!-- End stats-mockup-grid -->
+    </section>
+  </div>
+
+  <!-- ========================================================
+       PAGE 7: BOOK DETAILS
+       ======================================================== -->
+  <div id="page-book-details" class="page-section">
+    <section class="book-details-section" id="book-details">
+      <div class="container">
+
+        <!-- Back Button -->
+        <a href="#discover" class="btn btn-secondary"
+          style="margin-bottom: 2rem; border: none; box-shadow: none; font-size: 0.9rem; padding: 0.5rem 1rem;">← Back
+          to Discover</a>
+
+        <div class="bd-layout" style="display: grid; grid-template-columns: 300px 1fr; gap: 4rem; align-items: start;">
+
+          <!-- Left Column: Cover & Actions -->
+          <div class="bd-sidebar">
+            <div id="bd-cover"
+              style="width: 100%; aspect-ratio: 2/3; border-radius: 16px; background: var(--sage); box-shadow: var(--shadow-med); display: flex; align-items: center; justify-content: center; font-size: 4rem; color: rgba(255,255,255,0.5); margin-bottom: 1.5rem;">
+              📚</div>
+
+            <div class="bd-actions" style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <button class="btn btn-primary" id="btn-bd-reading" style="justify-content: center;">📖 Currently
+                Reading</button>
+              <button class="btn btn-secondary" id="btn-bd-tbr" style="justify-content: center;">📌 Add to TBR</button>
+              <button class="btn btn-secondary" id="btn-bd-dnf"
+                style="justify-content: center; border-color: #e5e5e5; color: var(--ink-light);">❌ DNF</button>
+            </div>
+
+            <div class="bd-rating-container"
+              style="margin-top: 2rem; background: var(--cream); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--blush); text-align: center;">
+              <div
+                style="font-size: 0.85rem; font-weight: 600; color: var(--dusty-rose); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                Your Rating</div>
+              <div class="star-widget" id="bd-star-widget"
+                style="font-size: 2rem; display: flex; justify-content: center; gap: 0.2rem; margin-bottom: 0.5rem; cursor: pointer;">
+                <span class="star" data-value="1">★</span>
+                <span class="star" data-value="2">★</span>
+                <span class="star" data-value="3">★</span>
+                <span class="star" data-value="4">★</span>
+                <span class="star" data-value="5">★</span>
+              </div>
+              <div id="bd-rating-display" style="font-size: 0.85rem; color: var(--ink-light); font-weight: 500;">Hover
+                to rate ✦</div>
+            </div>
+          </div>
+
+          <!-- Right Column: Info & Discussion -->
+          <div class="bd-main">
+            <div class="section-label" id="bd-category" style="margin-bottom: 0.5rem;">Fiction</div>
+            <h1 id="bd-title" style="font-size: 2.8rem; margin-bottom: 0.5rem; line-height: 1.1;">Book Title</h1>
+            <h2 id="bd-author"
+              style="font-size: 1.4rem; font-family: 'DM Sans', sans-serif; font-weight: 500; color: var(--ink-light); margin-bottom: 2rem;">
+              Author Name</h2>
+
+            <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">About this book</h3>
+            <p id="bd-description"
+              style="font-size: 1.05rem; line-height: 1.8; color: var(--ink); margin-bottom: 4rem;">Loading
+              description...</p>
+
+            <hr style="border: none; border-top: 1px solid rgba(0,0,0,0.05); margin-bottom: 3rem;">
+
+            <!-- Discussion Section -->
+            <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Community Discussion</h3>
+            <p style="font-size: 0.95rem; color: var(--ink-light); margin-bottom: 2rem;">Share your theories, reviews,
+              and thoughts about this book.</p>
+
+            <div class="create-post-card"
+              style="background: white; padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);">
+              <textarea id="bd-new-review"
+                placeholder="What did you think about this book? (Mark spoilers if necessary)" rows="3"
+                style="width: 100%; padding: 1rem; border: 1px solid #eee; border-radius: 8px; margin-bottom: 1rem; font-family: 'DM Sans', sans-serif; resize: vertical; outline: none;"></textarea>
+              <div style="display: flex; justify-content: flex-end;">
+                <button class="btn btn-primary" id="btn-bd-submit-review" style="padding: 0.5rem 1.5rem;">Post Review
+                  ✦</button>
+              </div>
+            </div>
+
+            <div id="bd-reviews-list" style="display: flex; flex-direction: column; gap: 1.5rem;">
+              <!-- Reviews populated by JS -->
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ========================================================
+       SHELF MODAL
+       ======================================================== -->
+  <div class="auth-modal-overlay" id="shelf-modal">
+    <div class="auth-modal-content" style="max-width: 800px; width: 95%; max-height: 85vh; overflow-y: auto;">
+      <button class="auth-close-btn" id="shelf-close-btn" aria-label="Close modal">✕</button>
+
+      <div class="auth-modal-header" style="margin-bottom: 2rem;">
+        <div class="auth-modal-icon" id="shelf-modal-icon">📚</div>
+        <h3 class="auth-modal-title" id="shelf-modal-title">Your Shelf</h3>
+      </div>
+
+      <div id="shelf-modal-body">
+        <!-- TBR Shelf -->
+        <div class="book-shelf active" id="shelf-tbr">
+          <div class="book-grid"></div>
+        </div>
+        <!-- Reading Shelf -->
+        <div class="book-shelf" id="shelf-reading">
+          <div class="book-grid"></div>
+        </div>
+        <!-- Read Shelf -->
+        <div class="book-shelf" id="shelf-read">
+          <div class="book-grid"></div>
+        </div>
+        <!-- DNF Shelf -->
+        <div class="book-shelf" id="shelf-dnf">
+          <div class="book-grid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       AUTH MODAL
+       ======================================================== -->
+  <div class="auth-modal-overlay" id="auth-modal">
+    <div class="auth-modal-content">
+      <button class="auth-close-btn" id="auth-close-btn" aria-label="Close modal">✕</button>
+
+      <!-- STEP 1: Email & Google -->
+      <div id="auth-step-1" class="auth-step active">
+        <div class="auth-modal-header">
+          <div class="auth-modal-icon">📚</div>
+          <h3 class="auth-modal-title">Welcome to BetterReads</h3>
+          <p class="auth-modal-subtitle">Your cozy corner awaits. Sign in to track, review, and discover.</p>
+        </div>
+
+        <div class="auth-social-buttons">
+          <button class="btn btn-secondary auth-social-btn" id="btn-google-auth">
+            <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                fill="#4285F4" />
+              <path
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.16v2.84C3.99 20.53 7.7 23 12 23z"
+                fill="#34A853" />
+              <path
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.16C1.43 8.55 1 10.22 1 12s.43 3.45 1.16 4.93l3.68-2.84z"
+                fill="#FBBC05" />
+              <path
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.16 7.07l3.68 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                fill="#EA4335" />
+            </svg>
+            Continue with Google
+          </button>
+        </div>
+
+        <div class="auth-divider">
+          <span>or</span>
+        </div>
+
+        <form id="auth-form-step1" class="auth-form">
+          <div class="auth-form-group">
+            <label for="auth-email">Email Address</label>
+            <input type="email" id="auth-email" placeholder="reader@example.com" required>
+          </div>
+          <button type="submit" class="btn btn-primary auth-submit-btn">Send Verification Code ✦</button>
+        </form>
+      </div>
+
+      <!-- STEP 2: Verification & Profile -->
+      <div id="auth-step-2" class="auth-step" style="display: none;">
+        <div class="auth-modal-header" style="margin-bottom: 1.5rem;">
+          <h3 class="auth-modal-title" style="font-size: 1.4rem;">Verify & Complete</h3>
+          <p class="auth-modal-subtitle" id="auth-code-message" style="font-size: 0.85rem;">We sent a code to your
+            email.</p>
+        </div>
+
+        <form id="auth-form-step2" class="auth-form">
+          <div class="auth-form-group">
+            <label for="auth-code">Verification Code</label>
+            <input type="text" id="auth-code" placeholder="123456" pattern="[0-9]{6}" required>
+          </div>
+          <div class="auth-form-group">
+            <label for="auth-password">Create Password</label>
+            <input type="password" id="auth-password" placeholder="••••••••" required>
+          </div>
+          <div class="auth-form-group">
+            <label for="auth-username">Username</label>
+            <input type="text" id="auth-username" placeholder="cozyreader99" required>
+          </div>
+          <div class="auth-form-group">
+            <label>Choose an Avatar</label>
+            <div class="avatar-grid" id="avatar-grid">
+              <div class="avatar-option active" data-avatar="🍵">🍵</div>
+              <div class="avatar-option" data-avatar="🌸">🌸</div>
+              <div class="avatar-option" data-avatar="🐱">🐱</div>
+              <div class="avatar-option" data-avatar="🌙">🌙</div>
+              <div class="avatar-option" data-avatar="🪴">🪴</div>
+              <div class="avatar-option" data-avatar="📚">📚</div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary auth-submit-btn" style="margin-top: 1rem;">Complete & Sign In
+            ✦</button>
+        </form>
+        <button type="button" class="btn btn-secondary auth-social-btn" id="btn-back-step1"
+          style="margin-top: 0.75rem; border: none; box-shadow: none; font-size: 0.8rem; background: transparent;">←
+          Back to Email</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/js/main.js"></script>
+</body>
+
+</html>
