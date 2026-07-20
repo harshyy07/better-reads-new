@@ -509,6 +509,7 @@
         <div class="discourse-tabs reveal" style="display:flex;gap:1rem;margin-bottom:2rem;justify-content:center;">
           <button class="btn btn-primary" id="btn-tab-threads">Community Threads</button>
           <button class="btn btn-secondary" id="btn-tab-clubs">Book Clubs</button>
+          <button class="btn btn-secondary" id="btn-tab-friends">Friends Corner</button>
         </div>
 
         <!-- THREADS VIEW -->
@@ -556,6 +557,40 @@
 
           <div class="discourse-grid" id="clubs-grid">
             <!-- Clubs populated by JS -->
+          </div>
+        </div>
+
+        <!-- FRIENDS CORNER VIEW -->
+        <div id="view-friends" style="display: none;">
+          <div style="display: grid; grid-template-columns: 1fr 320px; gap: 2rem; align-items: start;">
+            <!-- Left Side: Activity Feed & Search -->
+            <div>
+              <!-- Search and Add Friend -->
+              <div class="create-post-card" style="background: white; padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);">
+                <h3 style="margin-top: 0; margin-bottom: 1rem; font-size: 1.1rem;">Search Readers</h3>
+                <div style="display: flex; gap: 0.5rem;">
+                  <input type="text" id="friend-search-input" placeholder="Search by username (e.g. MapleReader)..." style="width: 100%; padding: 0.75rem; border: 1px solid #eee; border-radius: 8px; font-family: 'Inter', sans-serif;">
+                  <button class="btn btn-primary" id="btn-search-friend" style="padding: 0.5rem 1.5rem;">Search</button>
+                </div>
+                <div id="search-friend-result" style="margin-top: 1rem; display: none;">
+                  <!-- Dynamically populated search result -->
+                </div>
+              </div>
+
+              <!-- Live Activity Feed -->
+              <h3 style="font-size: 1.3rem; margin-bottom: 1rem; font-family: 'Pixel Operator', monospace;">Cozy Activity Feed</h3>
+              <div id="friends-activity-feed" style="display: flex; flex-direction: column; gap: 1rem;">
+                <!-- Feed items populated by JS -->
+              </div>
+            </div>
+
+            <!-- Right Side: Following List -->
+            <div class="create-post-card" style="background: white; padding: 1.5rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);">
+              <h3 style="margin-top: 0; margin-bottom: 1rem; font-size: 1.1rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem;">Following</h3>
+              <div id="following-list" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <!-- Following users populated by JS -->
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -619,7 +654,17 @@
               <div class="mockup-reading-progress-bar">
                 <div class="mockup-reading-progress-fill" id="mockup-reading-progress-fill" style="width: 0%;"></div>
               </div>
-              <button class="mockup-btn-primary">▷ Continue Reading</button>
+              <button class="mockup-btn-primary" id="mockup-update-btn">✏️ Update Progress</button>
+              <div id="mockup-progress-form" style="display: none; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                <div style="display: flex; gap: 0.5rem;">
+                  <input type="number" id="mockup-prog-curr" placeholder="Page" style="width: 50%; padding: 0.25rem; font-size: 0.8rem; border-radius: 4px; border: 1px solid #ccc;">
+                  <input type="number" id="mockup-prog-total" placeholder="Total" style="width: 50%; padding: 0.25rem; font-size: 0.8rem; border-radius: 4px; border: 1px solid #ccc;">
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button id="mockup-save-btn" class="btn" style="width: 50%; padding: 0.25rem; font-size: 0.8rem; background: var(--sage); border: none; border-radius: 4px; color: white; cursor: pointer;">Save</button>
+                  <button id="mockup-cancel-btn" class="btn" style="width: 50%; padding: 0.25rem; font-size: 0.8rem; background: transparent; border: 1px solid #ccc; border-radius: 4px; cursor: pointer;">Cancel</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -745,6 +790,28 @@
               </div>
               <div id="bd-rating-display" style="font-size: 0.85rem; color: var(--ink-light); font-weight: 500;">Hover
                 to rate ✦</div>
+            </div>
+
+            <div id="bd-progress-container"
+              style="display: none; margin-top: 1.5rem; background: var(--cream); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--sage); text-align: center; flex-direction: column; gap: 0.5rem;">
+              <div
+                style="font-size: 0.85rem; font-weight: 600; color: var(--sage); margin-bottom: 0.25rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                Reading Progress</div>
+              <div id="bd-progress-text" style="font-size: 0.9rem; color: var(--ink); font-weight: 500;">Page 0 of 0 (0%)</div>
+              <div style="width: 100%; height: 8px; background: #eee; border-radius: 4px; overflow: hidden; margin-top: 0.25rem;">
+                <div id="bd-progress-fill" style="width: 0%; height: 100%; background: var(--sage); transition: width 0.3s;"></div>
+              </div>
+              <button id="btn-bd-update-progress" class="btn" style="margin-top: 0.5rem; font-size: 0.8rem; padding: 0.4rem 0.8rem; background: transparent; border: 1px solid var(--sage); color: var(--ink); border-radius: 8px; cursor: pointer; width: 100%;">✏️ Update Progress</button>
+              <div id="bd-progress-form" style="display: none; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                <div style="display: flex; gap: 0.5rem;">
+                  <input type="number" id="bd-prog-curr" placeholder="Page" style="width: 50%; padding: 0.25rem; font-size: 0.8rem; border-radius: 4px; border: 1px solid #ccc; background: white;">
+                  <input type="number" id="bd-prog-total" placeholder="Total" style="width: 50%; padding: 0.25rem; font-size: 0.8rem; border-radius: 4px; border: 1px solid #ccc; background: white;">
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button id="bd-btn-save-progress" class="btn" style="width: 50%; padding: 0.25rem; font-size: 0.8rem; background: var(--sage); border: none; border-radius: 4px; color: white; cursor: pointer; font-weight: bold;">Save</button>
+                  <button id="bd-btn-cancel-progress" class="btn" style="width: 50%; padding: 0.25rem; font-size: 0.8rem; background: transparent; border: 1px solid #ccc; border-radius: 4px; cursor: pointer;">Cancel</button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -908,6 +975,78 @@
         <button type="button" class="btn btn-secondary auth-social-btn" id="btn-back-step1"
           style="margin-top: 0.75rem; border: none; box-shadow: none; font-size: 0.8rem; background: transparent;">←
           Back to Email</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       FRIEND PROFILE MODAL
+       ======================================================== -->
+  <div class="auth-modal-overlay" id="friend-profile-modal">
+    <div class="auth-modal-content" style="max-width: 600px; width: 95%; max-height: 85vh; overflow-y: auto;">
+      <button class="auth-close-btn" id="friend-profile-close-btn" aria-label="Close modal">✕</button>
+
+      <div class="auth-modal-header" style="margin-bottom: 1.5rem; text-align: center;">
+        <div class="auth-modal-icon" id="friend-profile-avatar" style="font-size: 3rem; width: 80px; height: 80px; border-radius: 50%; background: var(--lavender); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">🌸</div>
+        <h3 class="auth-modal-title" id="friend-profile-username" style="font-size: 1.6rem;">Friend Profile</h3>
+        <p class="auth-modal-subtitle" id="friend-profile-streak" style="color: var(--dusty-rose); font-weight: bold;">🔥 12 Day Streak</p>
+      </div>
+
+      <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+        <div style="flex: 1; background: var(--cream); padding: 1rem; border-radius: 12px; text-align: center;">
+          <div id="friend-stats-books" style="font-size: 1.5rem; font-weight: bold; color: var(--ink);">0</div>
+          <div style="font-size: 0.75rem; color: var(--ink-light);">Completed</div>
+        </div>
+        <div style="flex: 1; background: var(--cream); padding: 1rem; border-radius: 12px; text-align: center;">
+          <div id="friend-stats-pages" style="font-size: 1.5rem; font-weight: bold; color: var(--ink);">0</div>
+          <div style="font-size: 0.75rem; color: var(--ink-light);">Pages Read</div>
+        </div>
+        <div style="flex: 1; background: var(--cream); padding: 1rem; border-radius: 12px; text-align: center;">
+          <div id="friend-stats-genre" style="font-size: 1rem; font-weight: bold; color: var(--ink); height: 2.25rem; display: flex; align-items: center; justify-content: center;">Fantasy</div>
+          <div style="font-size: 0.75rem; color: var(--ink-light);">Top Genre</div>
+        </div>
+      </div>
+
+      <h4 style="margin-bottom: 0.75rem; font-family: 'Pixel Operator', monospace; font-size: 1.2rem;">Currently Reading</h4>
+      <div id="friend-currently-reading" style="margin-bottom: 2rem;">
+        <!-- Dynamically populated friend's current read -->
+      </div>
+
+      <h4 style="margin-bottom: 0.75rem; font-family: 'Pixel Operator', monospace; font-size: 1.2rem;">Completed Books</h4>
+      <div class="discover-books-grid" id="friend-completed-books" style="grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 1rem; display: grid;">
+        <!-- Dynamically populated friend's completed list -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       SHARE STATS MODAL
+       ======================================================== -->
+  <div class="auth-modal-overlay" id="share-stats-modal">
+    <div class="auth-modal-content" style="max-width: 450px; width: 95%; text-align: center;">
+      <button class="auth-close-btn" id="share-stats-close-btn" aria-label="Close modal">✕</button>
+
+      <div class="auth-modal-header" style="margin-bottom: 1.5rem;">
+        <div class="auth-modal-icon">📸</div>
+        <h3 class="auth-modal-title">Share Your Wrapped Stats</h3>
+      </div>
+
+      <!-- Preview Card -->
+      <div id="share-stats-card" style="background: linear-gradient(135deg, var(--lavender), var(--blush)); padding: 2rem; border-radius: 20px; border: 4px solid var(--ink); color: var(--ink); text-align: center; margin-bottom: 1.5rem; box-shadow: var(--shadow-med);">
+        <h2 style="font-family: 'Pixel Operator', monospace; font-size: 2rem; margin-bottom: 0.5rem; color: var(--ink);">BetterReads Wrapped</h2>
+        <div style="font-size: 3rem; margin-bottom: 1rem;">🍵📚✨</div>
+        <div style="background: rgba(255,255,255,0.7); padding: 1.5rem; border-radius: 12px; display: flex; flex-direction: column; gap: 0.5rem; font-weight: bold; border: 2px solid var(--ink);">
+          <div style="display: flex; justify-content: space-between;"><span>Books Devoured:</span><span id="share-books-count">0</span></div>
+          <div style="display: flex; justify-content: space-between;"><span>Pages Turned:</span><span id="share-pages-count">0</span></div>
+          <div style="display: flex; justify-content: space-between;"><span>Top Genre:</span><span id="share-genre">Fantasy</span></div>
+          <div style="display: flex; justify-content: space-between;"><span>Day Streak:</span><span id="share-streak">0 Days</span></div>
+        </div>
+        <p style="margin-top: 1rem; font-size: 0.75rem; color: var(--ink); font-weight: bold;">Join my reading nook at BetterReads ✦</p>
+      </div>
+
+      <div style="display: flex; gap: 1rem; justify-content: center;">
+        <button id="btn-share-to-feed" class="btn btn-primary" style="flex: 1;">Post to Discourse Feed</button>
+        <button id="btn-copy-share-link" class="btn btn-secondary" style="flex: 1; border-color: var(--ink);">Copy Link</button>
       </div>
     </div>
   </div>

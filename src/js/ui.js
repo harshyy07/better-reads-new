@@ -1,4 +1,4 @@
-import { store, updateShelf } from './store.js';
+import { store, updateShelf, updateProgress } from './store.js';
 
 export function escapeHTML(str) {
   if (!str) return '';
@@ -253,9 +253,37 @@ export function renderLibraryBooks() {
       }
 
       let ratingHtml = '';
+      let progressHtml = '';
       if (shelfId === 'reading' || shelfId === 'read') {
         const ratingStr = '★'.repeat(Math.round(book.averageRating || 4)) + '☆'.repeat(5 - Math.round(book.averageRating || 4));
         ratingHtml = `<div class="book-rating">${ratingStr}</div>`;
+      }
+
+      if (shelfId === 'reading') {
+        const prog = store.progress[book.id] || { currentPage: 0, totalPages: parseInt(book.pageCount) || 300 };
+        const percent = prog.totalPages > 0 ? Math.min(100, Math.round((prog.currentPage / prog.totalPages) * 100)) : 0;
+        progressHtml = `
+          <div class="book-progress-tracker" style="margin-top: 0.75rem; text-align: left; width: 100%;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--ink-light); margin-bottom: 0.25rem;">
+              <span>Pg ${prog.currentPage} / ${prog.totalPages}</span>
+              <span>${percent}%</span>
+            </div>
+            <div style="width: 100%; height: 6px; background: #eee; border-radius: 3px; overflow: hidden; margin-bottom: 0.5rem;">
+              <div style="width: ${percent}%; height: 100%; background: var(--sage); transition: width 0.3s ease;"></div>
+            </div>
+            <button class="btn-update-progress" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; border: 1px solid var(--sage); border-radius: 6px; color: var(--ink); background: transparent; width: 100%; cursor: pointer;">✏️ Update Progress</button>
+            <div class="progress-form" style="display: none; margin-top: 0.5rem; flex-direction: column; gap: 0.5rem;">
+              <div style="display: flex; gap: 0.25rem;">
+                <input type="number" class="prog-curr" placeholder="Page" value="${prog.currentPage}" style="width: 50%; padding: 0.25rem; font-size: 0.75rem; border: 1px solid #ddd; border-radius: 4px; outline: none; background: white;">
+                <input type="number" class="prog-total" placeholder="Total" value="${prog.totalPages}" style="width: 50%; padding: 0.25rem; font-size: 0.75rem; border: 1px solid #ddd; border-radius: 4px; outline: none; background: white;">
+              </div>
+              <div style="display: flex; gap: 0.25rem;">
+                <button class="btn-save-prog" style="width: 50%; font-size: 0.7rem; padding: 0.25rem; background: var(--sage); border: none; border-radius: 4px; color: white; cursor: pointer; font-weight: bold;">Save</button>
+                <button class="btn-cancel-prog" style="width: 50%; font-size: 0.7rem; padding: 0.25rem; background: transparent; border: 1px solid #ccc; border-radius: 4px; cursor: pointer;">Cancel</button>
+              </div>
+            </div>
+          </div>
+        `;
       }
 
       // XSS mitigation: using DOM methods to insert potentially unsafe text
@@ -269,13 +297,40 @@ export function renderLibraryBooks() {
           <div class="book-title">${escapeHTML(book.title)}</div>
           <div class="book-author">${escapeHTML(book.authors[0] || 'Unknown')}</div>
           ${ratingHtml}
+          ${progressHtml}
         </div>
       `;
 
       card.addEventListener('click', (e) => {
-        if (e.target.closest('button')) return;
+        if (e.target.closest('button') || e.target.closest('.progress-form') || e.target.closest('.btn-update-progress')) return;
         window.location.hash = `#book-${book.id}`;
       });
+
+      if (shelfId === 'reading') {
+        const updateBtn = card.querySelector('.btn-update-progress');
+        const formDiv = card.querySelector('.progress-form');
+        const cancelBtn = card.querySelector('.btn-cancel-prog');
+        const saveBtn = card.querySelector('.btn-save-prog');
+        const currInput = card.querySelector('.prog-curr');
+        const totalInput = card.querySelector('.prog-total');
+
+        updateBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          updateBtn.style.display = 'none';
+          formDiv.style.display = 'flex';
+        });
+
+        cancelBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          formDiv.style.display = 'none';
+          updateBtn.style.display = 'block';
+        });
+
+        saveBtn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          await updateProgress(book.id, currInput.value, totalInput.value);
+        });
+      }
 
       const removeBtn = card.querySelector('.remove-book-btn');
       removeBtn.addEventListener('click', (e) => {
@@ -313,19 +368,55 @@ export function renderReadingStats() {
       if (elAuthor) elAuthor.textContent = book.authors ? `by ${book.authors.join(', ')}` : 'Unknown Author';
       if (elCover) {
         elCover.style.backgroundImage = book.thumbnail ? `url(${book.thumbnail})` : 'none';
+        elCover.style.backgroundSize = 'cover';
         elCover.textContent = book.thumbnail ? '' : '📚';
       }
       
-      // mock progress
-      const mockProgress = 68;
+      const prog = store.progress[book.id] || { currentPage: 0, totalPages: parseInt(book.pageCount) || 300 };
+      const percent = prog.totalPages > 0 ? Math.min(100, Math.round((prog.currentPage / prog.totalPages) * 100)) : 0;
+      
       const elProgText = document.getElementById('mockup-reading-progress-text');
       const elProgFill = document.getElementById('mockup-reading-progress-fill');
-      if (elProgText) elProgText.textContent = `${mockProgress}% Complete`;
+      if (elProgText) elProgText.textContent = `${percent}% Complete (Pg ${prog.currentPage}/${prog.totalPages})`;
       if (elProgFill) {
         setTimeout(() => {
-          elProgFill.style.width = `${mockProgress}%`;
+          elProgFill.style.width = `${percent}%`;
         }, 100);
       }
+
+      // Update Form hooks on Stats page
+      const updateBtn = document.getElementById('mockup-update-btn');
+      const formDiv = document.getElementById('mockup-progress-form');
+      const cancelBtn = document.getElementById('mockup-cancel-btn');
+      const saveBtn = document.getElementById('mockup-save-btn');
+      const currInput = document.getElementById('mockup-prog-curr');
+      const totalInput = document.getElementById('mockup-prog-total');
+
+      if (updateBtn && formDiv && cancelBtn && saveBtn && currInput && totalInput) {
+        currInput.value = prog.currentPage;
+        totalInput.value = prog.totalPages;
+
+        updateBtn.onclick = (e) => {
+          e.stopPropagation();
+          updateBtn.style.display = 'none';
+          formDiv.style.display = 'flex';
+        };
+
+        cancelBtn.onclick = (e) => {
+          e.stopPropagation();
+          formDiv.style.display = 'none';
+          updateBtn.style.display = 'block';
+        };
+
+        saveBtn.onclick = async (e) => {
+          e.stopPropagation();
+          await updateProgress(book.id, currInput.value, totalInput.value);
+          formDiv.style.display = 'none';
+          updateBtn.style.display = 'block';
+          renderReadingStats();
+        };
+      }
+      
       elReadingCard.style.display = 'block';
     } else {
       elReadingCard.style.display = 'none';

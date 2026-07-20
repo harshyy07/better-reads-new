@@ -1,4 +1,4 @@
-import { store, updateShelf } from './store.js';
+import { store, updateShelf, updateProgress } from './store.js';
 import { fetchOpenLibraryBook } from './api.js';
 import { escapeHTML } from './ui.js';
 
@@ -130,6 +130,7 @@ export async function renderBookDetails(bookId) {
 
   updateBdShelfButtons(bookId);
   renderBdReviews(bookId);
+  renderBdProgress(bookId);
 }
 
 function updateBdShelfButtons(bookId) {
@@ -172,6 +173,7 @@ function updateBdShelfButtons(bookId) {
       updateShelf(shelfName, newShelf);
     }
     updateBdShelfButtons(bookId);
+    renderBdProgress(bookId);
   };
 
   btnReading.onclick = () => setShelf('reading');
@@ -230,3 +232,64 @@ function renderBdReviews(bookId) {
     listEl.appendChild(card);
   });
 }
+
+function renderBdProgress(bookId) {
+  const container = document.getElementById('bd-progress-container');
+  if (!container) return;
+
+  const isReading = store.shelves.reading && store.shelves.reading.includes(bookId);
+  if (!isReading) {
+    container.style.display = 'none';
+    return;
+  }
+
+  container.style.display = 'flex';
+
+  const book = store.books[bookId] || {};
+  const prog = store.progress[bookId] || { currentPage: 0, totalPages: parseInt(book.pageCount) || 300 };
+  const percent = prog.totalPages > 0 ? Math.min(100, Math.round((prog.currentPage / prog.totalPages) * 100)) : 0;
+
+  const textEl = document.getElementById('bd-progress-text');
+  const fillEl = document.getElementById('bd-progress-fill');
+  const updateBtn = document.getElementById('btn-bd-update-progress');
+  const formDiv = document.getElementById('bd-progress-form');
+  const saveBtn = document.getElementById('bd-btn-save-progress');
+  const cancelBtn = document.getElementById('bd-btn-cancel-progress');
+  const currInput = document.getElementById('bd-prog-curr');
+  const totalInput = document.getElementById('bd-prog-total');
+
+  if (textEl) textEl.textContent = `Page ${prog.currentPage} of ${prog.totalPages} (${percent}%)`;
+  if (fillEl) fillEl.style.width = `${percent}%`;
+
+  if (currInput) currInput.value = prog.currentPage;
+  if (totalInput) totalInput.value = prog.totalPages;
+
+  if (updateBtn && formDiv) {
+    updateBtn.onclick = (e) => {
+      e.stopPropagation();
+      updateBtn.style.display = 'none';
+      formDiv.style.display = 'flex';
+    };
+  }
+
+  if (cancelBtn && updateBtn && formDiv) {
+    cancelBtn.onclick = (e) => {
+      e.stopPropagation();
+      formDiv.style.display = 'none';
+      updateBtn.style.display = 'block';
+    };
+  }
+
+  if (saveBtn && formDiv && updateBtn) {
+    saveBtn.onclick = async (e) => {
+      e.stopPropagation();
+      const currVal = parseInt(currInput.value) || 0;
+      const totalVal = parseInt(totalInput.value) || 0;
+      await updateProgress(bookId, currVal, totalVal);
+      formDiv.style.display = 'none';
+      updateBtn.style.display = 'block';
+      renderBdProgress(bookId);
+    };
+  }
+}
+

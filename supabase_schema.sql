@@ -52,3 +52,56 @@ CREATE POLICY "Users can update their own shelves."
 CREATE POLICY "Users can delete their own shelves."
   ON shelves FOR DELETE
   USING ( auth.uid() = user_id );
+
+-- 3. Create the progress table
+CREATE TABLE public.progress (
+  id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id uuid REFERENCES auth.users on delete cascade NOT NULL,
+  book_id text NOT NULL,
+  current_page integer DEFAULT 0,
+  total_pages integer DEFAULT 0,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) NOT NULL,
+  UNIQUE(user_id, book_id)
+);
+
+ALTER TABLE public.progress ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own progress."
+  ON progress FOR SELECT
+  USING ( auth.uid() = user_id );
+
+CREATE POLICY "Users can insert own progress."
+  ON progress FOR INSERT
+  WITH CHECK ( auth.uid() = user_id );
+
+CREATE POLICY "Users can update own progress."
+  ON progress FOR UPDATE
+  USING ( auth.uid() = user_id );
+
+CREATE POLICY "Users can delete own progress."
+  ON progress FOR DELETE
+  USING ( auth.uid() = user_id );
+
+-- 4. Create the follows table
+CREATE TABLE public.follows (
+  id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id uuid REFERENCES auth.users on delete cascade NOT NULL,
+  following_id text NOT NULL,
+  created_at timestamp with time zone default timezone('utc'::text, now()) NOT NULL,
+  UNIQUE(user_id, following_id)
+);
+
+ALTER TABLE public.follows ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own follows."
+  ON follows FOR SELECT
+  USING ( auth.uid() = user_id );
+
+CREATE POLICY "Users can insert own follows."
+  ON follows FOR INSERT
+  WITH CHECK ( auth.uid() = user_id );
+
+CREATE POLICY "Users can delete own follows."
+  ON follows FOR DELETE
+  USING ( auth.uid() = user_id );
+

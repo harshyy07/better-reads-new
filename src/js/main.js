@@ -5,6 +5,7 @@ import { initUI } from './ui.js';
 import { initDiscover } from './api.js';
 import { initSpotify } from './spotify.js';
 import { initReviews } from './details.js';
+import { initSocial } from './social.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   initAuth();
@@ -13,4 +14,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initDiscover();
   initSpotify();
   initReviews();
+  initSocial();
 });
