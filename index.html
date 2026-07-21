@@ -857,6 +857,135 @@
   </div>
 
   <!-- ========================================================
+       PAGE 8: THREAD DETAILS
+       ======================================================== -->
+  <div id="page-thread-details" class="page-section">
+    <section class="discourse-section" id="thread-details">
+      <div class="container">
+        <!-- Back Button -->
+        <a href="#discourse" class="btn btn-secondary"
+          style="margin-bottom: 2rem; border: none; box-shadow: none; font-size: 0.9rem; padding: 0.5rem 1rem;">← Back to Discourse</a>
+
+        <div class="create-post-card" style="background: white; padding: 2rem; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);">
+          <div class="thread-header" style="margin-bottom: 1.5rem;">
+            <div class="thread-avatar" id="td-avatar" style="background: var(--lavender); width: 48px; height: 48px; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; border-radius: 50%;">🌸</div>
+            <div class="thread-meta" style="flex: 1; margin-left: 1rem;">
+              <div class="thread-user" id="td-user" style="font-weight: bold; font-size: 1.05rem;">user</div>
+              <div class="thread-time" id="td-time" style="color: var(--ink-light); font-size: 0.85rem;">time</div>
+            </div>
+            <div style="display: flex; gap: 0.75rem; align-items: center;">
+              <div class="badge" id="td-tag" style="background: var(--blush); color: #333; font-weight: 500; font-size: 0.85rem; padding: 0.25rem 0.75rem; border-radius: 6px;">Discussion</div>
+              <button class="btn btn-secondary btn-like" id="td-like-btn" style="padding: 0.4rem 0.8rem; border-radius: 8px; font-size: 0.9rem;">❤️ <span id="td-likes-count">0</span></button>
+            </div>
+          </div>
+          <h1 id="td-title" style="font-size: 2rem; margin-bottom: 1.5rem; color: var(--ink);">Thread Title</h1>
+          <div id="td-content" style="font-size: 1.05rem; line-height: 1.7; color: var(--ink); white-space: pre-wrap;">Thread content...</div>
+        </div>
+
+        <!-- Replies Section -->
+        <h3 style="font-size: 1.3rem; margin-bottom: 1.5rem;" id="td-replies-header">Comments (0)</h3>
+
+        <!-- Add Reply Form -->
+        <div class="create-post-card" style="background: white; padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);">
+          <textarea id="td-new-comment" placeholder="Write a cozy reply..." rows="3"
+            style="width: 100%; padding: 1rem; border: 1px solid #eee; border-radius: 8px; margin-bottom: 1rem; font-family: 'DM Sans', sans-serif; resize: vertical; outline: none;"></textarea>
+          <div style="display: flex; justify-content: flex-end;">
+            <button class="btn btn-primary" id="btn-td-submit-comment" style="padding: 0.5rem 1.5rem;">Post Reply ✦</button>
+          </div>
+        </div>
+
+        <!-- Replies List -->
+        <div id="td-comments-list" style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 3rem;">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ========================================================
+       PAGE 9: CLUB DETAILS
+       ======================================================== -->
+  <div id="page-club-details" class="page-section">
+    <section class="discourse-section" id="club-details">
+      <div class="container">
+        <!-- Back Button -->
+        <a href="#discourse" class="btn btn-secondary"
+          style="margin-bottom: 2rem; border: none; box-shadow: none; font-size: 0.9rem; padding: 0.5rem 1rem;">← Back to Discourse</a>
+
+        <div style="display: grid; grid-template-columns: 1fr 340px; gap: 3rem; align-items: start;">
+          <!-- Left Column: Details & Polls -->
+          <div>
+            <!-- Club Info Card -->
+            <div class="create-post-card" style="background: white; padding: 2rem; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h1 id="cd-club-name" style="font-size: 2.2rem; margin: 0; color: var(--ink);">Club Name</h1>
+                <button class="btn btn-secondary" id="cd-join-btn" style="padding: 0.5rem 1.5rem; font-weight: bold; border-radius: 8px;">Join Club</button>
+              </div>
+              <div id="cd-club-members" style="font-size: 0.9rem; font-weight: bold; color: var(--dusty-rose); margin-bottom: 1.5rem;">0 members</div>
+              <p id="cd-club-desc" style="font-size: 1.05rem; line-height: 1.6; color: var(--ink);">Club description...</p>
+            </div>
+
+            <!-- Book of the Month Card -->
+            <h3 style="font-size: 1.3rem; margin-bottom: 1rem; font-family: 'Pixel Operator', monospace;">📖 Book of the Month</h3>
+            <div class="create-post-card" style="background: white; padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05); display: flex; gap: 1.5rem; align-items: center;">
+              <div style="width: 80px; height: 120px; border-radius: 8px; background: url('https://covers.openlibrary.org/b/id/8225261-M.jpg') center/cover; box-shadow: var(--shadow-sm); flex-shrink: 0;"></div>
+              <div>
+                <h4 style="margin: 0 0 0.25rem; font-size: 1.15rem; color: var(--ink);">The Hobbit</h4>
+                <div style="font-size: 0.85rem; color: var(--ink-light); margin-bottom: 0.5rem;">J.R.R. Tolkien</div>
+                <p style="margin: 0; font-size: 0.9rem; line-height: 1.5; color: var(--ink);">Follow Bilbo Baggins as he goes on a dangerous quest with dwarves to reclaim a treasure guarded by a dragon.</p>
+              </div>
+            </div>
+
+            <!-- Interactive Poll Card -->
+            <h3 style="font-size: 1.3rem; margin-bottom: 1rem; font-family: 'Pixel Operator', monospace;">📊 Next Read Poll</h3>
+            <div class="create-post-card" style="background: white; padding: 2.5rem; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);">
+              <h4 style="margin: 0 0 1.5rem; font-size: 1.15rem; text-align: center; color: var(--ink);">Which cozy book should we pick for next month?</h4>
+              <div class="poll-widget" id="cd-poll-widget" style="display: flex; flex-direction: column; gap: 1rem;">
+                <!-- Option 1 -->
+                <div class="poll-option-row" data-index="0" style="cursor: pointer; position: relative; border: 1px solid #eee; border-radius: 10px; padding: 1rem; overflow: hidden; display: flex; justify-content: space-between; align-items: center; background: white; transition: background 0.2s;">
+                  <div class="poll-fill" id="poll-fill-0" style="position: absolute; left: 0; top: 0; bottom: 0; background: var(--blush); width: 45%; opacity: 0.4; transition: width 0.3s; pointer-events: none;"></div>
+                  <span class="poll-text" style="font-weight: 600; font-size: 0.95rem; z-index: 2; pointer-events: none;">The Starless Sea</span>
+                  <span class="poll-percentage" id="poll-pct-0" style="font-weight: bold; font-size: 0.95rem; z-index: 2; pointer-events: none;">45%</span>
+                </div>
+                <!-- Option 2 -->
+                <div class="poll-option-row" data-index="1" style="cursor: pointer; position: relative; border: 1px solid #eee; border-radius: 10px; padding: 1rem; overflow: hidden; display: flex; justify-content: space-between; align-items: center; background: white; transition: background 0.2s;">
+                  <div class="poll-fill" id="poll-fill-1" style="position: absolute; left: 0; top: 0; bottom: 0; background: var(--lavender); width: 35%; opacity: 0.4; transition: width 0.3s; pointer-events: none;"></div>
+                  <span class="poll-text" style="font-weight: 600; font-size: 0.95rem; z-index: 2; pointer-events: none;">Piranesi</span>
+                  <span class="poll-percentage" id="poll-pct-1" style="font-weight: bold; font-size: 0.95rem; z-index: 2; pointer-events: none;">35%</span>
+                </div>
+                <!-- Option 3 -->
+                <div class="poll-option-row" data-index="2" style="cursor: pointer; position: relative; border: 1px solid #eee; border-radius: 10px; padding: 1rem; overflow: hidden; display: flex; justify-content: space-between; align-items: center; background: white; transition: background 0.2s;">
+                  <div class="poll-fill" id="poll-fill-2" style="position: absolute; left: 0; top: 0; bottom: 0; background: var(--sage); width: 20%; opacity: 0.4; transition: width 0.3s; pointer-events: none;"></div>
+                  <span class="poll-text" style="font-weight: 600; font-size: 0.95rem; z-index: 2; pointer-events: none;">A Psalm for the Wild-Built</span>
+                  <span class="poll-percentage" id="poll-pct-2" style="font-weight: bold; font-size: 0.95rem; z-index: 2; pointer-events: none;">20%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Discussion Feed -->
+          <div>
+            <div class="create-post-card" style="background: white; padding: 1.5rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05); position: sticky; top: 100px;">
+              <h3 style="margin-top: 0; margin-bottom: 1rem; font-size: 1.15rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; font-family: 'Pixel Operator', monospace;">🏠 Club Chat Board</h3>
+              
+              <!-- Chat posts container -->
+              <div id="cd-chat-container" style="height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem; padding-right: 0.25rem;">
+                <!-- Chat messages populated by JS -->
+              </div>
+
+              <!-- Chat Input -->
+              <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <textarea id="cd-chat-input" placeholder="Type a cozy message..." rows="2" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #eee; border-radius: 8px; font-family: 'Inter', sans-serif; resize: none; font-size: 0.85rem; outline: none;"></textarea>
+                <button class="btn btn-primary" id="btn-cd-send-chat" style="padding: 0.4rem; font-size: 0.85rem; width: 100%; justify-content: center;">Send Message ✦</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ========================================================
        SHELF MODAL
        ======================================================== -->
   <div class="auth-modal-overlay" id="shelf-modal">

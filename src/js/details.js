@@ -1,4 +1,4 @@
-import { store, updateShelf, updateProgress } from './store.js';
+import { store, updateShelf, updateProgress, fetchReviews, addReview, fetchRatings, addRating } from './store.js';
 import { fetchOpenLibraryBook } from './api.js';
 import { escapeHTML } from './ui.js';
 
@@ -27,7 +27,7 @@ export async function renderBookDetails(bookId) {
   document.getElementById('bd-category').textContent = book.categories && book.categories.length > 0 ? book.categories[0] : 'Fiction';
   document.getElementById('bd-description').textContent = book.description || 'No description available for this book.';
 
-  const userRating = store.userRatings ? store.userRatings[bookId] : null;
+  const { userRating, avg } = await fetchRatings(bookId);
   const ratingDisplay = document.getElementById('bd-rating-display');
   let lockedRating = userRating || 0;
   let isLocked = !!userRating;
@@ -103,7 +103,7 @@ export async function renderBookDetails(bookId) {
       ratingDisplay.textContent = ratingLabels[rating] || `${rating} stars`;
     });
 
-    star.addEventListener('click', e => {
+    star.addEventListener('click', async e => {
       const rating = getRatingFromEvent(e, star);
       lockedRating = rating;
       isLocked = true;
@@ -111,7 +111,7 @@ export async function renderBookDetails(bookId) {
       ratingDisplay.textContent = `You rated: ${rating} ★`;
       ratingDisplay.style.color = 'var(--dusty-rose)';
       
-      store.userRatings[bookId] = rating;
+      await addRating(bookId, rating);
       
       star.style.transform = 'scale(1.4)';
       setTimeout(() => { star.style.transform = ''; }, 300);
@@ -184,21 +184,13 @@ function updateBdShelfButtons(bookId) {
 export function initReviews() {
   const btnSubmitReview = document.getElementById('btn-bd-submit-review');
   if (btnSubmitReview) {
-    btnSubmitReview.addEventListener('click', () => {
+    btnSubmitReview.addEventListener('click', async () => {
       if (!currentBookIdForDetails) return;
       const input = document.getElementById('bd-new-review');
       const val = input.value.trim();
       if (!val) return;
       
-      if (!store.reviews[currentBookIdForDetails]) store.reviews[currentBookIdForDetails] = [];
-      
-      store.reviews[currentBookIdForDetails].unshift({
-        author: store.currentUser ? store.currentUser.email : "You",
-        avatar: "🍵",
-        content: val,
-        replies: []
-      });
-      // In a real app we would sync reviews to DB
+      await addReview(currentBookIdForDetails, val);
       
       input.value = '';
       renderBdReviews(currentBookIdForDetails);
@@ -206,9 +198,10 @@ export function initReviews() {
   }
 }
 
-function renderBdReviews(bookId) {
-  const reviews = store.reviews[bookId] || [];
+async function renderBdReviews(bookId) {
+  const reviews = await fetchReviews(bookId);
   const listEl = document.getElementById('bd-reviews-list');
+  if (!listEl) return;
   listEl.innerHTML = '';
 
   if (reviews.length === 0) {
@@ -219,13 +212,13 @@ function renderBdReviews(bookId) {
   reviews.forEach(rev => {
     const card = document.createElement('div');
     card.className = 'review-card';
-    card.style = 'background: white; padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 2px 10px rgba(0,0,0,0.02);';
+    card.style = 'background: white; padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 2px 10px rgba(0,0,0,0.02); margin-bottom: 1rem;';
     card.innerHTML = `
       <div style="display: flex; gap: 1rem; align-items: flex-start;">
         <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--lavender); display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">${escapeHTML(rev.avatar || '🌸')}</div>
         <div>
           <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 0.25rem;">${escapeHTML(rev.author)}</div>
-          <div style="font-size: 0.95rem; line-height: 1.6; color: var(--ink);">${escapeHTML(rev.content).replace(/\\n/g, '<br>')}</div>
+          <div style="font-size: 0.95rem; line-height: 1.6; color: var(--ink);">${escapeHTML(rev.content).replace(/\n/g, '<br>')}</div>
         </div>
       </div>
     `;

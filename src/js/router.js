@@ -1,5 +1,6 @@
 import { renderReadingStats } from './ui.js';
 import { renderBookDetails } from './details.js';
+import { renderThreadDetails, renderClubDetails } from './social.js';
 
 export function initRouter() {
   const navbar = document.getElementById('navbar');
@@ -28,10 +29,18 @@ export function initRouter() {
   window.showPage = function(hash, scrollTargetId = null) {
     let targetPageId = pages[hash] || 'page-home';
     let bookIdToRender = null;
+    let threadIdToRender = null;
+    let clubIdToRender = null;
 
     if (hash && hash.startsWith('#book-')) {
       targetPageId = 'page-book-details';
       bookIdToRender = hash.replace('#book-', '');
+    } else if (hash && hash.startsWith('#thread-')) {
+      targetPageId = 'page-thread-details';
+      threadIdToRender = hash.replace('#thread-', '');
+    } else if (hash && hash.startsWith('#club-')) {
+      targetPageId = 'page-club-details';
+      clubIdToRender = hash.replace('#club-', '');
     }
 
     navbar.classList.remove('nav-open');
@@ -48,6 +57,10 @@ export function initRouter() {
 
       if (bookIdToRender) {
         renderBookDetails(bookIdToRender);
+      } else if (threadIdToRender) {
+        renderThreadDetails(threadIdToRender);
+      } else if (clubIdToRender) {
+        renderClubDetails(clubIdToRender);
       } else if (targetPageId === 'page-stats') {
         if (typeof renderReadingStats === 'function') renderReadingStats();
       }

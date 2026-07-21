@@ -3130,3 +3130,31 @@ p {
   font-weight: 700;
   color: var(--ink-light);
 }
+
+/* === Thread Detail, Comments & Poll Custom Styles === */
+.poll-option-row:hover {
+  background-color: #fafafa !important;
+  border-color: var(--blush) !important;
+}
+
+#cd-chat-container::-webkit-scrollbar {
+  width: 6px;
+}
+#cd-chat-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+#cd-chat-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+#cd-chat-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.review-card {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.review-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04) !important;
+}

@@ -1,37 +1,23 @@
-import { store, toggleFollowUser } from './store';
-import { escapeHTML } from './ui';
+import {
+  store,
+  toggleFollowUser,
+  fetchThreads,
+  addThread,
+  likeThread,
+  fetchComments,
+  addComment,
+  fetchClubs,
+  addClub,
+  checkClubJoined,
+  toggleJoinClub,
+  fetchClubDiscussions,
+  addClubDiscussion
+} from './store.js';
+import { escapeHTML } from './ui.js';
 
 // DISCOURSE & CLUBS DATABASES
 const DISCOURSE_DB_KEY = 'betterreads_discourse';
 const CLUBS_DB_KEY = 'betterreads_clubs';
-
-const defaultThreads = [
-  { id: 't1', user: 'luna.reads', avatar: '🌙', color: 'var(--lavender)', time: '2 hours ago', tag: 'Fantasy', title: 'The ending of Piranesi had me SOBBING — anyone else?', preview: 'Okay so I just finished and the moment he realises who he really is absolutely destroyed me...', likes: 142, replies: 38 },
-  { id: 't2', user: 'bookish.flora', avatar: '☀️', color: 'var(--peach)', time: '5 hours ago', tag: 'AMA', title: '📅 June Book Club — Voting is OPEN!', preview: 'The shortlist for June community pick is here! We have Intermezzo, James, and The Women...', likes: 287, replies: 119 },
-  { id: 't3', user: 'verified ✦ Olivie Blake', avatar: '🌿', color: 'var(--sage)', time: 'Yesterday', tag: 'Author', title: 'I\'m Olivie Blake — AMA about The Atlas Six', preview: 'Hi everyone! So excited to be here on BetterReads. I\'ll be answering questions for the next 2 hours...', likes: 1205, replies: 243 },
-  { id: 't4', user: 'readingwithrose', avatar: '🌸', color: 'var(--blush)', time: '3 days ago', tag: 'Challenge', title: '✅ Challenge complete! DNF\'d a book guilt-free', preview: 'I\'ve been holding onto Moby-Dick for three years out of guilt. This month gave me permission to let it go.', likes: 891, replies: 67 }
-];
-
-const defaultClubs = [
-  { id: 'c1', name: 'The Midnight Readers', desc: 'A cozy club for fantasy lovers. Currently reading: The Atlas Six.', members: 420 },
-  { id: 'c2', name: 'Non-Fiction November', desc: 'We read one non-fiction book every month and discuss our learnings.', members: 156 },
-  { id: 'c3', name: 'Romance & Roses', desc: 'Swoon-worthy romance books only! Join us for weekly deep dives.', members: 890 }
-];
-
-function initDiscourseDB() {
-  if (!localStorage.getItem(DISCOURSE_DB_KEY)) {
-    localStorage.setItem(DISCOURSE_DB_KEY, JSON.stringify(defaultThreads));
-  }
-  if (!localStorage.getItem(CLUBS_DB_KEY)) {
-    localStorage.setItem(CLUBS_DB_KEY, JSON.stringify(defaultClubs));
-  }
-}
-
-function getDiscourse() { return JSON.parse(localStorage.getItem(DISCOURSE_DB_KEY)) || []; }
-function saveDiscourse(data) { localStorage.setItem(DISCOURSE_DB_KEY, JSON.stringify(data)); }
-
-function getClubs() { return JSON.parse(localStorage.getItem(CLUBS_DB_KEY)) || []; }
-function saveClubs(data) { localStorage.setItem(CLUBS_DB_KEY, JSON.stringify(data)); }
 
 // MOCK SOCIAL FRIENDS
 const MOCK_FRIENDS = {
@@ -71,8 +57,6 @@ let activityFeed = [
 ];
 
 export function initSocial() {
-  initDiscourseDB();
-
   const btnTabThreads = document.getElementById('btn-tab-threads');
   const btnTabClubs = document.getElementById('btn-tab-clubs');
   const btnTabFriends = document.getElementById('btn-tab-friends');
@@ -123,7 +107,7 @@ export function initSocial() {
   // Create Thread listener
   const btnCreateThread = document.getElementById('btn-create-thread');
   if (btnCreateThread) {
-    btnCreateThread.addEventListener('click', () => {
+    btnCreateThread.addEventListener('click', async () => {
       const title = document.getElementById('new-thread-title').value.trim();
       const content = document.getElementById('new-thread-content').value.trim();
       const tag = document.getElementById('new-thread-tag').value;
@@ -133,20 +117,7 @@ export function initSocial() {
         return;
       }
 
-      const db = getDiscourse();
-      db.unshift({
-        id: 't' + Date.now(),
-        user: store.currentUser ? store.currentUser.email.split('@')[0] : 'you.reading',
-        avatar: '🌸',
-        color: 'var(--blush)',
-        time: 'Just now',
-        tag: tag,
-        title: title,
-        preview: content,
-        likes: 0,
-        replies: 0
-      });
-      saveDiscourse(db);
+      await addThread(title, content, tag);
 
       document.getElementById('new-thread-title').value = '';
       document.getElementById('new-thread-content').value = '';
@@ -157,7 +128,7 @@ export function initSocial() {
   // Create Club listener
   const btnCreateClub = document.getElementById('btn-create-club');
   if (btnCreateClub) {
-    btnCreateClub.addEventListener('click', () => {
+    btnCreateClub.addEventListener('click', async () => {
       const name = document.getElementById('new-club-name').value.trim();
       const desc = document.getElementById('new-club-desc').value.trim();
 
@@ -166,16 +137,7 @@ export function initSocial() {
         return;
       }
 
-      const db = getClubs();
-      const newId = 'c' + Date.now();
-      db.unshift({
-        id: newId,
-        name: name,
-        desc: desc,
-        members: 1
-      });
-      saveClubs(db);
-      localStorage.setItem('joined_club_' + newId, 'true');
+      await addClub(name, desc);
 
       document.getElementById('new-club-name').value = '';
       document.getElementById('new-club-desc').value = '';
@@ -265,15 +227,20 @@ export function initSocial() {
   });
 }
 
-function renderDiscourse() {
+export async function renderDiscourse() {
   const grid = document.getElementById('discourse-grid');
   if (!grid) return;
-  const threads = getDiscourse();
+  
+  const threads = await fetchThreads();
   grid.innerHTML = '';
 
-  threads.forEach(t => {
+  for (const t of threads) {
+    const comments = await fetchComments(t.id);
+    const repliesCount = comments.length || t.replies || 0;
+
     const card = document.createElement('div');
     card.className = 'thread-card';
+    card.style.cursor = 'pointer';
     card.innerHTML = `
       <div class="thread-header">
         <div class="thread-avatar" style="background:${t.color || 'var(--lavender)'}">${t.avatar || '🌸'}</div>
@@ -288,44 +255,46 @@ function renderDiscourse() {
       <div class="thread-footer">
         <div class="thread-stats">
           <div class="thread-stat btn-like" data-id="${t.id}" style="cursor:pointer; transition:transform 0.2s;">❤️ <span>${t.likes}</span></div>
-          <div class="thread-stat">💬 <span>${t.replies} replies</span></div>
+          <div class="thread-stat">💬 <span>${repliesCount} replies</span></div>
         </div>
       </div>
     `;
-    grid.appendChild(card);
-  });
 
-  // Attach like listeners
-  grid.querySelectorAll('.btn-like').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const id = e.currentTarget.dataset.id;
-      const db = getDiscourse();
-      const thread = db.find(x => x.id === id);
-      if (thread) {
-        thread.likes += 1;
-        saveDiscourse(db);
-        e.currentTarget.querySelector('span').textContent = thread.likes;
-        e.currentTarget.style.transform = 'scale(1.2)';
-        setTimeout(() => e.currentTarget.style.transform = 'scale(1)', 200);
-      }
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.btn-like')) return;
+      window.location.hash = `#thread-${t.id}`;
     });
-  });
+
+    // Attach like listener
+    const likeBtn = card.querySelector('.btn-like');
+    likeBtn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      await likeThread(t.id);
+      t.likes += 1;
+      likeBtn.querySelector('span').textContent = t.likes;
+      likeBtn.style.transform = 'scale(1.2)';
+      setTimeout(() => likeBtn.style.transform = 'scale(1)', 200);
+    });
+
+    grid.appendChild(card);
+  }
 }
 
-function renderClubs() {
+export async function renderClubs() {
   const grid = document.getElementById('clubs-grid');
   if (!grid) return;
-  const clubs = getClubs();
+  
+  const clubs = await fetchClubs();
   grid.innerHTML = '';
 
-  clubs.forEach(c => {
-    const joined = localStorage.getItem('joined_club_' + c.id);
+  for (const c of clubs) {
+    const joined = await checkClubJoined(c.id);
     const btnText = joined ? '✓ Joined' : 'Join Club';
     const btnStyle = joined ? 'background: var(--sage); color: #2d5a2d; border: none;' : '';
 
     const card = document.createElement('div');
     card.className = 'thread-card';
+    card.style.cursor = 'pointer';
     card.innerHTML = `
       <div class="thread-header">
         <div class="thread-avatar" style="background:var(--peach)">📚</div>
@@ -339,28 +308,23 @@ function renderClubs() {
         <button class="btn btn-secondary btn-join-club" data-id="${c.id}" style="${btnStyle}">${btnText}</button>
       </div>
     `;
-    grid.appendChild(card);
-  });
 
-  grid.querySelectorAll('.btn-join-club').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.btn-join-club')) return;
+      window.location.hash = `#club-${c.id}`;
+    });
+
+    const joinBtn = card.querySelector('.btn-join-club');
+    joinBtn.addEventListener('click', async (e) => {
       e.stopPropagation();
-      const id = e.currentTarget.dataset.id;
-      const isJoined = localStorage.getItem('joined_club_' + id);
-      const db = getClubs();
-      const club = db.find(x => x.id === id);
-
-      if (!isJoined) {
-        localStorage.setItem('joined_club_' + id, 'true');
-        if (club) { club.members += 1; saveClubs(db); }
-      } else {
-        localStorage.removeItem('joined_club_' + id);
-        if (club) { club.members = Math.max(0, club.members - 1); saveClubs(db); }
-      }
+      await toggleJoinClub(c.id);
       renderClubs();
     });
-  });
+
+    grid.appendChild(card);
+  }
 }
+
 
 function renderFriendsCorner() {
   // 1. Render following list
@@ -531,22 +495,13 @@ function openShareModal() {
 
   // Post stats to community feed logic
   const postBtn = document.getElementById('btn-share-to-feed');
-  postBtn.onclick = () => {
-    const db = getDiscourse();
-    db.unshift({
-      id: 't' + Date.now(),
-      user: store.currentUser ? store.currentUser.email.split('@')[0] : 'you.reading',
-      avatar: '🌸',
-      color: 'var(--blush)',
-      time: 'Just now',
-      tag: 'Wrapped 📸',
-      title: 'My Reading Stats Wrapped! ✨',
-      preview: `I've devoured ${totalBooks} books this year! That's ${totalPages.toLocaleString()} pages turned, a ${streak} streak, and my top vibe is ${topGenre}! Come join my reading corner. 🍵`,
-      likes: 0,
-      replies: 0
-    });
+  postBtn.onclick = async () => {
+    await addThread(
+      'My Reading Stats Wrapped! ✨',
+      `I've devoured ${totalBooks} books this year! That's ${totalPages.toLocaleString()} pages turned, a ${streak} streak, and my top vibe is ${topGenre}! Come join my reading corner. 🍵`,
+      'Wrapped 📸'
+    );
 
-    saveDiscourse(db);
     alert("Stats shared to Community Threads feed!");
     modal.classList.remove('active');
 
@@ -566,3 +521,230 @@ function openShareModal() {
 
   modal.classList.add('active');
 }
+
+export async function renderThreadDetails(threadId) {
+  const threads = await fetchThreads();
+  const t = threads.find(x => x.id === threadId);
+  if (!t) return;
+
+  const tdAvatar = document.getElementById('td-avatar');
+  const tdUser = document.getElementById('td-user');
+  const tdTime = document.getElementById('td-time');
+  const tdTag = document.getElementById('td-tag');
+  const tdTitle = document.getElementById('td-title');
+  const tdContent = document.getElementById('td-content');
+  const tdLikesCount = document.getElementById('td-likes-count');
+  const tdLikeBtn = document.getElementById('td-like-btn');
+  const tdRepliesHeader = document.getElementById('td-replies-header');
+  const tdCommentsList = document.getElementById('td-comments-list');
+  const submitCommentBtn = document.getElementById('btn-td-submit-comment');
+  const commentInput = document.getElementById('td-new-comment');
+
+  if (tdAvatar) tdAvatar.textContent = t.avatar || '🌸';
+  if (tdUser) tdUser.textContent = t.user || 'Unknown User';
+  if (tdTime) tdTime.textContent = t.time || '';
+  if (tdTag) {
+    tdTag.textContent = t.tag || 'Discussion';
+    tdTag.style.background = t.color || 'var(--blush)';
+  }
+  if (tdTitle) tdTitle.textContent = t.title || '';
+  if (tdContent) tdContent.textContent = t.preview || '';
+  if (tdLikesCount) tdLikesCount.textContent = t.likes || 0;
+
+  // Like button inside detail view
+  if (tdLikeBtn) {
+    // Clone to remove previous listeners
+    const newLikeBtn = tdLikeBtn.cloneNode(true);
+    tdLikeBtn.parentNode.replaceChild(newLikeBtn, tdLikeBtn);
+    newLikeBtn.addEventListener('click', async () => {
+      await likeThread(t.id);
+      t.likes += 1;
+      const countSpan = newLikeBtn.querySelector('span');
+      if (countSpan) countSpan.textContent = t.likes;
+      newLikeBtn.style.transform = 'scale(1.2)';
+      setTimeout(() => newLikeBtn.style.transform = 'scale(1)', 200);
+      
+      // Update count element if it was separately matched
+      const likesEl = document.getElementById('td-likes-count');
+      if (likesEl) likesEl.textContent = t.likes;
+    });
+  }
+
+  // Render comments
+  async function refreshComments() {
+    const comments = await fetchComments(threadId);
+    if (tdRepliesHeader) tdRepliesHeader.textContent = `Comments (${comments.length})`;
+    if (tdCommentsList) {
+      tdCommentsList.innerHTML = '';
+      if (comments.length === 0) {
+        tdCommentsList.innerHTML = `<div style="color:var(--ink-light); padding:1rem; text-align:center;">No comments yet. Start the conversation!</div>`;
+      } else {
+        comments.forEach(c => {
+          const card = document.createElement('div');
+          card.className = 'review-card';
+          card.style = 'background: white; padding: 1.25rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); margin-bottom: 0.5rem;';
+          card.innerHTML = `
+            <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+              <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--lavender); display: flex; align-items: center; justify-content: center; font-size: 1rem;">${escapeHTML(c.avatar || '🌸')}</div>
+              <div>
+                <div style="font-weight: 600; font-size: 0.85rem; margin-bottom: 0.15rem; display: flex; gap: 0.5rem; align-items: center;">
+                  <span>${escapeHTML(c.author)}</span>
+                  <span style="font-size:0.7rem; color:var(--ink-light); font-weight:normal;">${c.created_at ? new Date(c.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}</span>
+                </div>
+                <div style="font-size: 0.9rem; line-height: 1.5; color: var(--ink);">${escapeHTML(c.content)}</div>
+              </div>
+            </div>
+          `;
+          tdCommentsList.appendChild(card);
+        });
+      }
+    }
+  }
+
+  await refreshComments();
+
+  // Submit comment
+  if (submitCommentBtn && commentInput) {
+    const newSubmitBtn = submitCommentBtn.cloneNode(true);
+    submitCommentBtn.parentNode.replaceChild(newSubmitBtn, submitCommentBtn);
+    newSubmitBtn.addEventListener('click', async () => {
+      const val = commentInput.value.trim();
+      if (!val) return;
+      await addComment(threadId, val);
+      commentInput.value = '';
+      await refreshComments();
+    });
+  }
+}
+
+export async function renderClubDetails(clubId) {
+  const clubs = await fetchClubs();
+  const c = clubs.find(x => x.id === clubId);
+  if (!c) return;
+
+  const cdName = document.getElementById('cd-club-name');
+  const cdMembers = document.getElementById('cd-club-members');
+  const cdDesc = document.getElementById('cd-club-desc');
+  const cdJoinBtn = document.getElementById('cd-join-btn');
+  const chatContainer = document.getElementById('cd-chat-container');
+  const chatInput = document.getElementById('cd-chat-input');
+  const sendChatBtn = document.getElementById('btn-cd-send-chat');
+
+  if (cdName) cdName.textContent = c.name || '';
+  if (cdDesc) cdDesc.textContent = c.desc || '';
+  if (cdMembers) cdMembers.textContent = `${c.members} members`;
+
+  // Join button toggle
+  if (cdJoinBtn) {
+    async function updateJoinBtnState() {
+      const joined = await checkClubJoined(clubId);
+      if (joined) {
+        cdJoinBtn.textContent = '✓ Joined';
+        cdJoinBtn.style.background = 'var(--sage)';
+        cdJoinBtn.style.color = '#2d5a2d';
+        cdJoinBtn.style.border = 'none';
+      } else {
+        cdJoinBtn.textContent = 'Join Club';
+        cdJoinBtn.style.background = '';
+        cdJoinBtn.style.color = '';
+        cdJoinBtn.style.border = '';
+      }
+    }
+
+    await updateJoinBtnState();
+
+    const newJoinBtn = cdJoinBtn.cloneNode(true);
+    cdJoinBtn.parentNode.replaceChild(newJoinBtn, cdJoinBtn);
+    newJoinBtn.addEventListener('click', async () => {
+      await toggleJoinClub(clubId);
+      const joined = await checkClubJoined(clubId);
+      c.members += joined ? 1 : -1;
+      if (cdMembers) cdMembers.textContent = `${c.members} members`;
+      await updateJoinBtnState();
+      
+      // Also update clubs tab if they switch back
+      renderClubs();
+    });
+  }
+
+  // Poll rendering
+  function renderPoll() {
+    const pollKey = `club_poll_votes_${clubId}`;
+    const votedKey = `club_poll_voted_${clubId}`;
+    
+    let votes = JSON.parse(localStorage.getItem(pollKey)) || [45, 35, 20];
+    const hasVoted = localStorage.getItem(votedKey) === 'true';
+    const totalVotes = votes.reduce((a, b) => a + b, 0);
+
+    const pollWidget = document.getElementById('cd-poll-widget');
+    if (pollWidget) {
+      pollWidget.innerHTML = '';
+      const options = ["The Starless Sea", "Piranesi", "A Psalm for the Wild-Built"];
+      const colors = ["var(--blush)", "var(--lavender)", "var(--sage)"];
+
+      options.forEach((opt, idx) => {
+        const pct = totalVotes > 0 ? Math.round((votes[idx] / totalVotes) * 100) : 0;
+        
+        const row = document.createElement('div');
+        row.className = 'poll-option-row';
+        row.style = `cursor: ${hasVoted ? 'default' : 'pointer'}; position: relative; border: 1px solid #eee; border-radius: 10px; padding: 1rem; overflow: hidden; display: flex; justify-content: space-between; align-items: center; background: white; transition: background 0.2s;`;
+        
+        row.innerHTML = `
+          <div class="poll-fill" style="position: absolute; left: 0; top: 0; bottom: 0; background: ${colors[idx]}; width: ${pct}%; opacity: 0.4; transition: width 0.3s; pointer-events: none;"></div>
+          <span class="poll-text" style="font-weight: 600; font-size: 0.95rem; z-index: 2; pointer-events: none;">${opt}</span>
+          <span class="poll-percentage" style="font-weight: bold; font-size: 0.95rem; z-index: 2; pointer-events: none;">${pct}%</span>
+        `;
+
+        if (!hasVoted) {
+          row.addEventListener('click', () => {
+            votes[idx] += 1;
+            localStorage.setItem(pollKey, JSON.stringify(votes));
+            localStorage.setItem(votedKey, 'true');
+            renderPoll();
+          });
+        }
+        
+        pollWidget.appendChild(row);
+      });
+    }
+  }
+
+  renderPoll();
+
+  // Chat Board
+  async function refreshChat() {
+    const discussions = await fetchClubDiscussions(clubId);
+    if (chatContainer) {
+      chatContainer.innerHTML = '';
+      discussions.forEach(d => {
+        const msg = document.createElement('div');
+        msg.style = 'display:flex; gap:0.5rem; align-items:flex-start; margin-bottom:0.5rem;';
+        msg.innerHTML = `
+          <div style="width: 24px; height: 24px; border-radius: 50%; background: var(--lavender); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink:0;">${escapeHTML(d.avatar || '🌸')}</div>
+          <div style="background:var(--cream); padding:0.5rem 0.75rem; border-radius:10px; max-width:85%;">
+            <div style="font-weight:600; font-size:0.75rem; color:var(--ink); margin-bottom:0.1rem;">${escapeHTML(d.author)}</div>
+            <div style="font-size:0.8rem; color:var(--ink); line-height:1.4;">${escapeHTML(d.content)}</div>
+          </div>
+        `;
+        chatContainer.appendChild(msg);
+      });
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+  }
+
+  await refreshChat();
+
+  // Send message
+  if (sendChatBtn && chatInput) {
+    const newSendBtn = sendChatBtn.cloneNode(true);
+    sendChatBtn.parentNode.replaceChild(newSendBtn, sendChatBtn);
+    newSendBtn.addEventListener('click', async () => {
+      const val = chatInput.value.trim();
+      if (!val) return;
+      await addClubDiscussion(clubId, val);
+      chatInput.value = '';
+      await refreshChat();
+    });
+  }
+}
+
