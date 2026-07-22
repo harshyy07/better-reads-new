@@ -1,4 +1,4 @@
-import { store, updateShelf, updateProgress } from './store.js';
+import { store, updateShelf, updateProgress, updateReadingGoal } from './store.js';
 
 export function escapeHTML(str) {
   if (!str) return '';
@@ -424,7 +424,7 @@ export function renderReadingStats() {
   }
 
   // Section 2: Goals
-  const readingGoal = 25;
+  const readingGoal = store.readingGoal || 25;
   const elGoalCurrent = document.getElementById('mockup-goal-current');
   const elGoalTotal = document.getElementById('mockup-goal-total');
   const elGoalPercentage = document.getElementById('mockup-goal-percentage');
@@ -440,6 +440,37 @@ export function renderReadingStats() {
     setTimeout(() => {
       elGoalCircle.style.strokeDasharray = `${percentage}, 100`;
     }, 100);
+  }
+
+  // Hook up Goal form update logic
+  const goalUpdateBtn = document.getElementById('mockup-goal-update-btn');
+  const goalFormDiv = document.getElementById('mockup-goal-form');
+  const goalCancelBtn = document.getElementById('mockup-goal-cancel-btn');
+  const goalSaveBtn = document.getElementById('mockup-goal-save-btn');
+  const goalInput = document.getElementById('mockup-goal-input');
+
+  if (goalUpdateBtn && goalFormDiv && goalCancelBtn && goalSaveBtn && goalInput) {
+    goalInput.value = readingGoal;
+
+    goalUpdateBtn.onclick = (e) => {
+      e.stopPropagation();
+      goalUpdateBtn.style.display = 'none';
+      goalFormDiv.style.display = 'flex';
+    };
+
+    goalCancelBtn.onclick = (e) => {
+      e.stopPropagation();
+      goalFormDiv.style.display = 'none';
+      goalUpdateBtn.style.display = 'block';
+    };
+
+    goalSaveBtn.onclick = async (e) => {
+      e.stopPropagation();
+      await updateReadingGoal(goalInput.value);
+      goalFormDiv.style.display = 'none';
+      goalUpdateBtn.style.display = 'block';
+      renderReadingStats();
+    };
   }
 
   // Section 3: Recent Additions
@@ -471,5 +502,48 @@ export function renderReadingStats() {
   const elPagesRead = document.getElementById('mockup-pages-read');
   const elDayStreak = document.getElementById('mockup-day-streak');
   if (elPagesRead) elPagesRead.textContent = totalPages.toLocaleString();
-  if (elDayStreak) elDayStreak.textContent = totalBooks > 0 ? "18" : "0";
+  
+  const streak = calculateStreak(store.activityDates);
+  if (elDayStreak) elDayStreak.textContent = streak;
+}
+
+export function calculateStreak(activityDates = []) {
+  if (!activityDates || activityDates.length === 0) {
+    // Return a default mock streak of 3 if they have books in their completed/reading shelves
+    const hasActivity = (store.shelves.completed && store.shelves.completed.length > 0) || 
+                        (store.shelves.reading && store.shelves.reading.length > 0);
+    return hasActivity ? 3 : 0;
+  }
+  
+  // Sort unique dates descending
+  const uniqueDates = [...new Set(activityDates)].sort().reverse();
+  
+  const todayStr = new Date().toISOString().split('T')[0];
+  
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayStr = yesterday.toISOString().split('T')[0];
+  
+  const mostRecent = uniqueDates[0];
+  if (mostRecent !== todayStr && mostRecent !== yesterdayStr) {
+    return 0;
+  }
+  
+  let streak = 1;
+  let currentDate = new Date(mostRecent);
+  
+  for (let i = 1; i < uniqueDates.length; i++) {
+    const nextDate = new Date(uniqueDates[i]);
+    const diffTime = Math.abs(currentDate - nextDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 1) {
+      streak++;
+      currentDate = nextDate;
+    } else if (diffDays > 1) {
+      break;
+    }
+  }
+  
+  return streak;
 }

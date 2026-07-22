@@ -19,7 +19,9 @@ export const store = {
   reviews: {}, 
   userRatings: {},
   progress: {}, // key: bookId, value: { currentPage: number, totalPages: number }
-  following: []  // array of user profiles/IDs
+  following: [],  // array of user profiles/IDs
+  readingGoal: 25,
+  activityDates: []
 };
 
 const DB_KEY = 'betterreads_local_cache'; // Fallback for unauthenticated users
@@ -35,7 +37,9 @@ export function getLocalDB() {
         reviews: parsed.reviews || {},
         userRatings: parsed.userRatings || {},
         progress: parsed.progress || {},
-        following: parsed.following || []
+        following: parsed.following || [],
+        readingGoal: parsed.readingGoal !== undefined ? parsed.readingGoal : 25,
+        activityDates: parsed.activityDates || []
       };
     } catch (e) {
       console.error("Error parsing DB", e);
@@ -47,7 +51,9 @@ export function getLocalDB() {
     reviews: {},
     userRatings: {},
     progress: {},
-    following: []
+    following: [],
+    readingGoal: 25,
+    activityDates: []
   };
 }
 
@@ -55,8 +61,33 @@ export function saveLocalDB(db) {
   localStorage.setItem(DB_KEY, JSON.stringify(db));
 }
 
+export function recordActivity() {
+  const todayStr = new Date().toISOString().split('T')[0];
+  if (!store.activityDates.includes(todayStr)) {
+    store.activityDates.push(todayStr);
+    const local = getLocalDB();
+    local.activityDates = store.activityDates;
+    saveLocalDB(local);
+    document.dispatchEvent(new Event('betterreads-store-updated'));
+  }
+}
+
+export function updateReadingGoal(goal) {
+  const goalVal = parseInt(goal) || 25;
+  store.readingGoal = goalVal;
+  const local = getLocalDB();
+  local.readingGoal = goalVal;
+  saveLocalDB(local);
+  document.dispatchEvent(new Event('betterreads-store-updated'));
+}
+
 // Sync from Supabase if logged in, otherwise from localStorage
 export async function syncShelves() {
+  // Sync goal and activity dates first
+  const localDB = getLocalDB();
+  store.readingGoal = localDB.readingGoal !== undefined ? localDB.readingGoal : 25;
+  store.activityDates = localDB.activityDates || [];
+
   if (store.isLoggedIn && store.currentUser) {
     // 1. Sync shelves
     const { data: shelfData, error: shelfError } = await supabase
@@ -126,6 +157,12 @@ export async function syncShelves() {
 export async function updateShelf(type, bookIds) {
   store.shelves[type] = bookIds;
   
+  // Record activity on shelf change
+  const todayStr = new Date().toISOString().split('T')[0];
+  if (!store.activityDates.includes(todayStr)) {
+    store.activityDates.push(todayStr);
+  }
+  
   if (store.isLoggedIn && store.currentUser) {
     await supabase.from('shelves').upsert({
       user_id: store.currentUser.id,
@@ -135,6 +172,7 @@ export async function updateShelf(type, bookIds) {
   } else {
     const local = getLocalDB();
     local.shelves = store.shelves;
+    local.activityDates = store.activityDates;
     saveLocalDB(local);
   }
   document.dispatchEvent(new Event('betterreads-store-updated'));
@@ -154,6 +192,12 @@ export async function updateProgress(bookId, currentPage, totalPages) {
 
   store.progress[bookId] = { currentPage, totalPages };
 
+  // Record activity on progress update
+  const todayStr = new Date().toISOString().split('T')[0];
+  if (!store.activityDates.includes(todayStr)) {
+    store.activityDates.push(todayStr);
+  }
+
   if (store.isLoggedIn && store.currentUser) {
     try {
       await supabase.from('progress').upsert({
@@ -169,6 +213,7 @@ export async function updateProgress(bookId, currentPage, totalPages) {
   } else {
     const local = getLocalDB();
     local.progress = store.progress;
+    local.activityDates = store.activityDates;
     saveLocalDB(local);
   }
 
