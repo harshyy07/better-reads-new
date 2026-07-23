@@ -128,6 +128,38 @@ export async function renderBookDetails(bookId) {
     });
   }
 
+  const btnRecommend = document.getElementById('btn-bd-recommend');
+  if (btnRecommend) {
+    btnRecommend.onclick = () => {
+      const friendSelect = document.getElementById('recommend-friend-select');
+      const mockFriendsDb = {
+        'MapleReader': { username: 'MapleReader', avatar: '🪴' },
+        'LofiLover': { username: 'LofiLover', avatar: '🐱' },
+        'TeaTimeReads': { username: 'TeaTimeReads', avatar: '🍵' }
+      };
+
+      if (friendSelect) {
+        friendSelect.innerHTML = '';
+        const followedIds = store.following || [];
+        if (followedIds.length === 0) {
+          friendSelect.innerHTML = '<option value="">No friends followed yet (go to Friends Corner!)</option>';
+        } else {
+          followedIds.forEach(id => {
+            const friend = mockFriendsDb[id] || { username: id, avatar: '🌸' };
+            friendSelect.innerHTML += `<option value="${friend.username}">${friend.avatar} ${friend.username}</option>`;
+          });
+        }
+      }
+
+      const recommendModal = document.getElementById('recommend-book-modal');
+      if (recommendModal) {
+        recommendModal.dataset.bookId = bookId;
+        document.getElementById('recommend-book-subtitle').innerHTML = `Recommend <strong>${escapeHTML(book.title)}</strong> to a fellow reader.`;
+        recommendModal.classList.add('active');
+      }
+    };
+  }
+
   updateBdShelfButtons(bookId);
   renderBdReviews(bookId);
   renderBdProgress(bookId);

@@ -11,7 +11,11 @@ import {
   checkClubJoined,
   toggleJoinClub,
   fetchClubDiscussions,
-  addClubDiscussion
+  addClubDiscussion,
+  updateUserProfile,
+  sendBookRecommendation,
+  updateShelf,
+  logUserActivity
 } from './store.js';
 import { escapeHTML } from './ui.js';
 
@@ -185,6 +189,128 @@ export function initSocial() {
     });
   }
 
+  // Edit Profile Modal
+  const editProfileBtn = document.getElementById('btn-edit-profile');
+  const editProfileModal = document.getElementById('edit-profile-modal');
+  const editProfileCloseBtn = document.getElementById('edit-profile-close-btn');
+  const editProfileForm = document.getElementById('edit-profile-form');
+  let selectedAvatar = store.profile.avatar || '🍵';
+
+  if (editProfileBtn && editProfileModal && editProfileCloseBtn) {
+    editProfileBtn.onclick = () => {
+      document.getElementById('edit-profile-username').value = store.profile.username;
+      document.getElementById('edit-profile-bio').value = store.profile.bio;
+      document.getElementById('edit-profile-genre').value = store.profile.favoriteGenre;
+      selectedAvatar = store.profile.avatar || '🍵';
+      
+      // Highlight correct avatar option
+      const options = editProfileModal.querySelectorAll('.avatar-option');
+      options.forEach(opt => {
+        if (opt.dataset.avatar === selectedAvatar) {
+          opt.classList.add('selected');
+        } else {
+          opt.classList.remove('selected');
+        }
+      });
+
+      editProfileModal.classList.add('active');
+    };
+
+    editProfileCloseBtn.onclick = () => editProfileModal.classList.remove('active');
+    editProfileModal.onclick = (e) => { if (e.target === editProfileModal) editProfileModal.classList.remove('active'); };
+
+    // Avatar selection highlight
+    const avatarSelector = document.getElementById('edit-avatar-selector');
+    if (avatarSelector) {
+      avatarSelector.addEventListener('click', (e) => {
+        const option = e.target.closest('.avatar-option');
+        if (!option) return;
+        avatarSelector.querySelectorAll('.avatar-option').forEach(opt => opt.classList.remove('selected'));
+        option.classList.add('selected');
+        selectedAvatar = option.dataset.avatar;
+      });
+    }
+
+    if (editProfileForm) {
+      editProfileForm.onsubmit = async (e) => {
+        e.preventDefault();
+        const username = document.getElementById('edit-profile-username').value.trim();
+        const bio = document.getElementById('edit-profile-bio').value.trim();
+        const genre = document.getElementById('edit-profile-genre').value;
+        await updateUserProfile(username, selectedAvatar, bio, genre);
+        editProfileModal.classList.remove('active');
+        renderFriendsCorner();
+      };
+    }
+  }
+
+  // Friends Search Auto-suggestions
+  const searchSuggestionsDiv = document.getElementById('friend-search-suggestions');
+  if (searchInput && searchSuggestionsDiv) {
+    searchInput.addEventListener('input', () => {
+      const q = searchInput.value.trim().toLowerCase();
+      if (!q) {
+        searchSuggestionsDiv.style.display = 'none';
+        return;
+      }
+      const matches = Object.keys(MOCK_FRIENDS).filter(key => key.toLowerCase().includes(q));
+      if (matches.length > 0) {
+        searchSuggestionsDiv.style.display = 'block';
+        searchSuggestionsDiv.innerHTML = matches.map(key => {
+          const friend = MOCK_FRIENDS[key];
+          return `
+            <div class="suggestion-item" data-username="${friend.username}" style="display: flex; gap: 0.5rem; align-items: center; padding: 0.5rem 1rem; cursor: pointer; border-bottom: 1px solid #f9f9f9;">
+              <span>${friend.avatar}</span>
+              <span style="font-weight: 500; color: var(--ink);">${friend.username}</span>
+            </div>
+          `;
+        }).join('');
+      } else {
+        searchSuggestionsDiv.style.display = 'none';
+      }
+    });
+
+    searchSuggestionsDiv.addEventListener('click', (e) => {
+      const item = e.target.closest('.suggestion-item');
+      if (!item) return;
+      searchInput.value = item.dataset.username;
+      searchSuggestionsDiv.style.display = 'none';
+      searchBtn.click();
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#friend-search-input') && !e.target.closest('#friend-search-suggestions')) {
+        searchSuggestionsDiv.style.display = 'none';
+      }
+    });
+  }
+
+  // Recommend Book Modal setup
+  const recommendModal = document.getElementById('recommend-book-modal');
+  const recommendCloseBtn = document.getElementById('recommend-book-close-btn');
+  const recommendForm = document.getElementById('recommend-book-form');
+
+  if (recommendModal && recommendCloseBtn) {
+    recommendCloseBtn.onclick = () => recommendModal.classList.remove('active');
+    recommendModal.onclick = (e) => { if (e.target === recommendModal) recommendModal.classList.remove('active'); };
+    
+    if (recommendForm) {
+      recommendForm.onsubmit = async (e) => {
+        e.preventDefault();
+        const friendSelect = document.getElementById('recommend-friend-select');
+        const messageInput = document.getElementById('recommend-message');
+        const bookId = recommendModal.dataset.bookId;
+        
+        if (friendSelect.value && bookId) {
+          await sendBookRecommendation(friendSelect.value, bookId, messageInput.value.trim());
+          messageInput.value = '';
+          recommendModal.classList.remove('active');
+          alert('Recommendation sent successfully! ✨');
+        }
+      };
+    }
+  }
+
   // Modals close button
   const friendCloseBtn = document.getElementById('friend-profile-close-btn');
   const friendModal = document.getElementById('friend-profile-modal');
@@ -327,6 +453,113 @@ export async function renderClubs() {
 
 
 function renderFriendsCorner() {
+  // Update Profile Card
+  const userAvatar = document.getElementById('user-profile-avatar');
+  const userUsername = document.getElementById('user-profile-username');
+  const userBio = document.getElementById('user-profile-bio');
+  const userGenre = document.getElementById('user-profile-genre-tag');
+  if (userAvatar) userAvatar.textContent = store.profile.avatar || '🍵';
+  if (userUsername) userUsername.textContent = store.profile.username || 'cozyreader';
+  if (userBio) userBio.textContent = store.profile.bio || 'Lofi reading & warm tea';
+  if (userGenre) userGenre.textContent = `Genre: ${store.profile.favoriteGenre || 'Fantasy'}`;
+
+  // Render Suggested Cozy Readers to Follow
+  const suggestedContainer = document.getElementById('suggested-readers-list');
+  if (suggestedContainer) {
+    suggestedContainer.innerHTML = '';
+    const followedIds = store.following || [];
+    const notFollowedKeys = Object.keys(MOCK_FRIENDS).filter(id => !followedIds.includes(id));
+    if (notFollowedKeys.length === 0) {
+      suggestedContainer.innerHTML = `<div style="color:var(--ink-light); font-size:0.8rem; font-style: italic;">You follow all cozy readers! 🌸</div>`;
+    } else {
+      notFollowedKeys.forEach(id => {
+        const friend = MOCK_FRIENDS[id];
+        const row = document.createElement('div');
+        row.style = 'display:flex; justify-content:space-between; align-items:center; background:var(--cream); padding:0.5rem 0.75rem; border-radius:8px;';
+        row.innerHTML = `
+          <div style="display:flex; gap:0.5rem; align-items:center;">
+            <span style="font-size:1.1rem;">${friend.avatar}</span>
+            <span style="font-weight:600; font-size:0.85rem; color:var(--ink);">${friend.username}</span>
+          </div>
+          <button class="btn btn-secondary follow-btn" style="padding:0.2rem 0.5rem; font-size:0.75rem; border-radius:6px; border-color:var(--lavender); cursor:pointer;">Follow</button>
+        `;
+        row.querySelector('.follow-btn').onclick = async () => {
+          await toggleFollowUser(friend);
+          renderFriendsCorner();
+        };
+        suggestedContainer.appendChild(row);
+      });
+    }
+  }
+
+  // Render Recommendations Inbox
+  const recContainer = document.getElementById('recommendations-list');
+  const recCount = document.getElementById('recommendations-count');
+  if (recContainer) {
+    recContainer.innerHTML = '';
+    const myRecs = store.recommendations || [];
+    if (recCount) recCount.textContent = myRecs.length;
+
+    if (myRecs.length === 0) {
+      recContainer.innerHTML = `<div style="color:var(--ink-light); font-size:0.85rem; text-align:center; padding:1rem;">Your inbox is empty. Ask a friend for recommendations! ✉</div>`;
+    } else {
+      myRecs.forEach(rec => {
+        const card = document.createElement('div');
+        card.style = 'background:var(--cream); border: 1px solid var(--blush); border-radius:12px; padding:1rem; display:flex; gap:1rem; align-items:start; margin-bottom:0.5rem; position:relative;';
+        
+        const coverUrl = rec.bookCover ? `background-image: url(${rec.bookCover})` : `background: var(--sage)`;
+        const isTbr = store.shelves.tbr && store.shelves.tbr.includes(rec.bookId);
+        const isReading = store.shelves.reading && store.shelves.reading.includes(rec.bookId);
+        const isCompleted = store.shelves.completed && store.shelves.completed.includes(rec.bookId);
+        
+        let actionBtnHtml = '';
+        if (isReading) {
+          actionBtnHtml = `<span style="font-size:0.75rem; color:var(--sage); font-weight:bold;">📖 Reading</span>`;
+        } else if (isCompleted) {
+          actionBtnHtml = `<span style="font-size:0.75rem; color:var(--sage); font-weight:bold;">✓ Completed</span>`;
+        } else if (isTbr) {
+          actionBtnHtml = `<span style="font-size:0.75rem; color:var(--ink-light); font-weight:500;">📌 In TBR</span>`;
+        } else {
+          actionBtnHtml = `<button class="btn btn-secondary btn-add-tbr" style="padding:0.25rem 0.5rem; font-size:0.75rem; background:white; border-color:var(--lavender); cursor:pointer;">+ TBR</button>`;
+        }
+
+        card.innerHTML = `
+          <div class="rec-cover" style="width: 45px; height: 68px; ${coverUrl}; background-size: cover; border-radius: 4px; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor:pointer;"></div>
+          <div style="flex:1;">
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+              <div>
+                <div class="rec-book-title" style="font-weight:bold; font-size:0.9rem; color:var(--ink); line-height:1.2; cursor:pointer;">${escapeHTML(rec.bookTitle)}</div>
+                <div style="font-size:0.75rem; color:var(--ink-light); margin-bottom:0.25rem;">by ${escapeHTML(rec.bookAuthor)}</div>
+              </div>
+              <div>${actionBtnHtml}</div>
+            </div>
+            <div style="background:white; padding:0.5rem; border-radius:8px; font-size:0.8rem; border:1px solid #f0f0f0; margin-top:0.4rem; position:relative; line-height:1.4;">
+              <strong style="color:var(--ink);">${rec.fromUser.avatar} ${rec.fromUser.username}:</strong> "${escapeHTML(rec.message)}"
+            </div>
+          </div>
+        `;
+
+        const navigateToBook = () => {
+          window.location.hash = `#book-${rec.bookId}`;
+        };
+        card.querySelector('.rec-cover').onclick = navigateToBook;
+        card.querySelector('.rec-book-title').onclick = navigateToBook;
+
+        const addTbrBtn = card.querySelector('.btn-add-tbr');
+        if (addTbrBtn) {
+          addTbrBtn.onclick = async (e) => {
+            e.stopPropagation();
+            const newTbr = [...(store.shelves.tbr || []), rec.bookId];
+            await updateShelf('tbr', newTbr);
+            renderFriendsCorner();
+          };
+        }
+
+        recContainer.appendChild(card);
+      });
+    }
+  }
+
   // 1. Render following list
   const followingContainer = document.getElementById('following-list');
   if (followingContainer) {
@@ -360,8 +593,10 @@ function renderFriendsCorner() {
   if (feedContainer) {
     feedContainer.innerHTML = '';
     
-    // Add dynamically followed updates if any
-    let displayFeed = [...activityFeed];
+    // Add custom user activity updates
+    const customActivities = JSON.parse(localStorage.getItem('betterreads_user_activities')) || [];
+    let displayFeed = [...customActivities, ...activityFeed];
+    
     const followedIds = store.following || [];
     followedIds.forEach(id => {
       const friend = MOCK_FRIENDS[id];

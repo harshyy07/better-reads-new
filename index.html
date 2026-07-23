@@ -563,22 +563,59 @@
         <!-- FRIENDS CORNER VIEW -->
         <div id="view-friends" style="display: none;">
           <div style="display: grid; grid-template-columns: 1fr 320px; gap: 2rem; align-items: start;">
-            <!-- Left Side: Activity Feed & Search -->
+            <!-- Left Side: Profile, Search & Activity -->
             <div>
-              <!-- Search and Add Friend -->
-              <div class="create-post-card" style="background: white; padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);">
-                <h3 style="margin-top: 0; margin-bottom: 1rem; font-size: 1.1rem;">Search Readers</h3>
-                <div style="display: flex; gap: 0.5rem;">
-                  <input type="text" id="friend-search-input" placeholder="Search by username (e.g. MapleReader)..." style="width: 100%; padding: 0.75rem; border: 1px solid #eee; border-radius: 8px; font-family: 'Inter', sans-serif;">
-                  <button class="btn btn-primary" id="btn-search-friend" style="padding: 0.5rem 1.5rem;">Search</button>
+              <!-- User Profile Summary Header -->
+              <div class="create-post-card" style="background: white; padding: 1.5rem; border-radius: 16px; margin-bottom: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                  <div id="user-profile-avatar" style="font-size: 2.5rem; width: 60px; height: 60px; border-radius: 50%; background: var(--lavender); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">🍵</div>
+                  <div>
+                    <h3 id="user-profile-username" style="margin: 0; font-size: 1.2rem; color: var(--ink);">cozyreader</h3>
+                    <p id="user-profile-bio" style="margin: 0.25rem 0 0; font-size: 0.85rem; color: var(--ink-light);">Lofi reading & warm tea</p>
+                    <p id="user-profile-genre-tag" style="margin: 0.25rem 0 0; font-size: 0.75rem; font-weight: bold; color: var(--dusty-rose);">Genre: Fantasy</p>
+                  </div>
                 </div>
+                <button class="btn btn-secondary" id="btn-edit-profile" style="padding: 0.4rem 1rem; font-size: 0.8rem; border-color: var(--lavender); color: var(--ink); border-radius: 8px;">⚙️ Edit Profile</button>
+              </div>
+
+              <!-- Search and Add Friend -->
+              <div class="create-post-card" style="background: white; padding: 1.5rem; border-radius: 16px; margin-bottom: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05); position: relative;">
+                <h3 style="margin-top: 0; margin-bottom: 1rem; font-size: 1.1rem; color: var(--ink);">Search Readers</h3>
+                <div style="display: flex; gap: 0.5rem; position: relative;">
+                  <input type="text" id="friend-search-input" placeholder="Search by username (e.g. MapleReader)..." style="width: 100%; padding: 0.75rem; border: 1px solid #eee; border-radius: 8px; font-family: 'Inter', sans-serif;" autocomplete="off">
+                  <button class="btn btn-primary" id="btn-search-friend" style="padding: 0.5rem 1.5rem;">Search</button>
+                  
+                  <!-- Auto-suggestions Dropdown -->
+                  <div id="friend-search-suggestions" style="display: none; position: absolute; left: 0; right: 0; top: 100%; background: white; border: 1px solid #eee; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 10; margin-top: 4px; max-height: 200px; overflow-y: auto;">
+                  </div>
+                </div>
+                
                 <div id="search-friend-result" style="margin-top: 1rem; display: none;">
                   <!-- Dynamically populated search result -->
+                </div>
+
+                <!-- Suggested Cozy Readers to Follow -->
+                <div style="margin-top: 1.5rem; border-top: 1px dashed #eee; padding-top: 1rem;">
+                  <h4 style="margin: 0 0 0.75rem; font-size: 0.85rem; color: var(--ink-light); text-transform: uppercase; letter-spacing: 0.05em;">Suggested Cozy Readers</h4>
+                  <div id="suggested-readers-list" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <!-- Sugessted readers populated by JS -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Recommendations Inbox Section -->
+              <div class="create-post-card" style="background: white; padding: 1.5rem; border-radius: 16px; margin-bottom: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);">
+                <h3 style="margin-top: 0; margin-bottom: 1rem; font-size: 1.1rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; color: var(--ink);">
+                  <span>✉ Recommendations Inbox</span>
+                  <span class="badge" id="recommendations-count" style="background: var(--blush); font-size: 0.75rem; color: var(--ink); border-radius: 12px; padding: 0.15rem 0.5rem;">0</span>
+                </h3>
+                <div id="recommendations-list" style="display: flex; flex-direction: column; gap: 1rem;">
+                  <!-- Recommended books populated by JS -->
                 </div>
               </div>
 
               <!-- Live Activity Feed -->
-              <h3 style="font-size: 1.3rem; margin-bottom: 1rem; font-family: 'Pixel Operator', monospace;">Cozy Activity Feed</h3>
+              <h3 style="font-size: 1.3rem; margin-bottom: 1rem; font-family: 'Pixel Operator', monospace; color: var(--ink);">Cozy Activity Feed</h3>
               <div id="friends-activity-feed" style="display: flex; flex-direction: column; gap: 1rem;">
                 <!-- Feed items populated by JS -->
               </div>
@@ -586,7 +623,7 @@
 
             <!-- Right Side: Following List -->
             <div class="create-post-card" style="background: white; padding: 1.5rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);">
-              <h3 style="margin-top: 0; margin-bottom: 1rem; font-size: 1.1rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem;">Following</h3>
+              <h3 style="margin-top: 0; margin-bottom: 1rem; font-size: 1.1rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; color: var(--ink);">Following</h3>
               <div id="following-list" style="display: flex; flex-direction: column; gap: 0.75rem;">
                 <!-- Following users populated by JS -->
               </div>
@@ -779,6 +816,8 @@
               <button class="btn btn-secondary" id="btn-bd-tbr" style="justify-content: center;">📌 Add to TBR</button>
               <button class="btn btn-secondary" id="btn-bd-dnf"
                 style="justify-content: center; border-color: #e5e5e5; color: var(--ink-light);">❌ DNF</button>
+              <button class="btn btn-secondary" id="btn-bd-recommend"
+                style="justify-content: center; border-color: var(--blush); color: var(--ink); background: var(--cream);">✉ Recommend to Friend</button>
             </div>
 
             <div class="bd-rating-container"
@@ -1183,6 +1222,93 @@
         <button id="btn-share-to-feed" class="btn btn-primary" style="flex: 1;">Post to Discourse Feed</button>
         <button id="btn-copy-share-link" class="btn btn-secondary" style="flex: 1; border-color: var(--ink);">Copy Link</button>
       </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       EDIT PROFILE MODAL
+       ======================================================== -->
+  <div class="auth-modal-overlay" id="edit-profile-modal">
+    <div class="auth-modal-content" style="max-width: 450px; width: 95%;">
+      <button class="auth-close-btn" id="edit-profile-close-btn" aria-label="Close modal">✕</button>
+
+      <div class="auth-modal-header" style="margin-bottom: 1.5rem;">
+        <div class="auth-modal-icon">⚙️</div>
+        <h3 class="auth-modal-title">Customize Your Profile</h3>
+        <p class="auth-modal-subtitle">Add your own cozy flavor to your reading profile.</p>
+      </div>
+
+      <form id="edit-profile-form" style="display: flex; flex-direction: column; gap: 1rem; text-align: left;">
+        <div>
+          <label style="font-weight: 600; font-size: 0.85rem; color: var(--ink); display: block; margin-bottom: 0.4rem;">Username</label>
+          <input type="text" id="edit-profile-username" required style="width: 100%; padding: 0.75rem; border: 1px solid #eee; border-radius: 8px; font-family: 'Inter', sans-serif;">
+        </div>
+
+        <div>
+          <label style="font-weight: 600; font-size: 0.85rem; color: var(--ink); display: block; margin-bottom: 0.4rem;">Cozy Bio</label>
+          <textarea id="edit-profile-bio" rows="2" style="width: 100%; padding: 0.75rem; border: 1px solid #eee; border-radius: 8px; font-family: 'Inter', sans-serif; resize: none;" placeholder="e.g. Lofi reading & warm tea"></textarea>
+        </div>
+
+        <div>
+          <label style="font-weight: 600; font-size: 0.85rem; color: var(--ink); display: block; margin-bottom: 0.4rem;">Favorite Genre</label>
+          <select id="edit-profile-genre" style="width: 100%; padding: 0.75rem; border: 1px solid #eee; border-radius: 8px; font-family: 'Inter', sans-serif; background: white; color: var(--ink);">
+            <option value="Fantasy">Fantasy</option>
+            <option value="Romance">Romance</option>
+            <option value="Sci-Fi">Sci-Fi</option>
+            <option value="Mystery">Mystery</option>
+            <option value="Non-Fiction">Non-Fiction</option>
+            <option value="Classics">Classics</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="font-weight: 600; font-size: 0.85rem; color: var(--ink); display: block; margin-bottom: 0.4rem;">Choose Avatar Emoji</label>
+          <div class="avatar-selector" id="edit-avatar-selector" style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-top: 0.5rem;">
+            <div class="avatar-option" data-avatar="🍵">🍵</div>
+            <div class="avatar-option" data-avatar="📚">📚</div>
+            <div class="avatar-option" data-avatar="🌙">🌙</div>
+            <div class="avatar-option" data-avatar="🪴">🪴</div>
+            <div class="avatar-option" data-avatar="🐱">🐱</div>
+            <div class="avatar-option" data-avatar="🌸">🌸</div>
+            <div class="avatar-option" data-avatar="☕">☕</div>
+            <div class="avatar-option" data-avatar="🕯️">🕯️</div>
+            <div class="avatar-option" data-avatar="🦊">🦊</div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="margin-top: 1rem; width: 100%; padding: 0.75rem; justify-content: center;">Save Profile</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       RECOMMEND BOOK MODAL
+       ======================================================== -->
+  <div class="auth-modal-overlay" id="recommend-book-modal">
+    <div class="auth-modal-content" style="max-width: 450px; width: 95%;">
+      <button class="auth-close-btn" id="recommend-book-close-btn" aria-label="Close modal">✕</button>
+
+      <div class="auth-modal-header" style="margin-bottom: 1.5rem;">
+        <div class="auth-modal-icon">✉</div>
+        <h3 class="auth-modal-title">Recommend to a Friend</h3>
+        <p class="auth-modal-subtitle" id="recommend-book-subtitle">Share this cozy read with a fellow reader.</p>
+      </div>
+
+      <form id="recommend-book-form" style="display: flex; flex-direction: column; gap: 1rem; text-align: left;">
+        <div>
+          <label style="font-weight: 600; font-size: 0.85rem; color: var(--ink); display: block; margin-bottom: 0.4rem;">Select Friend</label>
+          <select id="recommend-friend-select" required style="width: 100%; padding: 0.75rem; border: 1px solid #eee; border-radius: 8px; font-family: 'Inter', sans-serif; background: white; color: var(--ink);">
+            <!-- Followed friends populated dynamically -->
+          </select>
+        </div>
+
+        <div>
+          <label style="font-weight: 600; font-size: 0.85rem; color: var(--ink); display: block; margin-bottom: 0.4rem;">Cozy Message</label>
+          <textarea id="recommend-message" rows="3" style="width: 100%; padding: 0.75rem; border: 1px solid #eee; border-radius: 8px; font-family: 'Inter', sans-serif; resize: vertical;" placeholder="e.g. You will love the cozy environment in this one!"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="margin-top: 1rem; width: 100%; padding: 0.75rem; justify-content: center;">Send Recommendation</button>
+      </form>
     </div>
   </div>
 

@@ -21,7 +21,14 @@ export const store = {
   progress: {}, // key: bookId, value: { currentPage: number, totalPages: number }
   following: [],  // array of user profiles/IDs
   readingGoal: 25,
-  activityDates: []
+  activityDates: [],
+  profile: {
+    username: 'cozyreader',
+    avatar: '🍵',
+    bio: 'Lofi reading & warm tea',
+    favoriteGenre: 'Fantasy'
+  },
+  recommendations: []
 };
 
 const DB_KEY = 'betterreads_local_cache'; // Fallback for unauthenticated users
@@ -31,6 +38,33 @@ export function getLocalDB() {
   if (dbData) {
     try {
       const parsed = JSON.parse(dbData);
+      
+      // Default mock recommendations if none exist
+      const defaultRecommendations = [
+        {
+          id: 'rec-mock-1',
+          fromUser: { username: 'MapleReader', avatar: '🪴' },
+          toUser: 'cozyreader',
+          bookId: '12845610',
+          bookTitle: 'The Hobbit',
+          bookAuthor: 'J.R.R. Tolkien',
+          bookCover: 'https://covers.openlibrary.org/b/id/13143588-M.jpg',
+          message: 'You absolutely have to read this cozy fantasy classic! Let me know when you start. 🌲',
+          created_at: new Date(Date.now() - 3600000 * 2).toISOString() // 2 hours ago
+        },
+        {
+          id: 'rec-mock-2',
+          fromUser: { username: 'LofiLover', avatar: '🐱' },
+          toUser: 'cozyreader',
+          bookId: '10548174',
+          bookTitle: 'A Court of Thorns and Roses',
+          bookAuthor: 'Sarah J. Maas',
+          bookCover: 'https://covers.openlibrary.org/b/id/12814881-M.jpg',
+          message: 'This has the most incredible dark academia / cozy fantasy vibes. Highly recommend! 🌸',
+          created_at: new Date(Date.now() - 3600000 * 24).toISOString() // 1 day ago
+        }
+      ];
+
       return {
         books: parsed.books || {},
         shelves: parsed.shelves || { tbr: [], reading: [], completed: [], dnf: [] },
@@ -39,12 +73,46 @@ export function getLocalDB() {
         progress: parsed.progress || {},
         following: parsed.following || [],
         readingGoal: parsed.readingGoal !== undefined ? parsed.readingGoal : 25,
-        activityDates: parsed.activityDates || []
+        activityDates: parsed.activityDates || [],
+        profile: parsed.profile || {
+          username: 'cozyreader',
+          avatar: '🍵',
+          bio: 'Lofi reading & warm tea',
+          favoriteGenre: 'Fantasy'
+        },
+        recommendations: parsed.recommendations || defaultRecommendations
       };
     } catch (e) {
       console.error("Error parsing DB", e);
     }
   }
+  
+  // Default values for first-time load
+  const initialRecommendations = [
+    {
+      id: 'rec-mock-1',
+      fromUser: { username: 'MapleReader', avatar: '🪴' },
+      toUser: 'cozyreader',
+      bookId: '12845610',
+      bookTitle: 'The Hobbit',
+      bookAuthor: 'J.R.R. Tolkien',
+      bookCover: 'https://covers.openlibrary.org/b/id/13143588-M.jpg',
+      message: 'You absolutely have to read this cozy fantasy classic! Let me know when you start. 🌲',
+      created_at: new Date(Date.now() - 3600000 * 2).toISOString()
+    },
+    {
+      id: 'rec-mock-2',
+      fromUser: { username: 'LofiLover', avatar: '🐱' },
+      toUser: 'cozyreader',
+      bookId: '10548174',
+      bookTitle: 'A Court of Thorns and Roses',
+      bookAuthor: 'Sarah J. Maas',
+      bookCover: 'https://covers.openlibrary.org/b/id/12814881-M.jpg',
+      message: 'This has the most incredible dark academia / cozy fantasy vibes. Highly recommend! 🌸',
+      created_at: new Date(Date.now() - 3600000 * 24).toISOString()
+    }
+  ];
+
   return {
     books: {},
     shelves: { tbr: [], reading: [], completed: [], dnf: [] },
@@ -53,7 +121,14 @@ export function getLocalDB() {
     progress: {},
     following: [],
     readingGoal: 25,
-    activityDates: []
+    activityDates: [],
+    profile: {
+      username: 'cozyreader',
+      avatar: '🍵',
+      bio: 'Lofi reading & warm tea',
+      favoriteGenre: 'Fantasy'
+    },
+    recommendations: initialRecommendations
   };
 }
 
@@ -141,6 +216,34 @@ export async function syncShelves() {
       const local = getLocalDB();
       store.following = local.following || [];
     }
+
+    // 4. Sync profile
+    try {
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('username, avatar, bio, favorite_genre')
+        .eq('id', store.currentUser.id)
+        .single();
+      
+      if (!profileError && profileData) {
+        store.profile = {
+          username: profileData.username || 'cozyreader',
+          avatar: profileData.avatar || '🍵',
+          bio: profileData.bio || 'Lofi reading & warm tea',
+          favoriteGenre: profileData.favorite_genre || 'Fantasy'
+        };
+      } else {
+        const local = getLocalDB();
+        store.profile = local.profile || { username: 'cozyreader', avatar: '🍵', bio: 'Lofi reading & warm tea', favoriteGenre: 'Fantasy' };
+      }
+    } catch (err) {
+      const local = getLocalDB();
+      store.profile = local.profile || { username: 'cozyreader', avatar: '🍵', bio: 'Lofi reading & warm tea', favoriteGenre: 'Fantasy' };
+    }
+
+    // 5. Sync recommendations
+    const local = getLocalDB();
+    store.recommendations = local.recommendations || [];
   } else {
     const local = getLocalDB();
     store.shelves = local.shelves || { tbr: [], reading: [], completed: [], dnf: [] };
@@ -149,6 +252,8 @@ export async function syncShelves() {
     store.userRatings = local.userRatings || {};
     store.progress = local.progress || {};
     store.following = local.following || [];
+    store.profile = local.profile || { username: 'cozyreader', avatar: '🍵', bio: 'Lofi reading & warm tea', favoriteGenre: 'Fantasy' };
+    store.recommendations = local.recommendations || [];
   }
   
   document.dispatchEvent(new Event('betterreads-store-updated'));
@@ -777,5 +882,74 @@ export async function addClubDiscussion(clubId, content) {
   localStorage.setItem(key, JSON.stringify(localMsgs));
 
   return newMsg;
+}
+
+// 7. USER PROFILE & SOCIAL RECOMMENDATIONS
+export async function updateUserProfile(username, avatar, bio, favoriteGenre) {
+  store.profile = { username, avatar, bio, favoriteGenre };
+  
+  if (store.isLoggedIn && store.currentUser) {
+    try {
+      await supabase.from('profiles').upsert({
+        id: store.currentUser.id,
+        username: username,
+        avatar: avatar,
+        bio: bio,
+        favorite_genre: favoriteGenre,
+        updated_at: new Date().toISOString()
+      });
+    } catch (err) {
+      console.error("Supabase profile update failed", err);
+    }
+  }
+
+  const local = getLocalDB();
+  local.profile = store.profile;
+  saveLocalDB(local);
+
+  document.dispatchEvent(new Event('betterreads-store-updated'));
+}
+
+export async function sendBookRecommendation(toUserId, bookId, message) {
+  const book = store.books[bookId] || { title: 'Unknown Book', authors: ['Unknown Author'] };
+  
+  const newRec = {
+    id: 'rec-' + Date.now(),
+    fromUser: {
+      username: store.profile.username,
+      avatar: store.profile.avatar
+    },
+    toUser: toUserId,
+    bookId: bookId,
+    bookTitle: book.title,
+    bookAuthor: book.authors ? (Array.isArray(book.authors) ? book.authors.join(', ') : book.authors) : 'Unknown Author',
+    bookCover: book.thumbnail || '',
+    message: message,
+    created_at: new Date().toISOString()
+  };
+
+  const local = getLocalDB();
+  local.recommendations = local.recommendations || [];
+  local.recommendations.unshift(newRec);
+  saveLocalDB(local);
+
+  store.recommendations = local.recommendations;
+
+  logUserActivity(`recommended "${book.title}" to ${toUserId}`);
+
+  document.dispatchEvent(new Event('betterreads-store-updated'));
+}
+
+export function logUserActivity(text) {
+  const key = 'betterreads_user_activities';
+  const activities = JSON.parse(localStorage.getItem(key)) || [];
+  activities.unshift({
+    username: store.profile.username,
+    avatar: store.profile.avatar,
+    text: text,
+    time: 'Just now'
+  });
+  localStorage.setItem(key, JSON.stringify(activities));
+  document.dispatchEvent(new Event('betterreads-store-updated'));
 }
 
