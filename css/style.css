@@ -813,6 +813,21 @@ p {
   color: #fff;
 }
 
+.spotify-card.spotify-connected .spotify-playlist-name svg {
+  fill: #1DB954;
+  animation: pulseGreen 2s infinite ease-in-out;
+}
+
+.spotify-card.spotify-connected .spotify-playlist-name {
+  color: #1DB954;
+}
+
+@keyframes pulseGreen {
+  0% { transform: scale(1); filter: drop-shadow(0 0 1px rgba(30, 215, 96, 0.4)); }
+  50% { transform: scale(1.1); filter: drop-shadow(0 0 5px rgba(30, 215, 96, 0.8)); }
+  100% { transform: scale(1); filter: drop-shadow(0 0 1px rgba(30, 215, 96, 0.4)); }
+}
+
 /* Header: album art + now playing */
 .spotify-header {
   display: flex;
