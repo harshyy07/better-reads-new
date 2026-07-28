@@ -4,29 +4,82 @@ export function initAuth() {
   const authModal = document.getElementById('auth-modal');
   const authCloseBtn = document.getElementById('auth-close-btn');
   const navAvatar = document.getElementById('nav-avatar');
+  const avatarDropdown = document.getElementById('avatar-dropdown');
+  const btnSignout = document.getElementById('btn-signout');
   const navGetStarted = document.getElementById('nav-get-started');
   const ctaSignup = document.getElementById('cta-signup');
   const ctaSignin = document.getElementById('cta-signin');
-  const authFormStep1 = document.getElementById('auth-form-step1');
+  
+  // Forms and Tabs
+  const authFormSignin = document.getElementById('auth-form-signin');
+  const authFormSignup = document.getElementById('auth-form-signup');
   const authFormStep2 = document.getElementById('auth-form-step2');
+  
   const authStep1 = document.getElementById('auth-step-1');
   const authStep2 = document.getElementById('auth-step-2');
+  
+  const tabSignin = document.getElementById('tab-signin');
+  const tabSignup = document.getElementById('tab-signup');
+  
   const btnGoogleAuth = document.getElementById('btn-google-auth');
   const btnBackStep1 = document.getElementById('btn-back-step1');
-  const authEmailInput = document.getElementById('auth-email');
-  const authCodeMessage = document.getElementById('auth-code-message');
   const avatarOptions = document.querySelectorAll('.avatar-option');
+  
   let selectedAvatar = '🍵';
   let isOAuthProfileCompletion = false;
 
-  window.showAuthModal = function() {
+  // Toggle tab
+  function switchTab(mode) {
+    if (mode === 'signin') {
+      if (tabSignin) tabSignin.classList.add('active');
+      if (tabSignup) tabSignup.classList.remove('active');
+      if (authFormSignin) authFormSignin.style.display = 'block';
+      if (authFormSignup) authFormSignup.style.display = 'none';
+    } else {
+      if (tabSignin) tabSignin.classList.remove('active');
+      if (tabSignup) tabSignup.classList.add('active');
+      if (authFormSignin) authFormSignin.style.display = 'none';
+      if (authFormSignup) authFormSignup.style.display = 'block';
+    }
+  }
+
+  if (tabSignin) tabSignin.addEventListener('click', () => switchTab('signin'));
+  if (tabSignup) tabSignup.addEventListener('click', () => switchTab('signup'));
+
+  window.showAuthModal = function(initialMode = 'signin') {
     if (authModal) authModal.classList.add('active');
     if (authStep1) authStep1.style.display = 'block';
     if (authStep2) authStep2.style.display = 'none';
+    switchTab(initialMode);
   };
 
   function closeAuthModal() {
     if (authModal) authModal.classList.remove('active');
+  }
+
+  // Toggle avatar dropdown menu
+  if (navAvatar) {
+    navAvatar.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (store.isLoggedIn) {
+        if (avatarDropdown) avatarDropdown.classList.toggle('active');
+      } else {
+        window.showAuthModal('signin');
+      }
+    });
+  }
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', () => {
+    if (avatarDropdown) avatarDropdown.classList.remove('active');
+  });
+
+  // Handle Sign Out
+  if (btnSignout) {
+    btnSignout.addEventListener('click', async () => {
+      const { error } = await supabase.auth.signOut();
+      if (error) alert(error.message);
+    });
   }
 
   function completeLogin(avatarOrText) {
@@ -34,7 +87,7 @@ export function initAuth() {
     closeAuthModal();
     if (navAvatar) {
       navAvatar.style.background = 'var(--sage)';
-      navAvatar.title = 'Profile';
+      navAvatar.title = 'Profile (Click to Sign Out)';
       navAvatar.textContent = avatarOrText;
     }
     if (navGetStarted) {
@@ -48,17 +101,6 @@ export function initAuth() {
     window.showAuthModal();
     if (authStep1) authStep1.style.display = 'none';
     if (authStep2) authStep2.style.display = 'block';
-    if (authCodeMessage) authCodeMessage.textContent = "Please complete your profile to continue.";
-    const authCodeInput = document.getElementById('auth-code');
-    if (authCodeInput) {
-      authCodeInput.required = false;
-      authCodeInput.parentElement.style.display = 'none';
-    }
-    const authPasswordInput = document.getElementById('auth-password');
-    if (authPasswordInput) {
-      authPasswordInput.required = false;
-      authPasswordInput.parentElement.style.display = 'none';
-    }
   }
 
   if (authCloseBtn) authCloseBtn.addEventListener('click', closeAuthModal);
@@ -71,14 +113,18 @@ export function initAuth() {
   const triggerAuth = (e) => {
     if (!store.isLoggedIn) {
       e.preventDefault();
-      window.showAuthModal();
+      window.showAuthModal('signup');
     }
   };
 
-  if (navAvatar) navAvatar.addEventListener('click', triggerAuth);
   if (navGetStarted) navGetStarted.addEventListener('click', triggerAuth);
   if (ctaSignup) ctaSignup.addEventListener('click', triggerAuth);
-  if (ctaSignin) ctaSignin.addEventListener('click', triggerAuth);
+  if (ctaSignin) ctaSignin.addEventListener('click', (e) => {
+    if (!store.isLoggedIn) {
+      e.preventDefault();
+      window.showAuthModal('signin');
+    }
+  });
 
   if (btnGoogleAuth) {
     btnGoogleAuth.addEventListener('click', async () => {
@@ -94,18 +140,19 @@ export function initAuth() {
     });
   }
 
-  if (authFormStep1) {
-    authFormStep1.addEventListener('submit', async (e) => {
+  // Handle Sign In submission
+  if (authFormSignin) {
+    authFormSignin.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const email = authEmailInput ? authEmailInput.value : '';
-      if (!email) return;
+      const email = document.getElementById('signin-email').value;
+      const password = document.getElementById('signin-password').value;
       
-      const submitBtn = authFormStep1.querySelector('button[type="submit"]');
+      const submitBtn = authFormSignin.querySelector('button[type="submit"]');
       const originalText = submitBtn.textContent;
-      submitBtn.textContent = 'Sending...';
+      submitBtn.textContent = 'Signing In...';
       submitBtn.disabled = true;
 
-      const { error } = await supabase.auth.signInWithOtp({ email });
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
       submitBtn.textContent = originalText;
       submitBtn.disabled = false;
@@ -114,9 +161,55 @@ export function initAuth() {
         alert(error.message);
         return;
       }
-      if (authStep1) authStep1.style.display = 'none';
-      if (authStep2) authStep2.style.display = 'block';
-      if (authCodeMessage) authCodeMessage.textContent = `We sent a code to ${email}.`;
+
+      store.currentUser = data.user;
+      // Fetch or setup profile
+      const { data: profile } = await supabase.from('profiles').select('username, avatar').eq('id', data.user.id).single();
+      if (profile && profile.avatar) {
+        localStorage.setItem('betterreads_user_profile', JSON.stringify({
+          username: profile.username || 'you.reading',
+          avatar: profile.avatar
+        }));
+        completeLogin(profile.avatar);
+      } else {
+        // If logged in but no profile, complete profile
+        showProfileCompletionStep();
+      }
+    });
+  }
+
+  // Handle Sign Up submission
+  if (authFormSignup) {
+    authFormSignup.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('signup-email').value;
+      const password = document.getElementById('signup-password').value;
+
+      const submitBtn = authFormSignup.querySelector('button[type="submit"]');
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = 'Registering...';
+      submitBtn.disabled = true;
+
+      const { data, error } = await supabase.auth.signUp({ email, password });
+
+      submitBtn.textContent = originalText;
+      submitBtn.disabled = false;
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      // Automatically log them in, or prompt if auto-login is disabled.
+      if (data.user) {
+        store.currentUser = data.user;
+        // Go to Step 2
+        if (authStep1) authStep1.style.display = 'none';
+        if (authStep2) authStep2.style.display = 'block';
+        isOAuthProfileCompletion = false;
+      } else {
+        alert('Please check your email to confirm your registration.');
+      }
     });
   }
 
@@ -141,33 +234,39 @@ export function initAuth() {
       const username = document.getElementById('auth-username').value;
       const submitBtn = authFormStep2.querySelector('button[type="submit"]');
       const originalText = submitBtn.textContent;
-      submitBtn.textContent = 'Verifying...';
+      submitBtn.textContent = 'Saving Profile...';
       submitBtn.disabled = true;
 
-      if (!isOAuthProfileCompletion) {
-        const email = authEmailInput.value;
-        const code = document.getElementById('auth-code').value;
-        const password = document.getElementById('auth-password').value;
-
-        const { data, error } = await supabase.auth.verifyOtp({ email, token: code, type: 'email' });
-        if (error) {
-          alert(error.message);
-          submitBtn.textContent = originalText;
-          submitBtn.disabled = false;
-          return;
-        }
-        store.currentUser = data.user;
-        if (password) await supabase.auth.updateUser({ password });
-      } else {
+      // Verify session exists
+      if (!store.currentUser) {
         const { data: { session } } = await supabase.auth.getSession();
         if (session) store.currentUser = session.user;
       }
 
-      await supabase.from('profiles').upsert({
+      if (!store.currentUser) {
+        alert('No user session found. Please sign up or sign in again.');
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        return;
+      }
+
+      const { error } = await supabase.from('profiles').upsert({
         id: store.currentUser.id,
         username: username,
         avatar: selectedAvatar
       });
+
+      if (error) {
+        alert('Error saving profile: ' + error.message);
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        return;
+      }
+
+      localStorage.setItem('betterreads_user_profile', JSON.stringify({
+        username: username,
+        avatar: selectedAvatar
+      }));
 
       submitBtn.textContent = originalText;
       submitBtn.disabled = false;
@@ -180,9 +279,15 @@ export function initAuth() {
     if (session) {
       store.isLoggedIn = true;
       store.currentUser = session.user;
-      supabase.from('profiles').select('avatar').eq('id', store.currentUser.id).single()
+      supabase.from('profiles').select('username, avatar').eq('id', store.currentUser.id).single()
         .then(({ data: profile }) => {
-          if (profile && profile.avatar) completeLogin(profile.avatar);
+          if (profile && profile.avatar) {
+            localStorage.setItem('betterreads_user_profile', JSON.stringify({
+              username: profile.username || 'you.reading',
+              avatar: profile.avatar
+            }));
+            completeLogin(profile.avatar);
+          }
           else showProfileCompletionStep();
         });
     } else {

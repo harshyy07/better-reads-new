@@ -50,6 +50,8 @@ export function initRouter() {
         renderBookDetails(bookIdToRender);
       } else if (targetPageId === 'page-stats') {
         if (typeof renderReadingStats === 'function') renderReadingStats();
+      } else if (targetPageId === 'page-discourse') {
+        document.dispatchEvent(new Event('betterreads-discourse-opened'));
       }
     }
 

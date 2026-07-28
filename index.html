@@ -30,7 +30,12 @@
       </ul>
       <div class="nav-cta">
         <a href="#cta" class="btn btn-primary" id="nav-get-started">Get Started</a>
-        <div class="nav-avatar" id="nav-avatar" title="Sign in">🌸</div>
+        <div class="nav-avatar-wrapper">
+          <div class="nav-avatar" id="nav-avatar" title="Sign in">🌸</div>
+          <div class="avatar-dropdown" id="avatar-dropdown">
+            <button class="avatar-dropdown-item" id="btn-signout">Sign Out</button>
+          </div>
+        </div>
       </div>
       <div class="nav-hamburger" id="nav-hamburger" aria-label="Open menu">
         <span></span><span></span><span></span>
@@ -250,17 +255,17 @@
       <!-- Interactive Room Hotspots (moved outside library-bg for z-index) -->
       <div class="library-hotspots" style="position: absolute; inset: 0; z-index: 10; pointer-events: none;">
         <button class="room-hotspot hotspot-tbr" data-shelf="tbr" title="Click to view To-Be-Read shelf"
-          style="position: absolute; top: 25%; left: 68%; background: none; border: none; padding: 0; box-shadow: none; transition: transform 0.2s; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); cursor: pointer; pointer-events: auto;"
+          style="position: absolute; top: 21%; left: 51%; background: none; border: none; padding: 0; box-shadow: none; transition: transform 0.2s; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); cursor: pointer; pointer-events: auto;"
           onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
           <img src="assets/btn_tbr.png" alt="TBR Bookshelf" style="height: 60px; object-fit: contain;">
         </button>
         <button class="room-hotspot hotspot-reading" data-shelf="reading" title="Click to view Currently Reading shelf"
-          style="position: absolute; top: 62%; left: 38%; background: none; border: none; padding: 0; box-shadow: none; transition: transform 0.2s; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); cursor: pointer; pointer-events: auto;"
+          style="position: absolute; top: 57%; left: 23%; background: none; border: none; padding: 0; box-shadow: none; transition: transform 0.2s; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); cursor: pointer; pointer-events: auto;"
           onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
           <img src="assets/btn_read.png" alt="Reading Chair" style="height: 60px; object-fit: contain;">
         </button>
         <button class="room-hotspot hotspot-dnf" data-shelf="dnf" title="Click to view Did-Not-Finish shelf"
-          style="position: absolute; top: 65%; right: 15%; background: none; border: none; padding: 0; box-shadow: none; transition: transform 0.2s; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); cursor: pointer; pointer-events: auto;"
+          style="position: absolute; top: 67%; left: 74%; background: none; border: none; padding: 0; box-shadow: none; transition: transform 0.2s; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); cursor: pointer; pointer-events: auto;"
           onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
           <img src="assets/btn_dnf.png" alt="DNF Cabinet" style="height: 60px; object-fit: contain;">
         </button>
@@ -271,24 +276,12 @@
         <div class="container">
           <div class="library-header reveal">
             <div class="section-label">My Library</div>
-            <h2>Your books, beautifully <em>at home</em></h2>
-            <p>Drag books between shelves, track your reading progress, and let the fireplace glow while Spotify plays
-              in the corner.</p>
           </div>
 
           <div class="library-main">
             <!-- Shelf Panel (Left Column) -->
             <!-- Left Column removed as requested -->
             <div class="library-info-placeholder">
-              <div class="hero-floating-card card-streak"
-                style="position: relative; top: auto; right: auto; animation: none; max-width: 320px; display: inline-flex; margin-top: 1rem;">
-                <div class="fc-icon">🔥</div>
-                <div>
-                  <div class="fc-label">Reading streak</div>
-                  <div class="fc-value">12 days</div>
-                  <div class="fc-stars mono" style="font-size:0.7rem; color: var(--ink-light);">Keep it up!</div>
-                </div>
-              </div>
             </div>
 
             <!-- Spotify Widget (Right Column) -->
@@ -511,52 +504,96 @@
           <button class="btn btn-secondary" id="btn-tab-clubs">Book Clubs</button>
         </div>
 
-        <!-- THREADS VIEW -->
-        <div id="view-threads">
-          <div class="create-post-card reveal"
-            style="background: white; padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);">
-            <h3 style="margin-top: 0; margin-bottom: 1rem; font-size: 1.1rem;">Create a New Thread</h3>
-            <input type="text" id="new-thread-title" placeholder="Thread Title..."
-              style="width: 100%; padding: 0.75rem; border: 1px solid #eee; border-radius: 8px; margin-bottom: 0.5rem; font-family: 'Inter', sans-serif;">
-            <textarea id="new-thread-content" placeholder="Share your thoughts, theories, or questions..." rows="3"
-              style="width: 100%; padding: 0.75rem; border: 1px solid #eee; border-radius: 8px; margin-bottom: 1rem; font-family: 'Inter', sans-serif; resize: vertical;"></textarea>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <select id="new-thread-tag"
-                style="padding: 0.5rem; border: 1px solid #eee; border-radius: 8px; font-family: 'Inter', sans-serif; color: var(--ink);">
-                <option value="Discussion">Discussion</option>
-                <option value="Spoilers ⚠️">Spoilers</option>
-                <option value="Theory">Theory</option>
-                <option value="Recommendation">Recommendation</option>
-              </select>
-              <button class="btn btn-primary" id="btn-create-thread" style="padding: 0.5rem 1.5rem;">Post
-                Thread</button>
+        <div class="discourse-layout">
+          <!-- Main Content (Left Column) -->
+          <div class="discourse-main">
+            <!-- THREADS VIEW -->
+            <div id="view-threads">
+              <div class="create-post-card reveal"
+                style="background: white; padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);">
+                <h3 style="margin-top: 0; margin-bottom: 1rem; font-size: 1.1rem;">Create a New Thread</h3>
+                <input type="text" id="new-thread-title" placeholder="Thread Title..."
+                  style="width: 100%; padding: 0.75rem; border: 1px solid #eee; border-radius: 8px; margin-bottom: 0.5rem; font-family: 'Inter', sans-serif;">
+                <textarea id="new-thread-content" placeholder="Share your thoughts, theories, or questions..." rows="3"
+                  style="width: 100%; padding: 0.75rem; border: 1px solid #eee; border-radius: 8px; margin-bottom: 1rem; font-family: 'Inter', sans-serif; resize: vertical;"></textarea>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <select id="new-thread-tag"
+                    style="padding: 0.5rem; border: 1px solid #eee; border-radius: 8px; font-family: 'Inter', sans-serif; color: var(--ink);">
+                    <option value="Discussion">Discussion</option>
+                    <option value="Spoilers ⚠️">Spoilers</option>
+                    <option value="Theory">Theory</option>
+                    <option value="Recommendation">Recommendation</option>
+                  </select>
+                  <button class="btn btn-primary" id="btn-create-thread" style="padding: 0.5rem 1.5rem;">Post
+                    Thread</button>
+                </div>
+              </div>
+
+              <div class="discourse-grid" id="discourse-grid">
+                <!-- Threads populated by JS -->
+              </div>
+            </div>
+
+            <!-- CLUBS VIEW -->
+            <div id="view-clubs" style="display: none;">
+              <div class="create-post-card reveal"
+                style="background: white; padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);">
+                <h3 style="margin-top: 0; margin-bottom: 1rem; font-size: 1.1rem;">Start a Book Club</h3>
+                <input type="text" id="new-club-name" placeholder="Club Name (e.g. The Midnight Readers)..."
+                  style="width: 100%; padding: 0.75rem; border: 1px solid #eee; border-radius: 8px; margin-bottom: 0.5rem; font-family: 'Inter', sans-serif;">
+                <textarea id="new-club-desc" placeholder="What is this club about? What are you reading?" rows="2"
+                  style="width: 100%; padding: 0.75rem; border: 1px solid #eee; border-radius: 8px; margin-bottom: 1rem; font-family: 'Inter', sans-serif; resize: vertical;"></textarea>
+                <div style="display: flex; justify-content: flex-end;">
+                  <button class="btn btn-secondary" id="btn-create-club"
+                    style="padding: 0.5rem 1.5rem; background: var(--sage); color: #2d5a2d; border: none;">Create
+                    Club</button>
+                </div>
+              </div>
+
+              <div class="discourse-grid" id="clubs-grid">
+                <!-- Clubs populated by JS -->
+              </div>
             </div>
           </div>
 
-          <div class="discourse-grid" id="discourse-grid">
-            <!-- Threads populated by JS -->
-          </div>
-        </div>
-
-        <!-- CLUBS VIEW -->
-        <div id="view-clubs" style="display: none;">
-          <div class="create-post-card reveal"
-            style="background: white; padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);">
-            <h3 style="margin-top: 0; margin-bottom: 1rem; font-size: 1.1rem;">Start a Book Club</h3>
-            <input type="text" id="new-club-name" placeholder="Club Name (e.g. The Midnight Readers)..."
-              style="width: 100%; padding: 0.75rem; border: 1px solid #eee; border-radius: 8px; margin-bottom: 0.5rem; font-family: 'Inter', sans-serif;">
-            <textarea id="new-club-desc" placeholder="What is this club about? What are you reading?" rows="2"
-              style="width: 100%; padding: 0.75rem; border: 1px solid #eee; border-radius: 8px; margin-bottom: 1rem; font-family: 'Inter', sans-serif; resize: vertical;"></textarea>
-            <div style="display: flex; justify-content: flex-end;">
-              <button class="btn btn-secondary" id="btn-create-club"
-                style="padding: 0.5rem 1.5rem; background: var(--sage); color: #2d5a2d; border: none;">Create
-                Club</button>
+          <!-- Sidebar Area (Right Column) -->
+          <aside class="discourse-sidebar reveal">
+            <!-- COZY POLL WIDGET -->
+            <div class="sidebar-widget cozy-poll">
+              <h3 class="widget-title">Weekly Cozy Poll 🍵</h3>
+              <p class="poll-question">What is your favourite reading beverage?</p>
+              <div class="poll-options" id="poll-options-container">
+                <button class="poll-option-btn" data-val="tea">
+                  <span class="option-text">🍵 Lavender Chamomile Tea</span>
+                  <div class="poll-progress-bg"><div class="poll-progress-fill" style="width: 0%;"></div></div>
+                  <span class="poll-pct"></span>
+                </button>
+                <button class="poll-option-btn" data-val="coffee">
+                  <span class="option-text">☕ Creamy Lofi Latte</span>
+                  <div class="poll-progress-bg"><div class="poll-progress-fill" style="width: 0%;"></div></div>
+                  <span class="poll-pct"></span>
+                </button>
+                <button class="poll-option-btn" data-val="cocoa">
+                  <span class="option-text">🍫 Cinnamon Hot Cocoa</span>
+                  <div class="poll-progress-bg"><div class="poll-progress-fill" style="width: 0%;"></div></div>
+                  <span class="poll-pct"></span>
+                </button>
+                <button class="poll-option-btn" data-val="cider">
+                  <span class="option-text">🍎 Spiced Apple Cider</span>
+                  <div class="poll-progress-bg"><div class="poll-progress-fill" style="width: 0%;"></div></div>
+                  <span class="poll-pct"></span>
+                </button>
+              </div>
             </div>
-          </div>
 
-          <div class="discourse-grid" id="clubs-grid">
-            <!-- Clubs populated by JS -->
-          </div>
+            <!-- LIVE ACTIVITY FEED -->
+            <div class="sidebar-widget live-activity">
+              <h3 class="widget-title">Nook Activity Feed 🍃</h3>
+              <div class="activity-feed-list" id="activity-feed-list">
+                <!-- Dynamically Populated -->
+              </div>
+            </div>
+          </aside>
         </div>
       </div>
     </section>
@@ -829,12 +866,17 @@
     <div class="auth-modal-content">
       <button class="auth-close-btn" id="auth-close-btn" aria-label="Close modal">✕</button>
 
-      <!-- STEP 1: Email & Google -->
+      <!-- STEP 1: Credentials / Tab Selection -->
       <div id="auth-step-1" class="auth-step active">
         <div class="auth-modal-header">
           <div class="auth-modal-icon">📚</div>
           <h3 class="auth-modal-title">Welcome to BetterReads</h3>
           <p class="auth-modal-subtitle">Your cozy corner awaits. Sign in to track, review, and discover.</p>
+        </div>
+
+        <div class="auth-tabs">
+          <div class="auth-tab active" id="tab-signin" data-tab="signin">Sign In</div>
+          <div class="auth-tab" id="tab-signup" data-tab="signup">Sign Up</div>
         </div>
 
         <div class="auth-social-buttons">
@@ -861,32 +903,41 @@
           <span>or</span>
         </div>
 
-        <form id="auth-form-step1" class="auth-form">
+        <!-- Form 1: Sign In -->
+        <form id="auth-form-signin" class="auth-form">
           <div class="auth-form-group">
-            <label for="auth-email">Email Address</label>
-            <input type="email" id="auth-email" placeholder="reader@example.com" required>
+            <label for="signin-email">Email Address</label>
+            <input type="email" id="signin-email" placeholder="reader@example.com" required>
           </div>
-          <button type="submit" class="btn btn-primary auth-submit-btn">Send Verification Code ✦</button>
+          <div class="auth-form-group">
+            <label for="signin-password">Password</label>
+            <input type="password" id="signin-password" placeholder="••••••••" required>
+          </div>
+          <button type="submit" class="btn btn-primary auth-submit-btn">Sign In ✦</button>
+        </form>
+
+        <!-- Form 2: Sign Up -->
+        <form id="auth-form-signup" class="auth-form" style="display: none;">
+          <div class="auth-form-group">
+            <label for="signup-email">Email Address</label>
+            <input type="email" id="signup-email" placeholder="reader@example.com" required>
+          </div>
+          <div class="auth-form-group">
+            <label for="signup-password">Password</label>
+            <input type="password" id="signup-password" placeholder="••••••••" required>
+          </div>
+          <button type="submit" class="btn btn-primary auth-submit-btn">Continue to Profile ✦</button>
         </form>
       </div>
 
-      <!-- STEP 2: Verification & Profile -->
+      <!-- STEP 2: Profile Details -->
       <div id="auth-step-2" class="auth-step" style="display: none;">
         <div class="auth-modal-header" style="margin-bottom: 1.5rem;">
-          <h3 class="auth-modal-title" style="font-size: 1.4rem;">Verify & Complete</h3>
-          <p class="auth-modal-subtitle" id="auth-code-message" style="font-size: 0.85rem;">We sent a code to your
-            email.</p>
+          <h3 class="auth-modal-title" style="font-size: 1.4rem;">Cozy Profile Setup</h3>
+          <p class="auth-modal-subtitle" id="auth-code-message" style="font-size: 0.85rem;">Let's customize your reading profile.</p>
         </div>
 
         <form id="auth-form-step2" class="auth-form">
-          <div class="auth-form-group">
-            <label for="auth-code">Verification Code</label>
-            <input type="text" id="auth-code" placeholder="123456" pattern="[0-9]{6}" required>
-          </div>
-          <div class="auth-form-group">
-            <label for="auth-password">Create Password</label>
-            <input type="password" id="auth-password" placeholder="••••••••" required>
-          </div>
           <div class="auth-form-group">
             <label for="auth-username">Username</label>
             <input type="text" id="auth-username" placeholder="cozyreader99" required>
@@ -907,7 +958,19 @@
         </form>
         <button type="button" class="btn btn-secondary auth-social-btn" id="btn-back-step1"
           style="margin-top: 0.75rem; border: none; box-shadow: none; font-size: 0.8rem; background: transparent;">←
-          Back to Email</button>
+          Back</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       THREAD REPLY MODAL
+       ======================================================== -->
+  <div class="reply-modal-overlay" id="reply-modal">
+    <div class="reply-modal-content">
+      <button class="reply-close-btn" id="reply-close-btn" aria-label="Close">×</button>
+      <div id="reply-modal-body">
+        <!-- Dynamically populated thread detail + comments list + reply form -->
       </div>
     </div>
   </div>

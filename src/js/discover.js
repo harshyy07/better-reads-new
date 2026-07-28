@@ -1,240 +1,521 @@
-     15. DISCOVER SEARCH & RENDERING (Vast Selection)
-     ────────────────────────────────────────────────────────── */
-  const discoverSearchInput = document.getElementById('discover-search');
-  const discoverGrid = document.getElementById('discover-books-grid');
+import { escapeHTML } from './ui.js';
+import { store } from './store.js';
 
-  // Create an invisible scroll trigger at the bottom of the grid
-  const scrollTrigger = document.createElement('div');
-  scrollTrigger.id = 'discover-scroll-trigger';
-  scrollTrigger.style.height = '1px';
-  scrollTrigger.style.width = '100%';
-  scrollTrigger.style.marginTop = '2rem';
-  if (discoverGrid && discoverGrid.parentNode) {
-    discoverGrid.parentNode.insertBefore(scrollTrigger, discoverGrid.nextSibling);
+/* ──────────────────────────────────────────────────────────
+   COMMUNITY DISCOURSE & BOOK CLUBS INTERACTIVE PAGE
+   ────────────────────────────────────────────────────────── */
+
+const DISCOURSE_DB_KEY = 'betterreads_discourse';
+const CLUBS_DB_KEY = 'betterreads_clubs';
+const POLL_VOTES_KEY = 'betterreads_poll_votes';
+
+const defaultThreads = [
+  {
+    id: 't1',
+    user: 'luna.reads',
+    avatar: '🌙',
+    color: 'var(--lavender)',
+    time: '2 hours ago',
+    tag: 'Fantasy',
+    title: 'The ending of Piranesi had me SOBBING — anyone else?',
+    preview: 'Okay so I just finished and the moment he realises who he really is absolutely destroyed me...',
+    likes: 142,
+    replies: 3,
+    repliesList: [
+      { user: 'readergirl', avatar: '📚', color: 'var(--blush)', time: '1 hour ago', content: 'Yes! The transition from the labyrinth to the real world was so melancholic.' },
+      { user: 'lofi_study', avatar: '☕', color: 'var(--peach)', time: '45 mins ago', content: 'I have read it three times now. The House is beautiful and kind.' },
+      { user: 'flora.books', avatar: '🌿', color: 'var(--sage)', time: '10 mins ago', content: 'I wish I could live in that library room honestly.' }
+    ]
+  },
+  {
+    id: 't2',
+    user: 'bookish.flora',
+    avatar: '☀️',
+    color: 'var(--peach)',
+    time: '5 hours ago',
+    tag: 'AMA',
+    title: '📅 June Book Club — Voting is OPEN!',
+    preview: 'The shortlist for June community pick is here! We have Intermezzo, James, and The Women...',
+    likes: 287,
+    replies: 2,
+    repliesList: [
+      { user: 'thrillerfan', avatar: '🕵️', color: 'var(--sage)', time: '4 hours ago', content: 'Voted for Intermezzo! Sally Rooney is amazing.' },
+      { user: 'clover_reads', avatar: '☘️', color: 'var(--lavender)', time: '3 hours ago', content: 'Hoping James wins, Everett is such an incredible writer.' }
+    ]
+  },
+  {
+    id: 't3',
+    user: 'verified ✦ Olivie Blake',
+    avatar: '🌿',
+    color: 'var(--sage)',
+    time: 'Yesterday',
+    tag: 'Author',
+    title: "I'm Olivie Blake — AMA about The Atlas Six",
+    preview: 'Hi everyone! So excited to be here on BetterReads. I\'ll be answering questions for the next 2 hours...',
+    likes: 1205,
+    replies: 1,
+    repliesList: [
+      { user: 'atlas_stan', avatar: '🔮', color: 'var(--blush)', time: 'Yesterday', content: 'Is Libby going to get her own spin-off or is the trilogy the absolute end of this world?' }
+    ]
+  },
+  {
+    id: 't4',
+    user: 'readingwithrose',
+    avatar: '🌸',
+    color: 'var(--blush)',
+    time: '3 days ago',
+    tag: 'Challenge',
+    title: '✅ Challenge complete! DNF\'d a book guilt-free',
+    preview: 'I\'ve been holding onto Moby-Dick for three years out of guilt. This month gave me permission to let it go.',
+    likes: 891,
+    replies: 2,
+    repliesList: [
+      { user: 'cozy_nook', avatar: '🍂', color: 'var(--peach)', time: '2 days ago', content: 'Good for you! Life is too short to read books we do not enjoy.' },
+      { user: 'ishmael', avatar: '🐳', color: 'var(--sage)', time: '1 day ago', content: 'Haha, as a Moby-Dick lover, I understand! It is a heavy journey.' }
+    ]
   }
+];
 
-  let searchTimeout = null;
-  let discoverStartIndex = 0;
-  let currentDiscoverIds = [];
+const defaultClubs = [
+  { id: 'c1', name: 'The Midnight Readers', desc: 'A cozy club for fantasy lovers. Currently reading: The Atlas Six.', members: 420 },
+  { id: 'c2', name: 'Non-Fiction November', desc: 'We read one non-fiction book every month and discuss our learnings.', members: 156 },
+  { id: 'c3', name: 'Romance & Roses', desc: 'Swoon-worthy romance books only! Join us for weekly deep dives.', members: 890 }
+];
 
-  async function performDiscoverFetch(isLoadMore = false) {
-    if (!discoverGrid) return;
+const defaultPollVotes = {
+  tea: 84,
+  coffee: 112,
+  cocoa: 67,
+  cider: 38
+};
 
-    if (!isLoadMore) {
-      discoverStartIndex = 0;
-      currentDiscoverIds = [];
-      discoverGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--ink-light); padding: 2rem;">Fetching books from the universe... 🌌</div>';
-      scrollTrigger.style.display = 'none';
-    } else {
-      discoverStartIndex += 10;
-    }
+const activityTemplates = [
+  { text: "<strong>{user}</strong> completed reading <em>{book}</em>! 📚", icon: "🎉" },
+  { text: "<strong>{user}</strong> added <em>{book}</em> to their TBR shelf. 📌", icon: "🍃" },
+  { text: "<strong>{user}</strong> rated <em>{book}</em> <strong>{rating}★</strong>. ⭐", icon: "✨" },
+  { text: "<strong>{user}</strong> joined the book club <strong>{club}</strong>. 🍵", icon: "🤝" },
+  { text: "<strong>{user}</strong> started a discussion on <em>{book}</em>. 💬", icon: "💭" }
+];
 
-    let newIds = [];
-    if (discoverSearchQuery) {
-      newIds = await fetchAndCacheBooks([discoverSearchQuery], discoverStartIndex, false);
-    } else if (activeDiscoverGenre || activeDiscoverMood) {
-      const qParts = [];
-      if (activeDiscoverGenre) qParts.push(activeDiscoverGenre);
-      if (activeDiscoverMood) qParts.push(activeDiscoverMood);
-      
-      if (activeDiscoverMood) {
-        newIds = await fetchAndCacheBooks([qParts.join(' ')], discoverStartIndex, false);
-      } else {
-        newIds = await fetchAndCacheBooks([activeDiscoverGenre], discoverStartIndex, true);
+const mockUsers = [
+  "luna.reads", "bookish.flora", "readingwithrose", "lofi_study",
+  "cozy_nook", "huckleberry", "alice_in_books", "shelf_helper",
+  "pixel_reader", "chrysanthemum", "tea_and_tales", "moss_gatherer"
+];
+
+const mockBooks = [
+  "Piranesi", "The Atlas Six", "Intermezzo", "Moby-Dick",
+  "A Court of Thorns and Roses", "Normal People", "The Hobbit",
+  "The Night Circus", "Book Lovers", "Tomorrow, and Tomorrow, and Tomorrow"
+];
+
+const mockClubs = [
+  "The Midnight Readers", "Non-Fiction November", "Romance & Roses", "Cottagecore Bookworms"
+];
+
+let activities = [];
+
+function initDiscourseDB() {
+  let threads = localStorage.getItem(DISCOURSE_DB_KEY);
+  if (threads) {
+    try {
+      const parsed = JSON.parse(threads);
+      if (parsed.length > 0 && !parsed[0].repliesList) {
+        localStorage.removeItem(DISCOURSE_DB_KEY);
       }
-    } else {
-      // Default state: just show some books from DB or fallback
-      const db = getDB();
-      newIds = Object.keys(db.books).slice(0, 10);
+    } catch (e) {
+      localStorage.removeItem(DISCOURSE_DB_KEY);
     }
+  }
+  if (!localStorage.getItem(DISCOURSE_DB_KEY)) {
+    localStorage.setItem(DISCOURSE_DB_KEY, JSON.stringify(defaultThreads));
+  }
+  if (!localStorage.getItem(CLUBS_DB_KEY)) {
+    localStorage.setItem(CLUBS_DB_KEY, JSON.stringify(defaultClubs));
+  }
+}
 
-    // Filter out books we already have in the current view to avoid duplicates
-    let uniqueNewIds = isLoadMore ? newIds.filter(id => !currentDiscoverIds.includes(id)) : newIds;
-    currentDiscoverIds = isLoadMore ? currentDiscoverIds.concat(uniqueNewIds) : uniqueNewIds;
+function getDiscourse() { return JSON.parse(localStorage.getItem(DISCOURSE_DB_KEY)); }
+function saveDiscourse(data) { localStorage.setItem(DISCOURSE_DB_KEY, JSON.stringify(data)); }
 
-    if (currentDiscoverIds.length === 0) {
-      discoverGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--ink-light); padding: 2rem;">No books found. Try searching for something else!</div>`;
-      scrollTrigger.style.display = 'none';
-      return;
-    }
+function getClubs() { return JSON.parse(localStorage.getItem(CLUBS_DB_KEY)); }
+function saveClubs(data) { localStorage.setItem(CLUBS_DB_KEY, JSON.stringify(data)); }
 
-    if (!isLoadMore) {
-      discoverGrid.innerHTML = '';
-    }
+function getPollVotes() {
+  const data = localStorage.getItem(POLL_VOTES_KEY);
+  if (data) {
+    try { return JSON.parse(data); } catch(e) {}
+  }
+  return defaultPollVotes;
+}
+function savePollVotes(votes) { localStorage.setItem(POLL_VOTES_KEY, JSON.stringify(votes)); }
 
-    const db = getDB();
-    // Render only the newly fetched unique books to append them
-    uniqueNewIds.forEach(id => {
-      const book = db.books[id];
-      if (!book) return;
+/* ──────────────────────────────────────────────────────────
+   FLOATING HEART INTERACTION
+   ────────────────────────────────────────────────────────── */
+function spawnHeart(e) {
+  const heart = document.createElement('div');
+  heart.className = 'floating-heart';
+  heart.textContent = '❤️';
+  const x = e.clientX || e.pageX;
+  const y = e.clientY || e.pageY;
+  
+  heart.style.left = `${x}px`;
+  heart.style.top = `${y}px`;
+  document.body.appendChild(heart);
+  
+  setTimeout(() => { heart.remove(); }, 800);
+}
 
-      const card = document.createElement('div');
-      card.className = 'discover-book-card';
+/* ──────────────────────────────────────────────────────────
+   COMMUNITY RENDERING
+   ────────────────────────────────────────────────────────── */
+export function renderDiscourse() {
+  const grid = document.getElementById('discourse-grid');
+  if (!grid) return;
+  const threads = getDiscourse();
+  grid.innerHTML = '';
 
-      let coverStyle = `background: ${getGradientFromString(book.title)}`;
-      let coverContent = book.title.charAt(0);
-      if (book.thumbnail) {
-        coverStyle = `background: url('${book.thumbnail}') center/cover;`;
-        coverContent = '';
-      }
-
-      // Check if already in TBR
-      const inTbr = db.shelves.tbr.includes(book.id);
-      const btnText = inTbr ? 'In TBR' : '+ TBR';
-      const btnStyle = inTbr ? 'background: var(--sage); color: #2d5a2d;' : '';
-
-      // First category badge
-      const cat = book.categories && book.categories.length > 0 ? book.categories[0] : (activeDiscoverGenre || 'Fiction');
-
-      card.innerHTML = `
-        <div class="dbc-cover" style="${coverStyle}">
-          ${coverContent}
-          <button class="dbc-shelf-btn" data-book-id="${book.id}" style="${btnStyle}">${btnText}</button>
+  threads.forEach(t => {
+    const card = document.createElement('div');
+    card.className = 'thread-card reveal';
+    card.innerHTML = `
+      <div class="thread-header">
+        <div class="thread-avatar" style="background:${t.color}">${t.avatar}</div>
+        <div class="thread-meta">
+          <div class="thread-user">${t.user}</div>
+          <div class="thread-time">${t.time}</div>
         </div>
-        <div class="dbc-info">
-          <div class="dbc-title">${escapeHTML(book.title)}</div>
-          <div class="dbc-author">${escapeHTML(book.authors[0] || 'Unknown')}</div>
-          <div class="dbc-meta">
-            <span class="dbc-rating">★★★★☆ ${book.averageRating}</span>
-            <span class="badge badge-lavender dbc-genre-tag" style="text-transform: capitalize;">${escapeHTML(cat)}</span>
+        <div class="badge" style="background: ${t.color}; color: #333; opacity: 0.9;">${t.tag}</div>
+      </div>
+      <div class="thread-title">${t.title}</div>
+      <div class="thread-preview">${t.preview}</div>
+      <div class="thread-footer">
+        <div class="thread-stats">
+          <div class="thread-stat btn-like" data-id="${t.id}" style="cursor:pointer; transition:transform 0.2s;">❤️ <span>${t.likes}</span></div>
+          <div class="thread-stat btn-comment" data-id="${t.id}" style="cursor:pointer;">💬 <span>${t.replies} replies</span></div>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  // Attach card click triggers to open replies
+  grid.querySelectorAll('.thread-card').forEach(card => {
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.btn-like')) return;
+      const likeBtn = card.querySelector('.btn-like');
+      if (likeBtn) openReplyModal(likeBtn.dataset.id);
+    });
+  });
+
+  // Attach like listeners
+  grid.querySelectorAll('.btn-like').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      spawnHeart(e);
+      const id = btn.dataset.id;
+      const db = getDiscourse();
+      const thread = db.find(x => x.id === id);
+      if (thread) {
+        thread.likes += 1;
+        saveDiscourse(db);
+        btn.querySelector('span').textContent = thread.likes;
+        btn.style.transform = 'scale(1.3)';
+        setTimeout(() => btn.style.transform = 'scale(1)', 200);
+      }
+    });
+  });
+}
+
+export function renderClubs() {
+  const grid = document.getElementById('clubs-grid');
+  if (!grid) return;
+  const clubs = getClubs();
+  grid.innerHTML = '';
+
+  clubs.forEach(c => {
+    const joined = localStorage.getItem('joined_club_' + c.id);
+    const btnText = joined ? '✓ Joined 🍵' : 'Join Club';
+    const btnStyle = joined ? 'background: var(--sage); color: #2d5a2d; border: none;' : '';
+
+    const card = document.createElement('div');
+    card.className = 'thread-card reveal';
+    card.innerHTML = `
+      <div class="thread-header">
+        <div class="thread-avatar" style="background:var(--peach)">📚</div>
+        <div class="thread-meta">
+          <div class="thread-user" style="font-family:'Pixel Operator', monospace; font-size:1.1rem; font-weight:700;">${c.name}</div>
+          <div class="thread-time">${c.members} members</div>
+        </div>
+      </div>
+      <div class="thread-preview" style="margin-top: 0.25rem;">${c.desc}</div>
+      <div class="thread-footer" style="justify-content: flex-end; margin-top: 0.5rem;">
+        <button class="btn btn-secondary btn-join-club" data-id="${c.id}" style="${btnStyle} padding: 0.4rem 1.2rem; font-size: 0.8rem;">${btnText}</button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  grid.querySelectorAll('.btn-join-club').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const id = btn.dataset.id;
+      const isJoined = localStorage.getItem('joined_club_' + id);
+      const db = getClubs();
+      const club = db.find(x => x.id === id);
+
+      if (!isJoined) {
+        localStorage.setItem('joined_club_' + id, 'true');
+        if (club) { club.members += 1; saveClubs(db); }
+      } else {
+        localStorage.removeItem('joined_club_' + id);
+        if (club) { club.members -= 1; saveClubs(db); }
+      }
+      renderClubs();
+    });
+  });
+}
+
+/* ──────────────────────────────────────────────────────────
+   REPLY MODAL SYSTEM
+   ────────────────────────────────────────────────────────── */
+const replyModal = document.getElementById('reply-modal');
+const replyCloseBtn = document.getElementById('reply-close-btn');
+const replyModalBody = document.getElementById('reply-modal-body');
+
+export function openReplyModal(threadId) {
+  if (!replyModal || !replyModalBody) return;
+  const db = getDiscourse();
+  const thread = db.find(x => x.id === threadId);
+  if (!thread) return;
+
+  replyModal.classList.add('active');
+  renderReplyModalBody(thread);
+}
+
+function renderReplyModalBody(thread) {
+  if (!replyModalBody) return;
+  const replies = thread.repliesList || [];
+  
+  let repliesHTML = '';
+  if (replies.length === 0) {
+    repliesHTML = `<p style="text-align: center; color: var(--ink-light); font-size: 0.85rem; margin: 1.5rem 0;">No comments yet. Start the conversation! 🌿</p>`;
+  } else {
+    repliesHTML = replies.map(r => `
+      <div class="reply-comment-card">
+        <div class="thread-header" style="margin-bottom:0.4rem;">
+          <div class="thread-avatar" style="background:${r.color || 'var(--blush)'}">${r.avatar || '🍵'}</div>
+          <div class="thread-meta">
+            <div class="thread-user" style="font-size:0.8rem; font-weight:600;">${r.user}</div>
+            <div class="thread-time" style="font-size:0.65rem; color:var(--ink-light);">${r.time}</div>
           </div>
         </div>
-      `;
-
-      // Re-apply 3D tilt
-      card.addEventListener('mousemove', e => {
-        const rect = card.getBoundingClientRect();
-        const x = ((e.clientX - rect.left) / rect.width - 0.5) * 12;
-        const y = ((e.clientY - rect.top) / rect.height - 0.5) * 12;
-        card.style.transform = `translateY(-8px) rotateX(${-y}deg) rotateY(${x}deg)`;
-        card.style.transformStyle = 'preserve-3d';
-      });
-      card.addEventListener('mouseleave', () => {
-        card.style.transform = '';
-      });
-
-      card.addEventListener('click', (e) => {
-        if (e.target.closest('button')) return; // Ignore button clicks
-        window.location.hash = `#book-${book.id}`;
-      });
-
-      discoverGrid.appendChild(card);
-    });
-
-    attachShelfBtnListeners();
-    scrollTrigger.style.display = newIds.length < 10 ? 'none' : 'block';
+        <div class="reply-comment-content">${escapeHTML(r.content)}</div>
+      </div>
+    `).join('');
   }
 
-  // Event Listeners for Discover
-  if (discoverSearchInput) {
-    discoverSearchInput.addEventListener('input', (e) => {
-      const q = e.target.value.trim();
-      discoverSearchQuery = q;
-      if (q.length > 0) {
-        activeDiscoverGenre = ''; // Clear genre if searching
-        activeDiscoverMood = '';
+  replyModalBody.innerHTML = `
+    <div class="reply-original-thread">
+      <div class="thread-header" style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.65rem;">
+        <div class="thread-avatar" style="width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.9rem; flex-shrink:0; background:${thread.color}">${thread.avatar}</div>
+        <div class="thread-meta" style="flex:1;">
+          <div class="thread-user" style="font-size:0.82rem; font-weight:600; color:var(--ink);">${thread.user}</div>
+          <div class="thread-time" style="font-size:0.68rem; color:var(--ink-light);">${thread.time}</div>
+        </div>
+        <div class="badge" style="background: ${thread.color}; color: #333; opacity: 0.9;">${thread.tag}</div>
+      </div>
+      <div class="thread-title" style="font-family:'Pixel Operator', monospace; font-size: 1.25rem; margin: 0.5rem 0; font-weight:700; color:var(--ink);">${thread.title}</div>
+      <div class="thread-preview" style="font-size: 0.88rem; color: var(--ink-light); line-height:1.6; margin-bottom: 0;">${thread.preview}</div>
+    </div>
+
+    <div class="reply-section-title">Comments (${thread.replies})</div>
+    
+    <div class="reply-list">
+      ${repliesHTML}
+    </div>
+
+    <div class="reply-composer">
+      <h4 style="font-size: 0.85rem; margin-bottom: 0.25rem; font-weight:600; color:var(--ink);">Share a thought</h4>
+      <textarea id="reply-input-text" placeholder="Write your reply... Be cozy, be kind." rows="2"></textarea>
+      <div class="reply-composer-footer">
+        <button class="btn btn-primary" id="btn-submit-reply" style="padding: 0.4rem 1.2rem; font-size: 0.8rem; background:var(--dusty-rose); color:white; border-radius:100px;">Post Reply</button>
+      </div>
+    </div>
+  `;
+
+  // Attach post reply listener
+  const btnSubmitReply = document.getElementById('btn-submit-reply');
+  if (btnSubmitReply) {
+    btnSubmitReply.addEventListener('click', () => {
+      const textInput = document.getElementById('reply-input-text');
+      const text = textInput ? textInput.value.trim() : '';
+      if (!text) return;
+
+      // Get current profile
+      const userProfileStr = localStorage.getItem('betterreads_user_profile') || '{}';
+      let username = 'you.reading';
+      let avatar = '🌸';
+      let userColor = 'var(--blush)';
+      try {
+        const profile = JSON.parse(userProfileStr);
+        if (profile.username) username = profile.username;
+        if (profile.avatar) avatar = profile.avatar;
+      } catch (e) {}
+
+      const db = getDiscourse();
+      const targetThread = db.find(x => x.id === thread.id);
+      if (targetThread) {
+        if (!targetThread.repliesList) targetThread.repliesList = [];
+        targetThread.repliesList.push({
+          user: username,
+          avatar: avatar,
+          color: userColor,
+          time: 'Just now',
+          content: text
+        });
+        targetThread.replies += 1;
+        saveDiscourse(db);
+
+        if (textInput) textInput.value = '';
+
+        renderReplyModalBody(targetThread);
+        renderDiscourse();
       }
-
-      if (searchTimeout) clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(() => {
-        // Deselect genre pills visually
-        if (q.length > 0) {
-          document.querySelectorAll('.genre-pill').forEach(p => p.classList.remove('active'));
-        }
-        performDiscoverFetch();
-      }, 800);
     });
   }
+}
 
-  document.querySelectorAll('#genre-pills .genre-pill').forEach(pill => {
-    pill.addEventListener('click', () => {
-      discoverSearchQuery = '';
-      if (discoverSearchInput) discoverSearchInput.value = '';
+/* ──────────────────────────────────────────────────────────
+   POLL COMPONENT
+   ────────────────────────────────────────────────────────── */
+export function initPoll() {
+  const container = document.getElementById('poll-options-container');
+  if (!container) return;
 
-      if (activeDiscoverGenre === pill.dataset.genre) {
-        activeDiscoverGenre = '';
-        pill.classList.remove('active');
+  const votedVal = localStorage.getItem('betterreads_voted_option');
+  const votes = getPollVotes();
+  const totalVotes = Object.values(votes).reduce((a, b) => a + b, 0);
+
+  const buttons = container.querySelectorAll('.poll-option-btn');
+  buttons.forEach(btn => {
+    const val = btn.dataset.val;
+    const count = votes[val] || 0;
+    const pct = totalVotes > 0 ? Math.round((count / totalVotes) * 100) : 0;
+    
+    const fill = btn.querySelector('.poll-progress-fill');
+    const pctSpan = btn.querySelector('.poll-pct');
+    
+    if (votedVal) {
+      btn.disabled = true;
+      if (votedVal === val) {
+        btn.classList.add('selected');
       } else {
-        document.querySelectorAll('#genre-pills .genre-pill').forEach(p => p.classList.remove('active'));
-        pill.classList.add('active');
-        activeDiscoverGenre = pill.dataset.genre;
+        btn.classList.remove('selected');
       }
-      performDiscoverFetch();
-    });
-  });
-
-  document.querySelectorAll('#mood-pills .genre-pill').forEach(pill => {
-    pill.addEventListener('click', () => {
-      discoverSearchQuery = '';
-      if (discoverSearchInput) discoverSearchInput.value = '';
-
-      if (activeDiscoverMood === pill.dataset.mood) {
-        activeDiscoverMood = '';
-        pill.classList.remove('active');
-      } else {
-        document.querySelectorAll('#mood-pills .genre-pill').forEach(p => p.classList.remove('active'));
-        pill.classList.add('active');
-        activeDiscoverMood = pill.dataset.mood;
-      }
-      performDiscoverFetch();
-    });
-  });
-
-  // Setup infinite scroll observer
-  let isLoadingMore = false;
-  const discoverObserver = new IntersectionObserver((entries) => {
-    if (entries[0].isIntersecting && scrollTrigger.style.display === 'block' && !isLoadingMore) {
-      isLoadingMore = true;
-      performDiscoverFetch(true).finally(() => {
-        isLoadingMore = false;
+      if (fill) fill.style.width = `${pct}%`;
+      if (pctSpan) pctSpan.textContent = `${pct}%`;
+    } else {
+      btn.disabled = false;
+      btn.classList.remove('selected');
+      if (fill) fill.style.width = '0%';
+      if (pctSpan) pctSpan.textContent = '';
+      
+      // Clear old listeners by replacement
+      const newBtn = btn.cloneNode(true);
+      btn.parentNode.replaceChild(newBtn, btn);
+      
+      newBtn.addEventListener('click', () => {
+        localStorage.setItem('betterreads_voted_option', val);
+        const currentVotes = getPollVotes();
+        currentVotes[val] += 1;
+        savePollVotes(currentVotes);
+        initPoll();
       });
     }
-  }, { rootMargin: '400px' });
-
-  discoverObserver.observe(scrollTrigger);
-
-  // Render initial set of books
-  document.addEventListener('betterreads-db-ready', () => {
-    // Initial display will just be local fallbacks
-    performDiscoverFetch();
-    renderDiscourse();
-    renderClubs();
   });
+}
 
-  /* ──────────────────────────────────────────────────────────
-     16. INTERACTIVE DISCOURSE & BOOK CLUBS
-     ────────────────────────────────────────────────────────── */
-  const DISCOURSE_DB_KEY = 'betterreads_discourse';
-  const CLUBS_DB_KEY = 'betterreads_clubs';
+/* ──────────────────────────────────────────────────────────
+   LIVE ACTIVITY FEED COMPONENT
+   ────────────────────────────────────────────────────────── */
+function generateRandomActivity() {
+  const user = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+  const template = activityTemplates[Math.floor(Math.random() * activityTemplates.length)];
+  
+  const text = template.text
+    .replace('{user}', user)
+    .replace('{book}', mockBooks[Math.floor(Math.random() * mockBooks.length)])
+    .replace('{rating}', (Math.floor(Math.random() * 2) + 4) + (Math.random() > 0.5 ? '.5' : ''))
+    .replace('{club}', mockClubs[Math.floor(Math.random() * mockClubs.length)]);
+    
+  return {
+    id: 'act-' + Date.now(),
+    icon: template.icon,
+    text: text,
+    time: 'Just now'
+  };
+}
 
-  const defaultThreads = [
-    { id: 't1', user: 'luna.reads', avatar: '🌙', color: 'var(--lavender)', time: '2 hours ago', tag: 'Fantasy', title: 'The ending of Piranesi had me SOBBING — anyone else?', preview: 'Okay so I just finished and the moment he realises who he really is absolutely destroyed me...', likes: 142, replies: 38 },
-    { id: 't2', user: 'bookish.flora', avatar: '☀️', color: 'var(--peach)', time: '5 hours ago', tag: 'AMA', title: '📅 June Book Club — Voting is OPEN!', preview: 'The shortlist for June community pick is here! We have Intermezzo, James, and The Women...', likes: 287, replies: 119 },
-    { id: 't3', user: 'verified ✦ Olivie Blake', avatar: '🌿', color: 'var(--sage)', time: 'Yesterday', tag: 'Author', title: 'I\'m Olivie Blake — AMA about The Atlas Six', preview: 'Hi everyone! So excited to be here on BetterReads. I\'ll be answering questions for the next 2 hours...', likes: 1205, replies: 243 },
-    { id: 't4', user: 'readingwithrose', avatar: '🌸', color: 'var(--blush)', time: '3 days ago', tag: 'Challenge', title: '✅ Challenge complete! DNF\'d a book guilt-free', preview: 'I\'ve been holding onto Moby-Dick for three years out of guilt. This month gave me permission to let it go.', likes: 891, replies: 67 }
-  ];
+export function initActivityFeed() {
+  const list = document.getElementById('activity-feed-list');
+  if (!list) return;
 
-  const defaultClubs = [
-    { id: 'c1', name: 'The Midnight Readers', desc: 'A cozy club for fantasy lovers. Currently reading: The Atlas Six.', members: 420 },
-    { id: 'c2', name: 'Non-Fiction November', desc: 'We read one non-fiction book every month and discuss our learnings.', members: 156 },
-    { id: 'c3', name: 'Romance & Roses', desc: 'Swoon-worthy romance books only! Join us for weekly deep dives.', members: 890 }
-  ];
-
-  function initDiscourseDB() {
-    if (!localStorage.getItem(DISCOURSE_DB_KEY)) {
-      localStorage.setItem(DISCOURSE_DB_KEY, JSON.stringify(defaultThreads));
-    }
-    if (!localStorage.getItem(CLUBS_DB_KEY)) {
-      localStorage.setItem(CLUBS_DB_KEY, JSON.stringify(defaultClubs));
+  if (activities.length === 0) {
+    for (let i = 0; i < 4; i++) {
+      const item = generateRandomActivity();
+      const times = ['2m ago', '5m ago', '12m ago', '20m ago'];
+      item.time = times[i];
+      activities.push(item);
     }
   }
 
-  function getDiscourse() { return JSON.parse(localStorage.getItem(DISCOURSE_DB_KEY)); }
-  function saveDiscourse(data) { localStorage.setItem(DISCOURSE_DB_KEY, JSON.stringify(data)); }
+  renderActivityList();
+  startLiveActivityInterval();
+}
 
-  function getClubs() { return JSON.parse(localStorage.getItem(CLUBS_DB_KEY)); }
-  function saveClubs(data) { localStorage.setItem(CLUBS_DB_KEY, JSON.stringify(data)); }
+function renderActivityList() {
+  const list = document.getElementById('activity-feed-list');
+  if (!list) return;
 
+  list.innerHTML = activities.map(act => `
+    <div class="activity-item">
+      <div class="activity-icon">${act.icon}</div>
+      <div class="activity-text">${act.text}</div>
+      <div class="activity-time">${act.time}</div>
+    </div>
+  `).join('');
+}
+
+function startLiveActivityInterval() {
+  if (window.betterReadsActivityInterval) {
+    clearInterval(window.betterReadsActivityInterval);
+  }
+
+  window.betterReadsActivityInterval = setInterval(() => {
+    const list = document.getElementById('activity-feed-list');
+    if (!list) return; // Only update if element is in view
+
+    activities.forEach(act => {
+      if (act.time === 'Just now') act.time = '1m ago';
+      else if (act.time === '1m ago') act.time = '2m ago';
+    });
+
+    const newAct = generateRandomActivity();
+    activities.unshift(newAct);
+
+    if (activities.length > 8) {
+      activities.pop();
+    }
+
+    renderActivityList();
+  }, 14000);
+}
+
+/* ──────────────────────────────────────────────────────────
+   BOOTSTRAP INITIALIZATION
+   ────────────────────────────────────────────────────────── */
+export function initDiscourse() {
   initDiscourseDB();
 
   // Tab switching logic
@@ -247,156 +528,77 @@
     btnTabThreads.addEventListener('click', () => {
       btnTabThreads.className = 'btn btn-primary';
       btnTabClubs.className = 'btn btn-secondary';
-      viewThreads.style.display = 'block';
-      viewClubs.style.display = 'none';
+      if (viewThreads) viewThreads.style.display = 'block';
+      if (viewClubs) viewClubs.style.display = 'none';
     });
+
     btnTabClubs.addEventListener('click', () => {
       btnTabClubs.className = 'btn btn-primary';
       btnTabThreads.className = 'btn btn-secondary';
-      viewClubs.style.display = 'block';
-      viewThreads.style.display = 'none';
+      if (viewClubs) viewClubs.style.display = 'block';
+      if (viewThreads) viewThreads.style.display = 'none';
     });
   }
 
-  // Render Threads
-  function renderDiscourse() {
-    const grid = document.getElementById('discourse-grid');
-    if (!grid) return;
-    const threads = getDiscourse();
-    grid.innerHTML = '';
-
-    threads.forEach(t => {
-      const card = document.createElement('div');
-      card.className = 'thread-card';
-      card.innerHTML = `
-        <div class="thread-header">
-          <div class="thread-avatar" style="background:${t.color}">${t.avatar}</div>
-          <div class="thread-meta">
-            <div class="thread-user">${t.user}</div>
-            <div class="thread-time">${t.time}</div>
-          </div>
-          <div class="badge" style="background: ${t.color}; color: #333; opacity: 0.9;">${t.tag}</div>
-        </div>
-        <div class="thread-title">${t.title}</div>
-        <div class="thread-preview">${t.preview}</div>
-        <div class="thread-footer">
-          <div class="thread-stats">
-            <div class="thread-stat btn-like" data-id="${t.id}" style="cursor:pointer; transition:transform 0.2s;">❤️ <span>${t.likes}</span></div>
-            <div class="thread-stat">💬 <span>${t.replies} replies</span></div>
-          </div>
-        </div>
-      `;
-      grid.appendChild(card);
-    });
-
-    // Attach like listeners
-    document.querySelectorAll('.btn-like').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const id = e.currentTarget.dataset.id;
-        const db = getDiscourse();
-        const thread = db.find(x => x.id === id);
-        if (thread) {
-          thread.likes += 1;
-          saveDiscourse(db);
-          e.currentTarget.querySelector('span').textContent = thread.likes;
-          e.currentTarget.style.transform = 'scale(1.2)';
-          setTimeout(() => e.currentTarget.style.transform = 'scale(1)', 200);
-        }
-      });
-    });
-  }
-
-  // Create Thread
+  // Create Thread listener
   const btnCreateThread = document.getElementById('btn-create-thread');
   if (btnCreateThread) {
     btnCreateThread.addEventListener('click', () => {
-      const title = document.getElementById('new-thread-title').value.trim();
-      const content = document.getElementById('new-thread-content').value.trim();
-      const tag = document.getElementById('new-thread-tag').value;
+      const titleInput = document.getElementById('new-thread-title');
+      const contentInput = document.getElementById('new-thread-content');
+      const tagSelect = document.getElementById('new-thread-tag');
+
+      const title = titleInput ? titleInput.value.trim() : '';
+      const content = contentInput ? contentInput.value.trim() : '';
+      const tag = tagSelect ? tagSelect.value : 'Discussion';
 
       if (!title || !content) {
         alert('Please fill out both title and content!');
         return;
       }
 
+      // Read current username
+      const userProfileStr = localStorage.getItem('betterreads_user_profile') || '{}';
+      let username = 'you.reading';
+      let avatar = '🌸';
+      try {
+        const profile = JSON.parse(userProfileStr);
+        if (profile.username) username = profile.username;
+        if (profile.avatar) avatar = profile.avatar;
+      } catch (e) {}
+
       const db = getDiscourse();
       db.unshift({
         id: 't' + Date.now(),
-        user: 'you.reading',
-        avatar: '🌸',
+        user: username,
+        avatar: avatar,
         color: 'var(--blush)',
         time: 'Just now',
         tag: tag,
         title: title,
         preview: content,
         likes: 0,
-        replies: 0
+        replies: 0,
+        repliesList: []
       });
       saveDiscourse(db);
 
-      document.getElementById('new-thread-title').value = '';
-      document.getElementById('new-thread-content').value = '';
+      if (titleInput) titleInput.value = '';
+      if (contentInput) contentInput.value = '';
+      
       renderDiscourse();
     });
   }
 
-  // Render Clubs
-  function renderClubs() {
-    const grid = document.getElementById('clubs-grid');
-    if (!grid) return;
-    const clubs = getClubs();
-    grid.innerHTML = '';
-
-    clubs.forEach(c => {
-      const joined = localStorage.getItem('joined_club_' + c.id);
-      const btnText = joined ? '✓ Joined' : 'Join Club';
-      const btnStyle = joined ? 'background: var(--sage); color: #2d5a2d; border: none;' : '';
-
-      const card = document.createElement('div');
-      card.className = 'thread-card';
-      card.innerHTML = `
-        <div class="thread-header">
-          <div class="thread-avatar" style="background:var(--peach)">📚</div>
-          <div class="thread-meta">
-            <div class="thread-user">${c.name}</div>
-            <div class="thread-time">${c.members} members</div>
-          </div>
-        </div>
-        <div class="thread-preview">${c.desc}</div>
-        <div class="thread-footer" style="justify-content: flex-end;">
-          <button class="btn btn-secondary btn-join-club" data-id="${c.id}" style="${btnStyle}">${btnText}</button>
-        </div>
-      `;
-      grid.appendChild(card);
-    });
-
-    document.querySelectorAll('.btn-join-club').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const id = e.currentTarget.dataset.id;
-        const isJoined = localStorage.getItem('joined_club_' + id);
-        if (!isJoined) {
-          localStorage.setItem('joined_club_' + id, 'true');
-          const db = getClubs();
-          const club = db.find(x => x.id === id);
-          if (club) { club.members += 1; saveClubs(db); }
-          renderClubs();
-        } else {
-          localStorage.removeItem('joined_club_' + id);
-          const db = getClubs();
-          const club = db.find(x => x.id === id);
-          if (club) { club.members -= 1; saveClubs(db); }
-          renderClubs();
-        }
-      });
-    });
-  }
-
-  // Create Club
+  // Create Club listener
   const btnCreateClub = document.getElementById('btn-create-club');
   if (btnCreateClub) {
     btnCreateClub.addEventListener('click', () => {
-      const name = document.getElementById('new-club-name').value.trim();
-      const desc = document.getElementById('new-club-desc').value.trim();
+      const nameInput = document.getElementById('new-club-name');
+      const descInput = document.getElementById('new-club-desc');
+
+      const name = nameInput ? nameInput.value.trim() : '';
+      const desc = descInput ? descInput.value.trim() : '';
 
       if (!name || !desc) {
         alert('Please provide a club name and description.');
@@ -414,79 +616,31 @@
       saveClubs(db);
       localStorage.setItem('joined_club_' + newId, 'true');
 
-      document.getElementById('new-club-name').value = '';
-      document.getElementById('new-club-desc').value = '';
+      if (nameInput) nameInput.value = '';
+      if (descInput) descInput.value = '';
+      
       renderClubs();
     });
   }
 
-  // Start initialization
-
-  async function renderHeroSlider() {
-    const track = document.getElementById('hero-slider-track');
-    if (!track) return;
-
-    // Fetch a few interesting books for the hero
-    const sliderBooks = await fetchAndCacheBooks(['bestsellers', 'classics'], 0, false);
-    const db = getDB();
-
-    track.innerHTML = '';
-    if (sliderBooks.length === 0) return;
-
-    // Duplicate the books array to allow for a seamless infinite scroll
-    const displayIds = [...sliderBooks, ...sliderBooks, ...sliderBooks];
-
-    displayIds.forEach(id => {
-      const book = db.books[id];
-      if (!book) return;
-
-      const card = document.createElement('div');
-      card.className = 'hero-slider-book';
-
-      const coverStyle = book.thumbnail
-        ? `background: url('${book.thumbnail}') center/cover;`
-        : `background: ${getGradientFromString(book.title)};`;
-      const coverContent = book.thumbnail ? '' : `<div style="padding: 1rem; color: white; text-align: center; font-weight: bold; font-size: 0.8rem; line-height: 1.2;">${escapeHTML(book.title)}</div>`;
-
-      card.innerHTML = `
-        <div class="dbc-cover" style="${coverStyle}">
-          ${coverContent}
-        </div>
-      `;
-
-      card.addEventListener('click', () => {
-        window.location.hash = `#book-${book.id}`;
-      });
-
-      track.appendChild(card);
+  // Set up listeners for close buttons
+  if (replyCloseBtn) {
+    replyCloseBtn.addEventListener('click', () => {
+      if (replyModal) replyModal.classList.remove('active');
     });
   }
 
-  const heroSearchBtn = document.getElementById('hero-search-btn');
-  const heroSearchInput = document.getElementById('hero-search-input');
+  // Set up refresh on page open event
+  document.addEventListener('betterreads-discourse-opened', () => {
+    renderDiscourse();
+    renderClubs();
+    initPoll();
+    initActivityFeed();
+  });
 
-  if (heroSearchBtn && heroSearchInput) {
-    heroSearchBtn.addEventListener('click', () => {
-      const q = heroSearchInput.value.trim();
-      if (q) {
-        discoverSearchQuery = q;
-        const discoverInput = document.getElementById('discover-search');
-        if (discoverInput) discoverInput.value = q;
-
-        window.location.hash = '#discover';
-
-        // Let the page transition happen, then fetch
-        setTimeout(() => {
-          performDiscoverFetch();
-        }, 300);
-      }
-    });
-
-    heroSearchInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') heroSearchBtn.click();
-    });
-  }
-
-  initDatabase();
-
-});
+  // Initial renders
+  renderDiscourse();
+  renderClubs();
+  initPoll();
+  initActivityFeed();
+}
