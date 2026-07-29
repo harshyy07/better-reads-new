@@ -313,7 +313,7 @@ export function renderReadingStats() {
       if (elAuthor) elAuthor.textContent = book.authors ? `by ${book.authors.join(', ')}` : 'Unknown Author';
       if (elCover) {
         elCover.style.backgroundImage = book.thumbnail ? `url(${book.thumbnail})` : 'none';
-        elCover.textContent = book.thumbnail ? '' : '📚';
+        elCover.innerHTML = book.thumbnail ? '' : '<svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" style="display:block;margin:auto;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>';
       }
       
       // mock progress
@@ -364,7 +364,7 @@ export function renderReadingStats() {
       item.className = 'mockup-book-item';
       const coverHtml = book.thumbnail 
         ? `<div class="mockup-book-cover" style="background-image: url('${book.thumbnail}')"></div>` 
-        : `<div class="mockup-book-cover" style="display:flex;align-items:center;justify-content:center;font-size:2rem;">📚</div>`;
+        : `<div class="mockup-book-cover" style="display:flex;align-items:center;justify-content:center;color:var(--ink-light);"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" style="display:block;margin:auto;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg></div>`;
       
       const genre = (book.categories && book.categories.length > 0) ? book.categories[0] : 'Fiction';
       item.innerHTML = `

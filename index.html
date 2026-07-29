@@ -8,7 +8,7 @@
   <meta name="description"
     content="BetterReads is a cozy, pastel-hued social reading platform for book lovers and authors. Track your reads, discover new books, and connect with a warm community." />
   <link rel="icon"
-    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>" />
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d1a5e1' stroke-width='2'><path d='M4 19.5A2.5 2.5 0 0 1 6.5 17H20'/><path d='M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z'/></svg>" />
 </head>
 
 <body>
@@ -19,7 +19,9 @@
   <nav class="navbar" id="navbar">
     <div class="container nav-inner">
       <a href="#" class="nav-logo" id="nav-logo">
-        <span class="nav-logo-icon">📚</span>
+        <span class="nav-logo-icon">
+          <svg class="icon-book" viewBox="0 0 24 24" width="20" height="20" stroke="var(--lavender)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+        </span>
         <span class="nav-logo-text">Better<span>Reads</span></span>
       </a>
       <ul class="nav-links">
@@ -31,7 +33,9 @@
       <div class="nav-cta">
         <a href="#cta" class="btn btn-primary" id="nav-get-started">Get Started</a>
         <div class="nav-avatar-wrapper">
-          <div class="nav-avatar" id="nav-avatar" title="Sign in">🌸</div>
+          <div class="nav-avatar" id="nav-avatar" title="Sign in" style="display:flex;align-items:center;justify-content:center;">
+            <svg class="icon-user" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:auto;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          </div>
           <div class="avatar-dropdown" id="avatar-dropdown">
             <button class="avatar-dropdown-item" id="btn-signout">Sign Out</button>
           </div>
@@ -58,7 +62,7 @@
       <div class="container hero-inner">
         <div class="hero-content">
           <div class="hero-eyebrow">
-            <span>🍵</span> Your cozy reading corner awaits
+            <span>✦</span> Your cozy reading corner awaits
           </div>
           <h1 class="hero-title">
             Every story deserves a <em>warm home</em>
@@ -99,7 +103,9 @@
     <!-- BOOK MARQUEE SECTION -->
     <section class="book-marquee-section" id="book-marquee">
       <div class="book-marquee-search reveal">
-        <span class="search-icon">🔍</span>
+        <span class="search-icon">
+          <svg class="icon-search" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </span>
         <input type="text" placeholder="Search for books, authors, or genres..." />
       </div>
 
@@ -204,7 +210,10 @@
       <div class="container">
         <div class="footer-grid">
           <div class="footer-brand">
-            <div class="footer-logo">📚 Better<span>Reads</span></div>
+            <div class="footer-logo">
+              <svg class="icon-book" viewBox="0 0 24 24" width="18" height="18" stroke="var(--lavender)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-right: 4px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+              Better<span>Reads</span>
+            </div>
             <p>A cozy, pastel-hued social reading platform for book lovers and authors. Your drawing room for every
               story.
             </p>
@@ -230,11 +239,15 @@
           </div>
         </div>
         <div class="footer-bottom">
-          <p>© 2025 BetterReads. Made with 🍵 for book lovers everywhere.</p>
+          <p>© 2025 BetterReads. Made with warmth for book lovers everywhere.</p>
           <div class="footer-socials">
             <a href="#" class="footer-social-link" id="social-twitter" title="Twitter">𝕏</a>
-            <a href="#" class="footer-social-link" id="social-instagram" title="Instagram">📷</a>
-            <a href="#" class="footer-social-link" id="social-discord" title="Discord">💬</a>
+            <a href="#" class="footer-social-link" id="social-instagram" title="Instagram">
+              <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            </a>
+            <a href="#" class="footer-social-link" id="social-discord" title="Discord">
+              <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            </a>
           </div>
         </div>
       </div>
@@ -289,7 +302,9 @@
               <div class="spotify-card" id="spotify-widget">
                 <!-- Header -->
                 <div class="spotify-header">
-                  <div class="spotify-album-art">🎵</div>
+                  <div class="spotify-album-art" style="display:flex;align-items:center;justify-content:center;">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+                  </div>
                   <div class="spotify-header-info">
                     <div class="spotify-playlist-name">
                       <svg viewBox="0 0 24 24">
@@ -305,9 +320,15 @@
                 <!-- Playback controls -->
                 <div class="spotify-playback">
                   <div class="spotify-controls-row">
-                    <button class="sp-ctrl" id="sp-prev" title="Previous">⏮</button>
-                    <button class="sp-ctrl-play" id="sp-play" title="Pause">⏸</button>
-                    <button class="sp-ctrl" id="sp-next" title="Next">⏭</button>
+                    <button class="sp-ctrl" id="sp-prev" title="Previous">
+                      <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:auto;"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5"></line></svg>
+                    </button>
+                    <button class="sp-ctrl-play" id="sp-play" title="Play/Pause">
+                      <svg class="icon-play" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="display:block;margin:auto;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                    </button>
+                    <button class="sp-ctrl" id="sp-next" title="Next">
+                      <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:auto;"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
+                    </button>
                   </div>
                   <div class="spotify-progress">
                     <span class="sp-time" id="sp-time-cur">0:00</span>
@@ -377,7 +398,9 @@
           <p>Search millions of books, filter by mood, genre, or page count, and find your community's top picks.</p>
         </div>
         <div class="discover-search-bar reveal">
-          <span class="search-icon">🔍</span>
+          <span class="search-icon">
+            <svg class="icon-search" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </span>
           <input type="text" id="discover-search" placeholder="Search books, authors, or series…"
             aria-label="Search books" />
         </div>
@@ -386,30 +409,28 @@
           <div style="display:flex; flex-direction:column; align-items:center; gap: 0.5rem; width: 100%;">
             <div
               style="font-size:0.7rem; font-family:'DM Mono', monospace; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-light);">
-              By Genre</div>
             <div class="genre-pills" id="genre-pills" style="margin-bottom:0;">
-              <button class="genre-pill gp-fantasy active" id="pill-fantasy" data-genre="fantasy">🔮 Fantasy</button>
-              <button class="genre-pill gp-romance" id="pill-romance" data-genre="romance">💌 Romance</button>
-              <button class="genre-pill gp-mystery" id="pill-mystery" data-genre="mystery">🕵️ Mystery</button>
-              <button class="genre-pill gp-scifi" id="pill-scifi" data-genre="scifi">🚀 Sci-Fi</button>
-              <button class="genre-pill gp-nonfiction" id="pill-nonfiction" data-genre="nonfiction">🌿
-                Non-Fiction</button>
-              <button class="genre-pill gp-literary" id="pill-literary" data-genre="literary">✍️ Literary</button>
-              <button class="genre-pill gp-historical" id="pill-historical" data-genre="historical">📜
-                Historical</button>
+              <button class="genre-pill gp-fantasy active" id="pill-fantasy" data-genre="fantasy">Fantasy</button>
+              <button class="genre-pill gp-romance" id="pill-romance" data-genre="romance">Romance</button>
+              <button class="genre-pill gp-mystery" id="pill-mystery" data-genre="mystery">Mystery</button>
+              <button class="genre-pill gp-scifi" id="pill-scifi" data-genre="scifi">Sci-Fi</button>
+              <button class="genre-pill gp-nonfiction" id="pill-nonfiction" data-genre="nonfiction">Non-Fiction</button>
+              <button class="genre-pill gp-literary" id="pill-literary" data-genre="literary">Literary</button>
+              <button class="genre-pill gp-historical" id="pill-historical" data-genre="historical">Historical</button>
             </div>
           </div>
-
+ 
           <div style="display:flex; flex-direction:column; align-items:center; gap: 0.5rem; width: 100%;">
             <div
               style="font-size:0.7rem; font-family:'DM Mono', monospace; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-light);">
               By Mood</div>
             <div class="genre-pills" id="mood-pills" style="margin-bottom:0;">
-              <button class="genre-pill gp-cozy" data-mood="cozy">🍵 Cozy</button>
-              <button class="genre-pill gp-dark-academia" data-mood="dark-academia">🕰️ Dark Academia</button>
-              <button class="genre-pill gp-heartbreaking" data-mood="heartbreaking">💔 Heartbreaking</button>
-              <button class="genre-pill gp-ethereal" data-mood="ethereal">✨ Ethereal</button>
-              <button class="genre-pill gp-wholesome" data-mood="wholesome">🌻 Wholesome</button>
+              <button class="genre-pill gp-cozy" data-mood="cozy">Cozy</button>
+              <button class="genre-pill gp-dark-academia" data-mood="dark-academia">Dark Academia</button>
+              <button class="genre-pill gp-heartbreaking" data-mood="heartbreaking">Heartbreaking</button>
+              <button class="genre-pill gp-ethereal" data-mood="ethereal">Ethereal</button>
+              <button class="genre-pill gp-wholesome" data-mood="wholesome">Wholesome</button>
+            </div>ome" data-mood="wholesome">🌻 Wholesome</button>
             </div>
           </div>
         </div>
@@ -442,7 +463,9 @@
         </div>
         <div class="reveal reveal-delay-1">
           <div class="rating-demo-card" id="rating-demo-card">
-            <div class="rating-book-cover">📚</div>
+            <div class="rating-book-cover" style="display:flex;align-items:center;justify-content:center;">
+              <svg viewBox="0 0 24 24" width="32" height="32" stroke="var(--ink-light)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            </div>
             <div class="rating-book-title">The Midnight Library</div>
             <div class="rating-book-author">Matt Haig · 2020</div>
             <div class="star-widget" id="star-widget" role="group" aria-label="Rate this book">
@@ -520,7 +543,7 @@
                   <select id="new-thread-tag"
                     style="padding: 0.5rem; border: 1px solid #eee; border-radius: 8px; font-family: 'Inter', sans-serif; color: var(--ink);">
                     <option value="Discussion">Discussion</option>
-                    <option value="Spoilers ⚠️">Spoilers</option>
+                    <option value="Spoilers">Spoilers</option>
                     <option value="Theory">Theory</option>
                     <option value="Recommendation">Recommendation</option>
                   </select>
@@ -560,26 +583,26 @@
           <aside class="discourse-sidebar reveal">
             <!-- COZY POLL WIDGET -->
             <div class="sidebar-widget cozy-poll">
-              <h3 class="widget-title">Weekly Cozy Poll 🍵</h3>
+              <h3 class="widget-title">Weekly Cozy Poll</h3>
               <p class="poll-question">What is your favourite reading beverage?</p>
               <div class="poll-options" id="poll-options-container">
                 <button class="poll-option-btn" data-val="tea">
-                  <span class="option-text">🍵 Lavender Chamomile Tea</span>
+                  <span class="option-text">Lavender Chamomile Tea</span>
                   <div class="poll-progress-bg"><div class="poll-progress-fill" style="width: 0%;"></div></div>
                   <span class="poll-pct"></span>
                 </button>
                 <button class="poll-option-btn" data-val="coffee">
-                  <span class="option-text">☕ Creamy Lofi Latte</span>
+                  <span class="option-text">Creamy Lofi Latte</span>
                   <div class="poll-progress-bg"><div class="poll-progress-fill" style="width: 0%;"></div></div>
                   <span class="poll-pct"></span>
                 </button>
                 <button class="poll-option-btn" data-val="cocoa">
-                  <span class="option-text">🍫 Cinnamon Hot Cocoa</span>
+                  <span class="option-text">Cinnamon Hot Cocoa</span>
                   <div class="poll-progress-bg"><div class="poll-progress-fill" style="width: 0%;"></div></div>
                   <span class="poll-pct"></span>
                 </button>
                 <button class="poll-option-btn" data-val="cider">
-                  <span class="option-text">🍎 Spiced Apple Cider</span>
+                  <span class="option-text">Spiced Apple Cider</span>
                   <div class="poll-progress-bg"><div class="poll-progress-fill" style="width: 0%;"></div></div>
                   <span class="poll-pct"></span>
                 </button>
@@ -588,7 +611,7 @@
 
             <!-- LIVE ACTIVITY FEED -->
             <div class="sidebar-widget live-activity">
-              <h3 class="widget-title">Nook Activity Feed 🍃</h3>
+              <h3 class="widget-title">Nook Activity Feed</h3>
               <div class="activity-feed-list" id="activity-feed-list">
                 <!-- Dynamically Populated -->
               </div>
@@ -614,7 +637,9 @@
             <div class="mockup-header-left">
               <h1 class="mockup-header-title" style="color: var(--lavender);">Reading Stats</h1>
             </div>
-            <div class="mockup-header-icon">📈</div>
+            <div class="mockup-header-icon">
+              <svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--ink-light)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+            </div>
           </div>
           
           <div class="mockup-simple-stats" style="grid-template-columns: 1fr; gap: 1.5rem; flex: 1; align-content: center;">
@@ -641,14 +666,18 @@
           <div class="mockup-header-left">
             <h1 class="mockup-header-title">My Library</h1>
           </div>
-          <div class="mockup-header-icon">⚙️</div>
+          <div class="mockup-header-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--ink-light)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          </div>
         </div>
 
         <!-- Section 1: Currently Reading -->
         <div class="mockup-section-title">CURRENTLY READING</div>
         <div class="mockup-card mockup-reading-card" id="mockup-reading-card">
           <div class="mockup-reading-content">
-            <div class="mockup-reading-cover" id="mockup-reading-cover">📚</div>
+          <div class="mockup-reading-cover" id="mockup-reading-cover" style="display:flex;align-items:center;justify-content:center;">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          </div>
             <div class="mockup-reading-info">
               <div class="mockup-reading-title" id="mockup-reading-title">No book currently</div>
               <div class="mockup-reading-author" id="mockup-reading-author">by Author</div>
@@ -667,7 +696,7 @@
             <div class="mockup-goal-title">2024 Goals</div>
             <div class="mockup-goal-text"><span id="mockup-goal-current">0</span> of <span
                 id="mockup-goal-total">25</span> books completed</div>
-            <div class="mockup-goal-pill">On Track ✨</div>
+            <div class="mockup-goal-pill">On Track</div>
           </div>
           <div class="mockup-goal-chart">
             <svg viewBox="0 0 36 36" class="circular-chart">
@@ -704,9 +733,9 @@
         </div>
 
         <!-- Fixed Share Button -->
-        <button class="fixed-share-btn" title="Share to Insta"
+        <button class="fixed-share-btn" title="Share to Instagram"
           onclick="alert('Screenshot mode activated! (Mock sharing)')">
-          📸
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:auto;"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
         </button>
       </div>
 
@@ -716,7 +745,9 @@
           <div class="mockup-header-left">
             <h1 class="mockup-header-title" style="color: var(--amber);">Milestones</h1>
           </div>
-          <div class="mockup-header-icon">🏆</div>
+          <div class="mockup-header-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--ink-light)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34"></path><path d="M12 2a6 6 0 0 1 6 6v3.58a6 6 0 0 1-5.66 5.98h-.68A6 6 0 0 1 6 11.58V8a6 6 0 0 1 6-6z"></path></svg>
+          </div>
         </div>
 
         <div class="mockup-simple-stats" style="grid-template-columns: 1fr; gap: 1.5rem; flex: 1; align-content: center;">
@@ -756,15 +787,15 @@
           <!-- Left Column: Cover & Actions -->
           <div class="bd-sidebar">
             <div id="bd-cover"
-              style="width: 100%; aspect-ratio: 2/3; border-radius: 16px; background: var(--sage); box-shadow: var(--shadow-med); display: flex; align-items: center; justify-content: center; font-size: 4rem; color: rgba(255,255,255,0.5); margin-bottom: 1.5rem;">
-              📚</div>
+              style="width: 100%; aspect-ratio: 2/3; border-radius: 16px; background: var(--sage); box-shadow: var(--shadow-med); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.5); margin-bottom: 1.5rem;">
+              <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="2" fill="none"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            </div>
 
             <div class="bd-actions" style="display: flex; flex-direction: column; gap: 0.75rem;">
-              <button class="btn btn-primary" id="btn-bd-reading" style="justify-content: center;">📖 Currently
-                Reading</button>
-              <button class="btn btn-secondary" id="btn-bd-tbr" style="justify-content: center;">📌 Add to TBR</button>
+              <button class="btn btn-primary" id="btn-bd-reading" style="justify-content: center;">Currently Reading</button>
+              <button class="btn btn-secondary" id="btn-bd-tbr" style="justify-content: center;">Add to TBR</button>
               <button class="btn btn-secondary" id="btn-bd-dnf"
-                style="justify-content: center; border-color: #e5e5e5; color: var(--ink-light);">❌ DNF</button>
+                style="justify-content: center; border-color: #e5e5e5; color: var(--ink-light);">DNF</button>
             </div>
 
             <div class="bd-rating-container"
@@ -834,7 +865,9 @@
       <button class="auth-close-btn" id="shelf-close-btn" aria-label="Close modal">✕</button>
 
       <div class="auth-modal-header" style="margin-bottom: 2rem;">
-        <div class="auth-modal-icon" id="shelf-modal-icon">📚</div>
+        <div class="auth-modal-icon" id="shelf-modal-icon" style="display:flex;align-items:center;justify-content:center;">
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.2" fill="none"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+        </div>
         <h3 class="auth-modal-title" id="shelf-modal-title">Your Shelf</h3>
       </div>
 
@@ -869,7 +902,9 @@
       <!-- STEP 1: Credentials / Tab Selection -->
       <div id="auth-step-1" class="auth-step active">
         <div class="auth-modal-header">
-          <div class="auth-modal-icon">📚</div>
+          <div class="auth-modal-icon" style="display:flex;align-items:center;justify-content:center;">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.2" fill="none"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          </div>
           <h3 class="auth-modal-title">Welcome to BetterReads</h3>
           <p class="auth-modal-subtitle">Your cozy corner awaits. Sign in to track, review, and discover.</p>
         </div>
@@ -966,11 +1001,51 @@
   <!-- ========================================================
        THREAD REPLY MODAL
        ======================================================== -->
+  <!-- ========================================================
+       THREAD REPLY MODAL
+       ======================================================== -->
   <div class="reply-modal-overlay" id="reply-modal">
     <div class="reply-modal-content">
       <button class="reply-close-btn" id="reply-close-btn" aria-label="Close">×</button>
       <div id="reply-modal-body">
         <!-- Dynamically populated thread detail + comments list + reply form -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       SPOTIFY CONNECTION MODAL
+       ======================================================== -->
+  <div class="auth-modal-overlay" id="spotify-conn-modal">
+    <div class="auth-modal-content" style="max-width: 420px;">
+      <button class="auth-close-btn" id="sp-conn-close-btn" aria-label="Close modal">✕</button>
+
+      <div class="auth-modal-header" style="margin-bottom: 1.5rem;">
+        <div class="auth-modal-icon" style="background:#1DB954;color:#fff;display:flex;align-items:center;justify-content:center;">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+            <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424c-.18.295-.565.387-.86.207-2.377-1.454-5.37-1.783-8.894-.982-.336.076-.67-.135-.746-.47-.077-.337.135-.67.472-.747 3.854-.88 7.15-.508 9.822 1.13.294.18.385.564.206.86zm1.226-2.72c-.226.367-.707.487-1.074.26-2.72-1.672-6.87-2.157-10.08-1.182-.413.125-.845-.107-.97-.52-.125-.413.107-.847.52-.973 3.67-1.114 8.24-.57 11.35 1.345.366.226.486.708.26 1.075zm.106-2.828C14.568 8.94 8.974 8.755 5.73 9.74c-.5.15-1.025-.137-1.176-.637-.152-.5.137-1.024.637-1.175 3.73-1.133 9.897-.922 13.75 1.366.45.267.6.845.333 1.296-.268.453-.846.6-1.296.333z" />
+          </svg>
+        </div>
+        <h3 class="auth-modal-title">Connect Spotify</h3>
+        <p class="auth-modal-subtitle">Choose how you would like to connect your Spotify account.</p>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+        <button class="btn btn-primary" id="btn-sp-demo" style="background:var(--sage);color:#2d5a2d;border:none;justify-content:center;padding:0.75rem;">
+          Quick Demo Connect (Simulated)
+        </button>
+        
+        <div style="text-align:center;font-size:0.8rem;color:var(--ink-light);margin:0.25rem 0;">— OR USE REAL ACCOUNT —</div>
+        
+        <div class="auth-form-group" style="text-align:left;">
+          <label for="sp-client-id" style="font-size:0.8rem;">Spotify Developer Client ID</label>
+          <input type="text" id="sp-client-id" placeholder="Paste your Spotify Client ID here..." style="width:100%;padding:0.75rem;border:1px solid #eee;border-radius:8px;font-family:sans-serif;font-size:0.85rem;margin-bottom:0.5rem;box-sizing:border-box;">
+          <p style="font-size:0.65rem;color:var(--ink-light);line-height:1.4;margin:0;">To use a real account, register <code>http://localhost:5173/</code> as a Redirect URI in your Spotify Developer Dashboard, then enter the Client ID above.</p>
+        </div>
+        
+        <button class="btn btn-primary" id="btn-sp-real-connect" style="background:#1DB954;border:none;justify-content:center;padding:0.75rem;">
+          Real Connect via Spotify
+        </button>
       </div>
     </div>
   </div>

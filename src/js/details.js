@@ -192,7 +192,7 @@ export function initReviews() {
       
       store.reviews[currentBookIdForDetails].unshift({
         author: store.currentUser ? store.currentUser.email : "You",
-        avatar: "🍵",
+        avatar: store.currentUser ? (store.currentUser.avatar || '') : '',
         content: val,
         replies: []
       });
@@ -218,9 +218,10 @@ function renderBdReviews(bookId) {
     const card = document.createElement('div');
     card.className = 'review-card';
     card.style = 'background: white; padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 2px 10px rgba(0,0,0,0.02);';
+    const initials = rev.avatar ? rev.avatar : (rev.author ? rev.author.charAt(0).toUpperCase() : 'U');
     card.innerHTML = `
       <div style="display: flex; gap: 1rem; align-items: flex-start;">
-        <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--lavender); display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">${escapeHTML(rev.avatar || '🌸')}</div>
+        <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--lavender); display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: bold; color: var(--ink);">${escapeHTML(initials)}</div>
         <div>
           <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 0.25rem;">${escapeHTML(rev.author)}</div>
           <div style="font-size: 0.95rem; line-height: 1.6; color: var(--ink);">${escapeHTML(rev.content).replace(/\\n/g, '<br>')}</div>

@@ -90,11 +90,11 @@ const defaultPollVotes = {
 };
 
 const activityTemplates = [
-  { text: "<strong>{user}</strong> completed reading <em>{book}</em>! 📚", icon: "🎉" },
-  { text: "<strong>{user}</strong> added <em>{book}</em> to their TBR shelf. 📌", icon: "🍃" },
-  { text: "<strong>{user}</strong> rated <em>{book}</em> <strong>{rating}★</strong>. ⭐", icon: "✨" },
-  { text: "<strong>{user}</strong> joined the book club <strong>{club}</strong>. 🍵", icon: "🤝" },
-  { text: "<strong>{user}</strong> started a discussion on <em>{book}</em>. 💬", icon: "💭" }
+  { text: "<strong>{user}</strong> completed reading <em>{book}</em>!", icon: "✦" },
+  { text: "<strong>{user}</strong> added <em>{book}</em> to their TBR shelf.", icon: "✦" },
+  { text: "<strong>{user}</strong> rated <em>{book}</em> <strong>{rating}★</strong>.", icon: "✦" },
+  { text: "<strong>{user}</strong> joined the book club <strong>{club}</strong>.", icon: "✦" },
+  { text: "<strong>{user}</strong> started a discussion on <em>{book}</em>.", icon: "✦" }
 ];
 
 const mockUsers = [
@@ -236,14 +236,16 @@ export function renderClubs() {
 
   clubs.forEach(c => {
     const joined = localStorage.getItem('joined_club_' + c.id);
-    const btnText = joined ? '✓ Joined 🍵' : 'Join Club';
+    const btnText = joined ? '✓ Joined' : 'Join Club';
     const btnStyle = joined ? 'background: var(--sage); color: #2d5a2d; border: none;' : '';
 
     const card = document.createElement('div');
     card.className = 'thread-card reveal';
     card.innerHTML = `
       <div class="thread-header">
-        <div class="thread-avatar" style="background:var(--peach)">📚</div>
+        <div class="thread-avatar" style="background:var(--peach);display:flex;align-items:center;justify-content:center;">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="var(--ink)" stroke-width="2" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        </div>
         <div class="thread-meta">
           <div class="thread-user" style="font-family:'Pixel Operator', monospace; font-size:1.1rem; font-weight:700;">${c.name}</div>
           <div class="thread-time">${c.members} members</div>
@@ -299,12 +301,14 @@ function renderReplyModalBody(thread) {
   
   let repliesHTML = '';
   if (replies.length === 0) {
-    repliesHTML = `<p style="text-align: center; color: var(--ink-light); font-size: 0.85rem; margin: 1.5rem 0;">No comments yet. Start the conversation! 🌿</p>`;
+    repliesHTML = `<p style="text-align: center; color: var(--ink-light); font-size: 0.85rem; margin: 1.5rem 0;">No comments yet. Start the conversation!</p>`;
   } else {
     repliesHTML = replies.map(r => `
       <div class="reply-comment-card">
         <div class="thread-header" style="margin-bottom:0.4rem;">
-          <div class="thread-avatar" style="background:${r.color || 'var(--blush)'}">${r.avatar || '🍵'}</div>
+          <div class="thread-avatar" style="background:${r.color || 'var(--blush)'};display:flex;align-items:center;justify-content:center;font-weight:bold;color:var(--ink);font-size:0.75rem;">
+            ${r.avatar || (r.user ? r.user.charAt(0).toUpperCase() : 'U')}
+          </div>
           <div class="thread-meta">
             <div class="thread-user" style="font-size:0.8rem; font-weight:600;">${r.user}</div>
             <div class="thread-time" style="font-size:0.65rem; color:var(--ink-light);">${r.time}</div>
