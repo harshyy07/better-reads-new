@@ -58,9 +58,9 @@ BetterReads is a beautiful, cozy, and highly interactive Single Page Application
 - Supports hovering over the left half or right half of a star to register half-star ratings (e.g., 4.5 stars).
 - Includes an animated breakdown bar chart simulating community rating distributions.
 
-### 5. 🎧 Cozy Lofi Player
-- An embedded, interactive mini-player widget designed to play ambient reading music.
-- Features a simulated tracklist, progress bar, and play/pause toggles to complete the cozy reading nook vibe.
+### 5. Cozy & Connected Spotify Player
+- **Real Spotify Integration**: Connect to your actual Spotify account via Spotify OAuth (Implicit Grant) using your Client ID. Displays current track, artist, album art, and controls/syncs active Spotify playback.
+- **Cozy Lofi Demo Mode**: A local fallback player powered by HTML5 Audio (SoundHelix tracklist) with play, pause, progress bar, and volume controls for a seamless offline or guest reading session.
 
 ### 6. 📊 Reading Stats (Wrapped)
 - A highly shareable, Spotify Wrapped-inspired aesthetic page (`#stats`).
@@ -68,9 +68,9 @@ BetterReads is a beautiful, cozy, and highly interactive Single Page Application
 - Redesigned layout uses a responsive `stats-mockup-grid` with floating, hover-animated stat cards.
 - Stats cards use the `Pixel Operator` pixel font for a retro-chic Wrapped aesthetic.
 
-### 7. 🔐 Authentication (Supabase)
+### 7. Authentication (Supabase)
 - **Google OAuth**: One-click sign-in via Google with automatic profile completion for new users.
-- **Magic Link / OTP**: Email-based passwordless login via Supabase `signInWithOtp` + `verifyOtp`.
+- **Email & Password Auth**: Secure login and sign-up using Supabase `signInWithPassword` and `signUp`.
 - **Profile Setup**: New users choose a username and emoji avatar (🍵, 📚, 🌙, etc.) on first sign-in.
 - Shelf data syncs to Supabase when logged in; falls back to `localStorage` for guests.
 
@@ -108,7 +108,12 @@ npm run build
 ```
 
 ## 📈 Recent Updates & Changelog
-- **UX Enhancements & Bug Fixes (Latest)**: 
+- **Spotify OAuth Integration & Auth Upgrade (Latest)**:
+  - **Spotify Connection & OAuth**: Integrated a new Spotify connection flow. Users can link a real Spotify account using Implicit Grant OAuth to track and control live playback or switch to a high-fidelity Demo Mode featuring local lofi tracks via HTML5 Audio.
+  - **Email & Password Authentication**: Replaced OTP magic links with a standard email-and-password flow (Sign In / Sign Up) via Supabase for a more direct, robust account management experience.
+  - **Library Hotspot Alignment**: Relocated and fine-tuned coordinate positioning of 2D library hotspots to accurately map to the sketch background.
+  - **Aesthetic Styling Polish**: Cleaned up UI elements and eliminated tacky emojis to achieve a more cohesive and premium lofi/cottagecore aesthetic.
+- **UX Enhancements & Bug Fixes**: 
   - **Home & Discover Search Routing**: Integrated the Home page marquee search bar with the Discover page, enabling instant routing, auto-filling the search query, and clearing active filters.
   - **Discover Shelf Operations & Sync**: Implemented toggleable `+ TBR` shelf additions directly on Discover book cards. Custom event listeners synchronize button states in real-time if a book is added or removed elsewhere.
   - **3D Card Hover Effects**: Added a dynamic, smooth 3D tilt hover animation to book cards in the Discover grid.
