@@ -45,23 +45,58 @@ export async function fetchOpenLibraryBook(bookId) {
   try {
     const decodedBookId = decodeURIComponent(bookId);
     
-    if (store.books[decodedBookId]) return store.books[decodedBookId];
-    if (store.books[bookId]) return store.books[bookId];
+    let book = store.books[decodedBookId] || store.books[bookId];
 
-    const res = await fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(decodedBookId)}`);
-    const data = await res.json();
-    if (data.docs && data.docs.length > 0) {
-      const doc = data.docs[0];
-      const newBook = {
-        id: decodedBookId,
-        title: doc.title,
-        authors: doc.author_name || ['Unknown'],
-        categories: doc.subject || ['Fiction'],
-        description: `First published in ${doc.first_publish_year || 'unknown year'}. An intriguing book about ${doc.subject ? doc.subject.slice(0,3).join(', ') : 'various topics'}.`,
-        thumbnail: doc.cover_i ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-L.jpg` : `https://covers.openlibrary.org/b/id/${decodedBookId}-L.jpg`
-      };
-      cacheBook(newBook);
-      return newBook;
+    if (!book) {
+      const res = await fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(decodedBookId)}`);
+      const data = await res.json();
+      if (data.docs && data.docs.length > 0) {
+        const doc = data.docs[0];
+        book = {
+          id: decodedBookId,
+          title: doc.title,
+          authors: doc.author_name || ['Unknown'],
+          categories: doc.subject || ['Fiction'],
+          description: '',
+          thumbnail: doc.cover_i ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-L.jpg` : `https://covers.openlibrary.org/b/id/${decodedBookId}-L.jpg`
+        };
+      }
+    }
+
+    if (book) {
+      const needsDescription = !book.description || 
+                               book.description === 'No description available.' || 
+                               book.description.startsWith('First published in ');
+      
+      if (needsDescription) {
+        try {
+          const workRes = await fetch(`https://openlibrary.org/works/${decodedBookId}.json`);
+          if (workRes.ok) {
+            const workData = await workRes.json();
+            let realDescription = '';
+            if (workData.description) {
+              if (typeof workData.description === 'string') {
+                realDescription = workData.description;
+              } else if (workData.description.value) {
+                realDescription = workData.description.value;
+              }
+            }
+            if (realDescription) {
+              book.description = realDescription;
+            } else {
+              book.description = 'No description available for this book.';
+            }
+          }
+        } catch (workErr) {
+          console.error('Failed to fetch details from Works API', workErr);
+        }
+
+        if (!book.description) {
+          book.description = 'No description available for this book.';
+        }
+        cacheBook(book);
+      }
+      return book;
     }
   } catch(e) {
     console.error(e);
