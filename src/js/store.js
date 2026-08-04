@@ -17,7 +17,8 @@ export const store = {
     dnf: []
   },
   reviews: {}, 
-  userRatings: {}
+  userRatings: {},
+  readingProgress: {} // key: bookId, value: { pagesRead, totalPages }
 };
 
 const DB_KEY = 'betterreads_local_cache'; // Fallback for unauthenticated users
@@ -26,12 +27,19 @@ export function getLocalDB() {
   const dbData = localStorage.getItem(DB_KEY);
   if (dbData) {
     try {
-      return JSON.parse(dbData);
+      const parsed = JSON.parse(dbData);
+      return {
+        books: parsed.books || {},
+        shelves: parsed.shelves || { tbr: [], reading: [], completed: [], dnf: [] },
+        reviews: parsed.reviews || {},
+        userRatings: parsed.userRatings || {},
+        readingProgress: parsed.readingProgress || {}
+      };
     } catch (e) {
       console.error("Error parsing DB", e);
     }
   }
-  return { books: {}, shelves: { tbr: [], reading: [], completed: [], dnf: [] }, reviews: {}, userRatings: {} };
+  return { books: {}, shelves: { tbr: [], reading: [], completed: [], dnf: [] }, reviews: {}, userRatings: {}, readingProgress: {} };
 }
 
 export function saveLocalDB(db) {
@@ -55,12 +63,33 @@ export async function syncShelves() {
         }
       });
     }
+
+    // Sync reading progress
+    try {
+      const { data: pData, error: pError } = await supabase
+        .from('reading_progress')
+        .select('book_id, pages_read, total_pages')
+        .eq('user_id', store.currentUser.id);
+      
+      if (!pError && pData) {
+        store.readingProgress = {};
+        pData.forEach(row => {
+          store.readingProgress[row.book_id] = {
+            pagesRead: row.pages_read,
+            totalPages: row.total_pages
+          };
+        });
+      }
+    } catch (e) {
+      console.warn("Failed to fetch reading progress from Supabase", e);
+    }
   } else {
     const local = getLocalDB();
     store.shelves = local.shelves || { tbr: [], reading: [], completed: [], dnf: [] };
     store.books = local.books || {};
     store.reviews = local.reviews || {};
     store.userRatings = local.userRatings || {};
+    store.readingProgress = local.readingProgress || {};
   }
   
   document.dispatchEvent(new Event('betterreads-store-updated'));
@@ -90,3 +119,31 @@ export function cacheBook(book) {
   local.books[book.id] = book;
   saveLocalDB(local);
 }
+
+export async function saveReadingProgress(bookId, pagesRead, totalPages) {
+  store.readingProgress[bookId] = { pagesRead, totalPages };
+
+  if (store.isLoggedIn && store.currentUser) {
+    try {
+      const { error } = await supabase.from('reading_progress').upsert({
+        user_id: store.currentUser.id,
+        book_id: bookId,
+        pages_read: pagesRead,
+        total_pages: totalPages,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'user_id, book_id' });
+      if (error) throw error;
+    } catch (e) {
+      console.warn("Supabase reading progress sync failed. Saving locally.", e);
+      const local = getLocalDB();
+      local.readingProgress = store.readingProgress;
+      saveLocalDB(local);
+    }
+  } else {
+    const local = getLocalDB();
+    local.readingProgress = store.readingProgress;
+    saveLocalDB(local);
+  }
+  document.dispatchEvent(new Event('betterreads-store-updated'));
+}
+

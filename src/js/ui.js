@@ -1,4 +1,4 @@
-import { store, updateShelf } from './store.js';
+import { store, updateShelf, saveReadingProgress } from './store.js';
 
 export function escapeHTML(str) {
   if (!str) return '';
@@ -304,7 +304,8 @@ export function renderReadingStats() {
   const elReadingCard = document.getElementById('mockup-reading-card');
   if (elReadingCard) {
     if (readingIds.length > 0) {
-      const book = store.books[readingIds[0]];
+      const bookId = readingIds[0];
+      const book = store.books[bookId];
       const elTitle = document.getElementById('mockup-reading-title');
       const elAuthor = document.getElementById('mockup-reading-author');
       const elCover = document.getElementById('mockup-reading-cover');
@@ -316,16 +317,70 @@ export function renderReadingStats() {
         elCover.innerHTML = book.thumbnail ? '' : '<svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" style="display:block;margin:auto;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>';
       }
       
-      // mock progress
-      const mockProgress = 68;
+      // real progress
+      const totalBookPages = parseInt(book.pageCount) || 300;
+      const progress = store.readingProgress[bookId] || { pagesRead: 0, totalPages: totalBookPages };
+      const pagesRead = Math.min(progress.pagesRead, totalBookPages);
+      const realProgressPercent = Math.min(Math.round((pagesRead / totalBookPages) * 100), 100);
+
       const elProgText = document.getElementById('mockup-reading-progress-text');
       const elProgFill = document.getElementById('mockup-reading-progress-fill');
-      if (elProgText) elProgText.textContent = `${mockProgress}% Complete`;
+      if (elProgText) elProgText.textContent = `${realProgressPercent}% Complete (${pagesRead}/${totalBookPages} pgs)`;
       if (elProgFill) {
         setTimeout(() => {
-          elProgFill.style.width = `${mockProgress}%`;
+          elProgFill.style.width = `${realProgressPercent}%`;
         }, 100);
       }
+
+      // Wire up stats page progress buttons
+      const btnUpdate = document.getElementById('btn-mockup-update-prog');
+      const form = document.getElementById('mockup-reading-form');
+      const actions = document.getElementById('mockup-reading-actions');
+      const btnSave = document.getElementById('btn-mockup-save-prog');
+      const btnCancel = document.getElementById('btn-mockup-cancel-prog');
+      const input = document.getElementById('input-mockup-pages-read');
+
+      if (btnUpdate && form && actions && btnSave && btnCancel && input) {
+        input.value = pagesRead;
+        input.max = totalBookPages;
+
+        btnUpdate.onclick = (e) => {
+          e.stopPropagation();
+          form.style.display = 'flex';
+          actions.style.display = 'none';
+          input.focus();
+        };
+
+        btnCancel.onclick = (e) => {
+          e.stopPropagation();
+          form.style.display = 'none';
+          actions.style.display = 'block';
+        };
+
+        btnSave.onclick = async (e) => {
+          e.stopPropagation();
+          let val = parseInt(input.value) || 0;
+          if (val < 0) val = 0;
+          if (val > totalBookPages) val = totalBookPages;
+
+          await saveReadingProgress(bookId, val, totalBookPages);
+
+          if (val >= totalBookPages) {
+            alert(`🎉 Congratulations! You have finished "${book.title}"! Moved to Completed.`);
+            ['reading', 'tbr', 'completed', 'dnf'].forEach(s => {
+               const filtered = store.shelves[s].filter(id => id !== bookId);
+               if (filtered.length !== store.shelves[s].length) {
+                 updateShelf(s, filtered);
+               }
+            });
+            const newCompleted = [...(store.shelves.completed || []), bookId];
+            await updateShelf('completed', newCompleted);
+          } else {
+            renderReadingStats();
+          }
+        };
+      }
+
       elReadingCard.style.display = 'block';
     } else {
       elReadingCard.style.display = 'none';

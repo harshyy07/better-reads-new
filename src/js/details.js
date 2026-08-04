@@ -1,4 +1,4 @@
-import { store, updateShelf } from './store.js';
+import { store, updateShelf, saveReadingProgress } from './store.js';
 import { fetchOpenLibraryBook } from './api.js';
 import { escapeHTML } from './ui.js';
 
@@ -130,6 +130,7 @@ export async function renderBookDetails(bookId) {
 
   updateBdShelfButtons(bookId);
   renderBdReviews(bookId);
+  renderBookProgressWidget(book, bookId);
 }
 
 function updateBdShelfButtons(bookId) {
@@ -172,6 +173,7 @@ function updateBdShelfButtons(bookId) {
       updateShelf(shelfName, newShelf);
     }
     updateBdShelfButtons(bookId);
+    renderBookProgressWidget(store.books[bookId], bookId);
   };
 
   btnReading.onclick = () => setShelf('reading');
@@ -230,4 +232,92 @@ function renderBdReviews(bookId) {
     `;
     listEl.appendChild(card);
   });
+}
+
+function renderBookProgressWidget(book, bookId) {
+  const container = document.getElementById('bd-progress-container');
+  if (!container) return;
+
+  const isReading = store.shelves.reading && store.shelves.reading.includes(bookId);
+  if (!isReading) {
+    container.innerHTML = '';
+    return;
+  }
+
+  const totalPages = parseInt(book.pageCount) || 300;
+  const progress = store.readingProgress[bookId] || { pagesRead: 0, totalPages: totalPages };
+  const pagesRead = Math.min(progress.pagesRead, totalPages);
+  const percent = Math.min(Math.round((pagesRead / totalPages) * 100), 100);
+
+  container.innerHTML = `
+    <div style="background: var(--cream); padding: 1.25rem; border-radius: 16px; border: 1px solid var(--blush); text-align: left; margin-bottom: 1.5rem;">
+      <div style="font-size: 0.85rem; font-weight: 600; color: var(--dusty-rose); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">
+        Reading Progress
+      </div>
+      <div style="font-size: 0.95rem; font-weight: bold; color: var(--ink); margin-bottom: 0.5rem;">
+        ${pagesRead} of ${totalPages} pages (${percent}%)
+      </div>
+      <div style="background: #eee; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 0.75rem;">
+        <div style="background: var(--sage); width: ${percent}%; height: 100%; transition: width 0.3s ease;"></div>
+      </div>
+      
+      <div id="bd-prog-actions" style="display: flex; gap: 0.5rem;">
+        <button id="btn-bd-update-prog" class="btn btn-secondary" style="padding: 0.3rem 0.75rem; font-size: 0.85rem; width: 100%; justify-content: center;">Update Progress</button>
+      </div>
+
+      <div id="bd-prog-form" style="display: none; margin-top: 0.75rem; flex-direction: column; gap: 0.5rem;">
+        <label style="font-size: 0.8rem; color: var(--ink-light); font-weight: 600;">Current Page:</label>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <input type="number" id="input-bd-pages-read" min="0" max="${totalPages}" value="${pagesRead}" 
+            style="width: 80px; padding: 0.3rem; border: 1px solid #ccc; border-radius: 6px; outline: none; text-align: center;" />
+          <button id="btn-bd-save-prog" class="btn btn-primary" style="padding: 0.3rem 0.75rem; font-size: 0.85rem; flex: 1; justify-content: center;">Save</button>
+          <button id="btn-bd-cancel-prog" class="btn btn-secondary" style="padding: 0.3rem 0.75rem; font-size: 0.85rem; border-color: transparent; justify-content: center;">Cancel</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const btnUpdate = container.querySelector('#btn-bd-update-prog');
+  const form = container.querySelector('#bd-prog-form');
+  const actions = container.querySelector('#bd-prog-actions');
+  const btnSave = container.querySelector('#btn-bd-save-prog');
+  const btnCancel = container.querySelector('#btn-bd-cancel-prog');
+  const input = container.querySelector('#input-bd-pages-read');
+
+  btnUpdate.onclick = () => {
+    form.style.display = 'flex';
+    actions.style.display = 'none';
+    input.focus();
+  };
+
+  btnCancel.onclick = () => {
+    form.style.display = 'none';
+    actions.style.display = 'flex';
+  };
+
+  btnSave.onclick = async () => {
+    let val = parseInt(input.value) || 0;
+    if (val < 0) val = 0;
+    if (val > totalPages) val = totalPages;
+
+    await saveReadingProgress(bookId, val, totalPages);
+
+    if (val >= totalPages) {
+      alert(`🎉 Congratulations! You have finished "${book.title}"! Moved to Completed.`);
+      
+      // Auto move to completed
+      ['reading', 'tbr', 'completed', 'dnf'].forEach(s => {
+         const filtered = store.shelves[s].filter(id => id !== bookId);
+         if (filtered.length !== store.shelves[s].length) {
+           updateShelf(s, filtered);
+         }
+      });
+      const newCompleted = [...(store.shelves.completed || []), bookId];
+      await updateShelf('completed', newCompleted);
+      
+      updateBdShelfButtons(bookId);
+    } else {
+      renderBookProgressWidget(book, bookId);
+    }
+  };
 }

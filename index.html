@@ -685,7 +685,14 @@
               <div class="mockup-reading-progress-bar">
                 <div class="mockup-reading-progress-fill" id="mockup-reading-progress-fill" style="width: 0%;"></div>
               </div>
-              <button class="mockup-btn-primary">▷ Continue Reading</button>
+              <div id="mockup-reading-actions">
+                <button class="mockup-btn-primary" id="btn-mockup-update-prog" style="cursor: pointer; width: 100%; border: none;">▷ Update Progress</button>
+              </div>
+              <div id="mockup-reading-form" style="display: none; margin-top: 0.5rem; align-items: center; gap: 0.5rem;">
+                <input type="number" id="input-mockup-pages-read" style="width: 60px; padding: 0.3rem; border: 1px solid #ccc; border-radius: 6px; font-size: 0.85rem; outline: none; text-align: center;" />
+                <button id="btn-mockup-save-prog" style="background: var(--sage); color: #2d5a2d; border: none; padding: 0.3rem 0.6rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: bold;">Save</button>
+                <button id="btn-mockup-cancel-prog" style="background: transparent; border: none; color: var(--ink-light); padding: 0.3rem 0.6rem; cursor: pointer; font-size: 0.85rem;">Cancel</button>
+              </div>
             </div>
           </div>
         </div>
@@ -797,6 +804,9 @@
               <button class="btn btn-secondary" id="btn-bd-dnf"
                 style="justify-content: center; border-color: #e5e5e5; color: var(--ink-light);">DNF</button>
             </div>
+
+            <!-- Reading Progress Widget -->
+            <div id="bd-progress-container" style="margin-top: 1.5rem;"></div>
 
             <div class="bd-rating-container"
               style="margin-top: 2rem; background: var(--cream); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--blush); text-align: center;">

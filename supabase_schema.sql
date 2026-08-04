@@ -52,3 +52,34 @@ CREATE POLICY "Users can update their own shelves."
 CREATE POLICY "Users can delete their own shelves."
   ON shelves FOR DELETE
   USING ( auth.uid() = user_id );
+
+-- 3. Create the reading_progress table
+CREATE TABLE public.reading_progress (
+  id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id uuid REFERENCES auth.users on delete cascade NOT NULL,
+  book_id text NOT NULL,
+  pages_read integer DEFAULT 0 NOT NULL,
+  total_pages integer DEFAULT 100 NOT NULL,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) NOT NULL,
+  UNIQUE(user_id, book_id)
+);
+
+-- Set up Row Level Security (RLS) for reading_progress
+ALTER TABLE public.reading_progress ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view their own reading progress."
+  ON reading_progress FOR SELECT
+  USING ( auth.uid() = user_id );
+
+CREATE POLICY "Users can insert their own reading progress."
+  ON reading_progress FOR INSERT
+  WITH CHECK ( auth.uid() = user_id );
+
+CREATE POLICY "Users can update their own reading progress."
+  ON reading_progress FOR UPDATE
+  USING ( auth.uid() = user_id );
+
+CREATE POLICY "Users can delete their own reading progress."
+  ON reading_progress FOR DELETE
+  USING ( auth.uid() = user_id );
+

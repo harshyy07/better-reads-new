@@ -58,7 +58,8 @@ export async function fetchOpenLibraryBook(bookId) {
           authors: doc.author_name || ['Unknown'],
           categories: doc.subject || ['Fiction'],
           description: '',
-          thumbnail: doc.cover_i ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-L.jpg` : `https://covers.openlibrary.org/b/id/${decodedBookId}-L.jpg`
+          thumbnail: doc.cover_i ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-L.jpg` : `https://covers.openlibrary.org/b/id/${decodedBookId}-L.jpg`,
+          pageCount: doc.number_of_pages_median || 300
         };
       }
     }
