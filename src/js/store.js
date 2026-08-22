@@ -18,7 +18,8 @@ export const store = {
   },
   reviews: {}, 
   userRatings: {},
-  readingProgress: {} // key: bookId, value: { pagesRead, totalPages }
+  readingProgress: {}, // key: bookId, value: { pagesRead, totalPages }
+  readingLogs: {} // key: bookId, value: array of { timestamp, pagesRead, totalPages, note }
 };
 
 const DB_KEY = 'betterreads_local_cache'; // Fallback for unauthenticated users
@@ -33,13 +34,14 @@ export function getLocalDB() {
         shelves: parsed.shelves || { tbr: [], reading: [], completed: [], dnf: [] },
         reviews: parsed.reviews || {},
         userRatings: parsed.userRatings || {},
-        readingProgress: parsed.readingProgress || {}
+        readingProgress: parsed.readingProgress || {},
+        readingLogs: parsed.readingLogs || {}
       };
     } catch (e) {
       console.error("Error parsing DB", e);
     }
   }
-  return { books: {}, shelves: { tbr: [], reading: [], completed: [], dnf: [] }, reviews: {}, userRatings: {}, readingProgress: {} };
+  return { books: {}, shelves: { tbr: [], reading: [], completed: [], dnf: [] }, reviews: {}, userRatings: {}, readingProgress: {}, readingLogs: {} };
 }
 
 export function saveLocalDB(db) {
@@ -90,6 +92,7 @@ export async function syncShelves() {
     store.reviews = local.reviews || {};
     store.userRatings = local.userRatings || {};
     store.readingProgress = local.readingProgress || {};
+    store.readingLogs = local.readingLogs || {};
   }
   
   document.dispatchEvent(new Event('betterreads-store-updated'));
@@ -120,8 +123,16 @@ export function cacheBook(book) {
   saveLocalDB(local);
 }
 
-export async function saveReadingProgress(bookId, pagesRead, totalPages) {
+export async function saveReadingProgress(bookId, pagesRead, totalPages, note = '') {
   store.readingProgress[bookId] = { pagesRead, totalPages };
+  
+  if (!store.readingLogs[bookId]) store.readingLogs[bookId] = [];
+  store.readingLogs[bookId].push({
+    timestamp: new Date().toISOString(),
+    pagesRead,
+    totalPages,
+    note: note.trim()
+  });
 
   if (store.isLoggedIn && store.currentUser) {
     try {
@@ -133,15 +144,22 @@ export async function saveReadingProgress(bookId, pagesRead, totalPages) {
         updated_at: new Date().toISOString()
       }, { onConflict: 'user_id, book_id' });
       if (error) throw error;
+      
+      const local = getLocalDB();
+      local.readingProgress = store.readingProgress;
+      local.readingLogs = store.readingLogs;
+      saveLocalDB(local);
     } catch (e) {
       console.warn("Supabase reading progress sync failed. Saving locally.", e);
       const local = getLocalDB();
       local.readingProgress = store.readingProgress;
+      local.readingLogs = store.readingLogs;
       saveLocalDB(local);
     }
   } else {
     const local = getLocalDB();
     local.readingProgress = store.readingProgress;
+    local.readingLogs = store.readingLogs;
     saveLocalDB(local);
   }
   document.dispatchEvent(new Event('betterreads-store-updated'));

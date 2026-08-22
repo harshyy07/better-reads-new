@@ -851,7 +851,11 @@
               <textarea id="bd-new-review"
                 placeholder="What did you think about this book? (Mark spoilers if necessary)" rows="3"
                 style="width: 100%; padding: 1rem; border: 1px solid #eee; border-radius: 8px; margin-bottom: 1rem; font-family: 'DM Sans', sans-serif; resize: vertical; outline: none;"></textarea>
-              <div style="display: flex; justify-content: flex-end;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--ink-light); cursor: pointer; user-select: none;">
+                  <input type="checkbox" id="bd-new-review-spoiler" style="accent-color: var(--dusty-rose); width: 16px; height: 16px;" />
+                  Contains spoilers
+                </label>
                 <button class="btn btn-primary" id="btn-bd-submit-review" style="padding: 0.5rem 1.5rem;">Post Review
                   ✦</button>
               </div>
