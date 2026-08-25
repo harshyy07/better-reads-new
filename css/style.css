@@ -3834,4 +3834,460 @@ p {
   border: 1px solid rgba(0,0,0,0.03);
   margin-top: 0.15rem;
   font-style: italic;
-}
+}
+
+/* ============================================================
+   COZY USER PROFILE & PROGRESS UPLOAD STYLES
+   ============================================================ */
+.profile-section {
+  padding: 6rem 0 4rem;
+  background: var(--warm-white);
+  min-height: 90vh;
+}
+
+.profile-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 2.5rem;
+  align-items: start;
+  margin-top: 2.5rem;
+}
+
+.profile-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.profile-card {
+  background: white;
+  border: 1.5px solid var(--blush);
+  border-radius: 24px;
+  padding: 2rem;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-avatar-large-wrapper {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--cream);
+  border: 3px solid var(--blush);
+  box-shadow: var(--shadow-soft);
+  margin: 0 auto 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+.profile-avatar-large-wrapper:hover {
+  transform: rotate(8deg) scale(1.05);
+}
+
+.profile-avatar-large {
+  font-size: 3.5rem;
+  line-height: 1;
+}
+
+.profile-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.5rem;
+  color: var(--ink);
+  margin: 0 0 0.25rem 0;
+  text-align: center;
+}
+
+.profile-joined {
+  font-size: 0.8rem;
+  color: var(--ink-light);
+  font-style: italic;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.profile-stats-mini {
+  display: flex;
+  justify-content: space-around;
+  border-top: 1.5px dashed rgba(232, 165, 152, 0.25);
+  padding-top: 1.25rem;
+}
+
+.profile-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-stat-item .num {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.profile-stat-item .lbl {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-light);
+  margin-top: 0.2rem;
+}
+
+/* Edit profile settings card */
+.profile-edit-card h4 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.2rem;
+  color: var(--ink);
+}
+
+#profile-edit-form .auth-form-group {
+  margin-bottom: 1rem;
+}
+
+#profile-edit-form label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  color: var(--ink-light);
+  margin-bottom: 0.4rem;
+  display: block;
+}
+
+#profile-edit-form input {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1.5px solid var(--blush);
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  outline: none;
+  background: var(--cream);
+  color: var(--ink);
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+#profile-edit-form input:focus {
+  border-color: var(--dusty-rose);
+}
+
+/* Avatar choices grid in edit card */
+#profile-edit-form .avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+#profile-edit-form .avatar-option {
+  width: 40px;
+  height: 40px;
+  font-size: 1.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: var(--cream);
+  border: 1.5px solid transparent;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+#profile-edit-form .avatar-option:hover {
+  background: var(--blush);
+  transform: scale(1.1);
+}
+
+#profile-edit-form .avatar-option.active {
+  background: var(--blush);
+  border-color: var(--dusty-rose);
+  transform: scale(1.1);
+  box-shadow: var(--shadow-soft);
+}
+
+/* Main Content Area */
+.profile-subheading {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.6rem;
+  color: var(--ink);
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+/* Progress Cards */
+.progress-card {
+  display: flex;
+  gap: 1.5rem;
+  background: white;
+  border: 1.5px solid var(--blush);
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.progress-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-med);
+}
+
+.progress-card-cover {
+  width: 90px;
+  height: 135px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.progress-card-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.progress-card-info .book-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.25rem;
+  color: var(--ink);
+  margin: 0;
+}
+
+.progress-card-info .book-author {
+  font-size: 0.85rem;
+  color: var(--ink-light);
+  margin-top: -0.25rem;
+}
+
+.progress-numeric-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.4rem;
+}
+
+.progress-numeric-row label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ink-light);
+}
+
+.progress-inputs {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: var(--cream);
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+  border: 1px solid rgba(232, 165, 152, 0.2);
+}
+
+.progress-inputs .pg-input {
+  width: 60px;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--ink);
+  text-align: center;
+  padding: 0;
+}
+
+.progress-inputs .sep {
+  color: var(--ink-light);
+  font-size: 0.8rem;
+}
+
+.progress-inputs .total-pgs {
+  font-size: 0.85rem;
+  color: var(--ink-light);
+}
+
+.percentage-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--dusty-rose);
+  background: rgba(232, 165, 152, 0.12);
+  padding: 0.25rem 0.6rem;
+  border-radius: 20px;
+}
+
+/* Slider Custom Styling */
+.pg-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  outline: none;
+  background: #eee;
+  margin: 0.5rem 0;
+}
+
+.pg-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--dusty-rose);
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  transition: transform 0.1s;
+}
+
+.pg-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.pg-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--dusty-rose);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  transition: transform 0.1s;
+}
+
+.pg-slider::-moz-range-thumb:hover {
+  transform: scale(1.2);
+}
+
+.progress-note-wrapper textarea {
+  width: 100%;
+  border: 1.5px solid var(--cream);
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  font-family: inherit;
+  outline: none;
+  resize: vertical;
+  background: var(--cream);
+  box-sizing: border-box;
+  color: var(--ink);
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.progress-note-wrapper textarea:focus {
+  border-color: var(--blush);
+  background-color: white;
+}
+
+/* Timeline Custom Styles */
+.profile-timeline {
+  position: relative;
+  padding-left: 2rem;
+  margin-top: 1.5rem;
+}
+
+.profile-timeline::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  background: var(--blush);
+  opacity: 0.6;
+}
+
+.profile-timeline .timeline-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
+}
+
+.profile-timeline .timeline-dot {
+  position: absolute;
+  left: -29px;
+  top: 6px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--cream);
+  border: 3px solid var(--dusty-rose);
+  box-shadow: 0 0 0 3px white;
+}
+
+.profile-timeline .timeline-content {
+  background: white;
+  border: 1.5px solid var(--blush);
+  border-radius: 16px;
+  padding: 1.25rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.profile-timeline .timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: var(--ink-light);
+  margin-bottom: 0.25rem;
+}
+
+.profile-timeline .timeline-action {
+  font-size: 0.85rem;
+  color: var(--ink);
+}
+
+.profile-timeline .timeline-time {
+  font-size: 0.75rem;
+  color: var(--ink-light);
+}
+
+.profile-timeline .timeline-book {
+  font-size: 0.85rem;
+  color: var(--ink-light);
+  margin-bottom: 0.5rem;
+}
+
+.profile-timeline .timeline-note {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--cream);
+  padding: 0.6rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid rgba(232, 165, 152, 0.15);
+  margin-top: 0.25rem;
+  font-style: italic;
+}
+
+/* Responsive adjust */
+@media (max-width: 900px) {
+  .profile-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .progress-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .progress-card-info {
+    width: 100%;
+  }
+
+  .btn-update-progress-save {
+    align-self: center !important;
+  }
+}
+

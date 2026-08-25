@@ -1,4 +1,4 @@
-import { store, updateShelf, saveReadingProgress } from './store.js';
+import { store, updateShelf, saveReadingProgress, supabase } from './store.js';
 
 export function escapeHTML(str) {
   if (!str) return '';
@@ -203,6 +203,10 @@ export function initUI() {
 
   document.addEventListener('betterreads-store-updated', () => {
     renderLibraryBooks();
+    const profilePage = document.getElementById('page-profile');
+    if (profilePage && profilePage.classList.contains('active')) {
+      renderProfilePage();
+    }
   });
 }
 
@@ -437,3 +441,270 @@ export function renderReadingStats() {
   if (elPagesRead) elPagesRead.textContent = totalPages.toLocaleString();
   if (elDayStreak) elDayStreak.textContent = totalBooks > 0 ? "18" : "0";
 }
+
+export function renderProfilePage() {
+  // 1. Get profile data from localStorage or fallback
+  let profile = { username: 'you.reading', avatar: '🍵' };
+  try {
+    const stored = localStorage.getItem('betterreads_user_profile');
+    if (stored) {
+      profile = JSON.parse(stored);
+    } else if (store.currentUser) {
+      profile.username = store.currentUser.email.split('@')[0];
+    }
+  } catch (e) {
+    console.error("Error parsing profile", e);
+  }
+
+  // 2. Populate Header & Card elements
+  const elHeaderUsername = document.getElementById('prof-header-username');
+  const elCardUsername = document.getElementById('prof-card-username');
+  const elLargeAvatar = document.getElementById('prof-large-avatar');
+  const inputUsername = document.getElementById('prof-edit-username');
+
+  if (elHeaderUsername) elHeaderUsername.textContent = profile.username;
+  if (elCardUsername) elCardUsername.textContent = profile.username;
+  if (elLargeAvatar) elLargeAvatar.textContent = profile.avatar;
+  if (inputUsername && !inputUsername.dataset.initialized) {
+    inputUsername.value = profile.username;
+    inputUsername.dataset.initialized = 'true';
+  }
+
+  // 3. Setup Avatar Grid choice in settings
+  const avatarGrid = document.getElementById('prof-avatar-grid');
+  let selectedAvatar = profile.avatar;
+
+  if (avatarGrid) {
+    const options = avatarGrid.querySelectorAll('.avatar-option');
+    options.forEach(opt => {
+      const isSelected = opt.dataset.avatar === selectedAvatar;
+      opt.classList.toggle('active', isSelected);
+
+      opt.onclick = () => {
+        options.forEach(o => o.classList.remove('active'));
+        opt.classList.add('active');
+        selectedAvatar = opt.dataset.avatar;
+      };
+    });
+  }
+
+  // 4. Form submission handler for saving profile details
+  const editForm = document.getElementById('profile-edit-form');
+  if (editForm) {
+    editForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const newUsername = inputUsername.value.trim();
+      if (!newUsername) return;
+
+      profile.username = newUsername;
+      profile.avatar = selectedAvatar;
+      localStorage.setItem('betterreads_user_profile', JSON.stringify(profile));
+
+      // Update Nav avatar element directly
+      const navAvatar = document.getElementById('nav-avatar');
+      if (navAvatar) navAvatar.textContent = selectedAvatar;
+
+      // Sync to Supabase if logged in
+      if (store.isLoggedIn && store.currentUser) {
+        try {
+          const { error } = await supabase.from('profiles').upsert({
+            id: store.currentUser.id,
+            username: newUsername,
+            avatar: selectedAvatar
+          });
+          if (error) throw error;
+        } catch (err) {
+          console.warn("Supabase profile save failed", err);
+        }
+      }
+
+      alert("✨ Profile updated successfully!");
+      renderProfilePage();
+    };
+  }
+
+  // 5. Populate Mini Stats
+  const completedIds = store.shelves.completed || [];
+  const readingIds = store.shelves.reading || [];
+  
+  // Sum pages read
+  let totalPagesRead = 0;
+  Object.values(store.readingProgress || {}).forEach(prog => {
+    totalPagesRead += prog.pagesRead || 0;
+  });
+
+  const elStatCompleted = document.getElementById('prof-stat-completed');
+  const elStatReading = document.getElementById('prof-stat-reading');
+  const elStatPages = document.getElementById('prof-stat-pages');
+
+  if (elStatCompleted) elStatCompleted.textContent = completedIds.length;
+  if (elStatReading) elStatReading.textContent = readingIds.length;
+  if (elStatPages) elStatPages.textContent = totalPagesRead.toLocaleString();
+
+  // 6. Populate Currently Reading list
+  const listContainer = document.getElementById('prof-reading-list');
+  if (listContainer) {
+    listContainer.innerHTML = '';
+    
+    if (readingIds.length === 0) {
+      listContainer.innerHTML = `
+        <div style="background: var(--cream); padding: 2.5rem 1.5rem; border-radius: 16px; text-align: center; border: 1.5px dashed var(--blush);">
+          <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">📚</div>
+          <h4 style="margin: 0 0 0.5rem 0; color: var(--ink); font-family: 'DM Sans', sans-serif;">Your reading nest is empty</h4>
+          <p style="margin: 0; font-size: 0.85rem; color: var(--ink-light); line-height: 1.4;">Go to <a href="#discover" style="color: var(--dusty-rose); font-weight: 600;">Discover</a> to find your next cozy adventure!</p>
+        </div>
+      `;
+    } else {
+      readingIds.forEach(id => {
+        const book = store.books[id];
+        if (!book) return;
+
+        const totalPages = parseInt(book.pageCount) || 300;
+        const progress = store.readingProgress[id] || { pagesRead: 0, totalPages: totalPages };
+        const pagesRead = Math.min(progress.pagesRead, totalPages);
+        const percent = Math.min(Math.round((pagesRead / totalPages) * 100), 100);
+
+        const card = document.createElement('div');
+        card.className = 'progress-card';
+
+        let coverStyle = `background: ${getGradientFromString(book.title)}`;
+        let coverContent = book.title.charAt(0);
+        if (book.thumbnail) {
+          coverStyle = `background: url('${book.thumbnail}') center/cover;`;
+          coverContent = '';
+        }
+
+        card.innerHTML = `
+          <div class="progress-card-cover" style="${coverStyle}">${coverContent}</div>
+          <div class="progress-card-info">
+            <h4 class="book-title">${escapeHTML(book.title)}</h4>
+            <div class="book-author">by ${escapeHTML(book.authors[0] || 'Unknown')}</div>
+            
+            <div class="progress-numeric-row">
+              <label>Pages Read:</label>
+              <div class="progress-inputs">
+                <input type="number" class="pg-input" min="0" max="${totalPages}" value="${pagesRead}">
+                <span class="sep">/</span>
+                <span class="total-pgs">${totalPages}</span>
+              </div>
+              <span class="percentage-badge">${percent}%</span>
+            </div>
+            
+            <input type="range" class="pg-slider" min="0" max="${totalPages}" value="${pagesRead}">
+            
+            <div class="progress-note-wrapper">
+              <textarea class="pg-note-input" placeholder="Any cozy thoughts on this reading session? (optional)" rows="1"></textarea>
+            </div>
+            
+            <button class="btn btn-secondary btn-update-progress-save" style="margin-top: 0.5rem; padding: 0.4rem 1rem; font-size: 0.8rem; background: var(--sage); color: #2d5a2d; border: none; align-self: flex-start;">Save Progress ✦</button>
+          </div>
+        `;
+
+        const slider = card.querySelector('.pg-slider');
+        const numInput = card.querySelector('.pg-input');
+        const badge = card.querySelector('.percentage-badge');
+        const saveBtn = card.querySelector('.btn-update-progress-save');
+        const noteInput = card.querySelector('.pg-note-input');
+
+        const updateVisuals = (val) => {
+          const newPercent = Math.min(Math.round((val / totalPages) * 100), 100);
+          badge.textContent = `${newPercent}%`;
+        };
+
+        slider.oninput = () => {
+          numInput.value = slider.value;
+          updateVisuals(slider.value);
+        };
+
+        numInput.oninput = () => {
+          let val = parseInt(numInput.value) || 0;
+          if (val < 0) val = 0;
+          if (val > totalPages) val = totalPages;
+          slider.value = val;
+          updateVisuals(val);
+        };
+
+        saveBtn.onclick = async () => {
+          let val = parseInt(numInput.value) || 0;
+          if (val < 0) val = 0;
+          if (val > totalPages) val = totalPages;
+
+          const note = noteInput.value.trim();
+          await saveReadingProgress(book.id, val, totalPages, note);
+
+          if (val >= totalPages) {
+            alert(`🎉 Congratulations! You have finished "${book.title}"! Moved to Completed.`);
+            const filteredReading = store.shelves.reading.filter(bid => bid !== book.id);
+            await updateShelf('reading', filteredReading);
+            
+            const currentCompleted = store.shelves.completed || [];
+            if (!currentCompleted.includes(book.id)) {
+              await updateShelf('completed', [...currentCompleted, book.id]);
+            }
+          } else {
+            alert("📖 Reading progress logged!");
+            renderProfilePage();
+          }
+        };
+
+        listContainer.appendChild(card);
+      });
+    }
+  }
+
+  // 7. Populate Timeline logs
+  const timelineContainer = document.getElementById('prof-timeline');
+  if (timelineContainer) {
+    timelineContainer.innerHTML = '';
+    
+    let allLogs = [];
+    Object.keys(store.readingLogs || {}).forEach(bookId => {
+      const book = store.books[bookId];
+      const logs = store.readingLogs[bookId] || [];
+      logs.forEach(log => {
+        allLogs.push({
+          bookTitle: book ? book.title : 'Unknown Book',
+          bookId,
+          ...log
+        });
+      });
+    });
+
+    if (allLogs.length === 0) {
+      timelineContainer.innerHTML = `
+        <div style="color: var(--ink-light); padding: 1.5rem; text-align: center; font-size: 0.85rem; font-style: italic;">
+          Your reading journal is empty. Log progress above to write your first entry!
+        </div>
+      `;
+    } else {
+      allLogs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      
+      allLogs.forEach(log => {
+        const dateStr = new Date(log.timestamp).toLocaleDateString(undefined, {
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        const pct = Math.min(Math.round((log.pagesRead / log.totalPages) * 100), 100);
+
+        const logItem = document.createElement('div');
+        logItem.className = 'timeline-item';
+        logItem.innerHTML = `
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-header">
+              <span class="timeline-action">Logged <strong>${log.pagesRead}/${log.totalPages} pages</strong> (${pct}%)</span>
+              <span class="timeline-time">${dateStr}</span>
+            </div>
+            <div class="timeline-book">Book: <a href="#book-${log.bookId}" style="color:var(--dusty-rose); font-weight: 600; text-decoration: none;">${escapeHTML(log.bookTitle)}</a></div>
+            ${log.note ? `<div class="timeline-note">“${escapeHTML(log.note)}”</div>` : ''}
+          </div>
+        `;
+        timelineContainer.appendChild(logItem);
+      });
+    }
+  }
+}
+

@@ -1,4 +1,4 @@
-import { renderReadingStats } from './ui.js';
+import { renderReadingStats, renderProfilePage } from './ui.js';
 import { renderBookDetails } from './details.js';
 
 export function initRouter() {
@@ -14,6 +14,7 @@ export function initRouter() {
     '#rating': 'page-rating',
     '#discourse': 'page-discourse',
     '#stats': 'page-stats',
+    '#profile': 'page-profile',
     '#cta': 'page-home'
   };
 
@@ -22,7 +23,8 @@ export function initRouter() {
     'page-discover': 'nav-discover',
     'page-library': 'nav-library',
     'page-discourse': 'nav-discourse',
-    'page-stats': 'nav-stats'
+    'page-stats': 'nav-stats',
+    'page-profile': 'nav-avatar' // Map to the avatar button to highlight if active
   };
 
   window.showPage = function(hash, scrollTargetId = null) {
@@ -50,6 +52,8 @@ export function initRouter() {
         renderBookDetails(bookIdToRender);
       } else if (targetPageId === 'page-stats') {
         if (typeof renderReadingStats === 'function') renderReadingStats();
+      } else if (targetPageId === 'page-profile') {
+        if (typeof renderProfilePage === 'function') renderProfilePage();
       } else if (targetPageId === 'page-discourse') {
         document.dispatchEvent(new Event('betterreads-discourse-opened'));
       }

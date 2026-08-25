@@ -37,6 +37,7 @@
             <svg class="icon-user" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:auto;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
           </div>
           <div class="avatar-dropdown" id="avatar-dropdown">
+            <button class="avatar-dropdown-item" id="btn-view-profile" onclick="window.location.hash='#profile'">View Profile</button>
             <button class="avatar-dropdown-item" id="btn-signout">Sign Out</button>
           </div>
         </div>
@@ -774,6 +775,96 @@
       </div>
 
       </div> <!-- End stats-mockup-grid -->
+    </section>
+  </div>
+
+  <!-- ========================================================
+       PAGE 6.5: USER PROFILE & PROGRESS UPLOAD
+       ======================================================== -->
+  <div id="page-profile" class="page-section">
+    <section class="profile-section" id="profile">
+      <div class="container">
+        <div class="section-header reveal">
+          <div class="section-label">My Reading Nest</div>
+          <h2>Welcome back, <span id="prof-header-username">Reader</span> ✦</h2>
+          <p>Customize your reading nook, update your book progress, and look back at your cozy journey.</p>
+        </div>
+
+        <div class="profile-layout">
+          <!-- Sidebar: User Info & Settings -->
+          <div class="profile-sidebar reveal">
+            <div class="profile-card">
+              <div class="profile-avatar-large-wrapper">
+                <div class="profile-avatar-large" id="prof-large-avatar">🍵</div>
+              </div>
+              <h3 class="profile-name" id="prof-card-username">you.reading</h3>
+              <div class="profile-joined">Cozy Reader since today</div>
+              
+              <div class="profile-stats-mini">
+                <div class="profile-stat-item">
+                  <span class="num" id="prof-stat-completed">0</span>
+                  <span class="lbl">Completed</span>
+                </div>
+                <div class="profile-stat-item">
+                  <span class="num" id="prof-stat-reading">0</span>
+                  <span class="lbl">Reading</span>
+                </div>
+                <div class="profile-stat-item">
+                  <span class="num" id="prof-stat-pages">0</span>
+                  <span class="lbl">Pages</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Edit profile card -->
+            <div class="profile-card profile-edit-card" style="margin-top: 1.5rem;">
+              <h4 style="margin-top: 0; margin-bottom: 1rem;">Nook Settings</h4>
+              <form id="profile-edit-form">
+                <div class="auth-form-group">
+                  <label for="prof-edit-username">Change Username</label>
+                  <input type="text" id="prof-edit-username" placeholder="cozyreader" required>
+                </div>
+                <div class="auth-form-group">
+                  <label>Select Avatar</label>
+                  <div class="avatar-grid" id="prof-avatar-grid">
+                    <div class="avatar-option" data-avatar="🍵">🍵</div>
+                    <div class="avatar-option" data-avatar="🌸">🌸</div>
+                    <div class="avatar-option" data-avatar="🐱">🐱</div>
+                    <div class="avatar-option" data-avatar="🌙">🌙</div>
+                    <div class="avatar-option" data-avatar="🪴">🪴</div>
+                    <div class="avatar-option" data-avatar="📚">📚</div>
+                    <div class="avatar-option" data-avatar="🍂">🍂</div>
+                    <div class="avatar-option" data-avatar="🦊">🦊</div>
+                    <div class="avatar-option" data-avatar="🕯️">🕯️</div>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.6rem; font-size: 0.85rem;">Save Details ✦</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Main Content: Reading Progress & History -->
+          <div class="profile-main">
+            <!-- Currently Reading List / Progress Upload -->
+            <div class="profile-progress-container reveal reveal-delay-1">
+              <h3 class="profile-subheading">Update Reading Progress</h3>
+              <p style="font-size: 0.9rem; color: var(--ink-light); margin-bottom: 1.5rem;">Select one of your currently reading books and slide to log your pages read.</p>
+              
+              <div id="prof-reading-list" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <!-- Dynamically populated currently reading books with progress controls -->
+              </div>
+            </div>
+
+            <!-- Reading History Log Timeline -->
+            <div class="profile-history-container reveal reveal-delay-2" style="margin-top: 3rem;">
+              <h3 class="profile-subheading">My Reading Journal</h3>
+              <div class="profile-timeline" id="prof-timeline">
+                <!-- Dynamically populated timeline logs -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   </div>
 
