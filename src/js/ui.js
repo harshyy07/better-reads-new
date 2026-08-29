@@ -440,6 +440,109 @@ export function renderReadingStats() {
   const elDayStreak = document.getElementById('mockup-day-streak');
   if (elPagesRead) elPagesRead.textContent = totalPages.toLocaleString();
   if (elDayStreak) elDayStreak.textContent = totalBooks > 0 ? "18" : "0";
+
+  // Section 5: Extra Reading Stats & Milestones
+  // 1. Longest Book (pgs)
+  let longestBookPages = 0;
+  completedIds.forEach(id => {
+    const book = store.books[id];
+    if (book && book.pageCount) {
+      const pgs = parseInt(book.pageCount) || 0;
+      if (pgs > longestBookPages) longestBookPages = pgs;
+    }
+  });
+  const elLongestBook = document.getElementById('mockup-longest-book');
+  if (elLongestBook) elLongestBook.textContent = longestBookPages;
+
+  // 2. Time Reading (Estimated)
+  let timeReadingHours = Math.round((totalPages * 1.5) / 60);
+  const elTimeReading = document.getElementById('mockup-time-reading');
+  if (elTimeReading) elTimeReading.textContent = `${timeReadingHours}h`;
+
+  // 3. Average Rating
+  const ratingKeys = Object.keys(store.userRatings || {});
+  let avgRating = 0;
+  if (ratingKeys.length > 0) {
+    let sum = 0;
+    ratingKeys.forEach(k => {
+      sum += parseFloat(store.userRatings[k]) || 0;
+    });
+    avgRating = (sum / ratingKeys.length).toFixed(1);
+  } else {
+    avgRating = '0.0';
+  }
+  const elAvgRating = document.getElementById('mockup-avg-rating');
+  if (elAvgRating) elAvgRating.textContent = avgRating;
+
+  // 4. Top Genre
+  const allShelvedBookIds = new Set([
+    ...(store.shelves.tbr || []),
+    ...(store.shelves.reading || []),
+    ...(store.shelves.completed || []),
+    ...(store.shelves.dnf || [])
+  ]);
+  const genreCounts = {};
+  allShelvedBookIds.forEach(id => {
+    const book = store.books[id];
+    if (book && book.categories && book.categories.length > 0) {
+      const cat = book.categories[0];
+      genreCounts[cat] = (genreCounts[cat] || 0) + 1;
+    }
+  });
+  let topGenre = 'N/A';
+  let maxGenreCount = 0;
+  Object.keys(genreCounts).forEach(g => {
+    if (genreCounts[g] > maxGenreCount) {
+      maxGenreCount = genreCounts[g];
+      topGenre = g;
+    }
+  });
+  if (topGenre.length > 12) topGenre = topGenre.substring(0, 10) + '..';
+  const elTopGenre = document.getElementById('mockup-top-genre');
+  if (elTopGenre) elTopGenre.textContent = topGenre;
+
+  // 5. Reviews Written
+  let userReviewsCount = 0;
+  const userEmail = (store.currentUser && store.currentUser.email) || 'You';
+  Object.keys(store.reviews || {}).forEach(bookId => {
+    const bookReviews = store.reviews[bookId] || [];
+    bookReviews.forEach(rev => {
+      if (rev.author === 'You' || rev.author === userEmail) {
+        userReviewsCount++;
+      }
+    });
+  });
+  const elReviewsCount = document.getElementById('mockup-reviews-count');
+  if (elReviewsCount) elReviewsCount.textContent = userReviewsCount;
+
+  // 6. Best Month (Estimated from logs or current month fallback)
+  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const logCountsByMonth = {};
+  Object.keys(store.readingLogs || {}).forEach(bookId => {
+    const logs = store.readingLogs[bookId] || [];
+    logs.forEach(log => {
+      if (log.timestamp) {
+        const date = new Date(log.timestamp);
+        if (!isNaN(date.getTime())) {
+          const monthName = monthNames[date.getMonth()];
+          logCountsByMonth[monthName] = (logCountsByMonth[monthName] || 0) + 1;
+        }
+      }
+    });
+  });
+  let bestMonth = 'N/A';
+  let maxLogs = 0;
+  Object.keys(logCountsByMonth).forEach(m => {
+    if (logCountsByMonth[m] > maxLogs) {
+      maxLogs = logCountsByMonth[m];
+      bestMonth = m;
+    }
+  });
+  if (bestMonth === 'N/A' && completedIds.length > 0) {
+    bestMonth = monthNames[new Date().getMonth()];
+  }
+  const elBestMonth = document.getElementById('mockup-best-month');
+  if (elBestMonth) elBestMonth.textContent = bestMonth;
 }
 
 export function renderProfilePage() {
