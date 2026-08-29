@@ -219,51 +219,102 @@ export async function renderBookDetails(bookId) {
 }
 
 function updateBdShelfButtons(bookId) {
-  const btnReading = document.getElementById('btn-bd-reading');
-  const btnTbr = document.getElementById('btn-bd-tbr');
-  const btnDnf = document.getElementById('btn-bd-dnf');
-  
-  [btnReading, btnTbr, btnDnf].forEach(btn => {
-    btn.style.background = 'var(--warm-white)';
-    btn.style.color = 'var(--ink)';
-    btn.style.borderColor = '#e5e5e5';
-  });
+  const btnTrigger = document.getElementById('btn-shelf-trigger');
+  const triggerText = document.getElementById('shelf-trigger-text');
+  const triggerArrow = document.getElementById('shelf-trigger-arrow');
+  const menu = document.getElementById('shelf-dropdown-menu');
+  const optButtons = document.querySelectorAll('.shelf-opt-btn');
 
+  if (!btnTrigger || !menu) return;
+
+  // Reset trigger styling
+  btnTrigger.style.background = 'var(--warm-white)';
+  btnTrigger.style.color = 'var(--ink)';
+  btnTrigger.style.borderColor = '#e5e5e5';
+  triggerText.textContent = 'Add to Shelf';
+
+  // Remove selected class from all options
+  optButtons.forEach(btn => btn.classList.remove('selected'));
+
+  let activeShelf = null;
   if (store.shelves.reading && store.shelves.reading.includes(bookId)) {
-    btnReading.style.background = 'var(--sage)';
-    btnReading.style.color = '#2d5a2d';
-    btnReading.style.borderColor = 'var(--sage)';
+    activeShelf = 'reading';
+    btnTrigger.style.background = 'var(--sage)';
+    btnTrigger.style.color = '#2d5a2d';
+    btnTrigger.style.borderColor = 'var(--sage)';
+    triggerText.textContent = 'Currently Reading';
   } else if (store.shelves.tbr && store.shelves.tbr.includes(bookId)) {
-    btnTbr.style.background = 'var(--sage)';
-    btnTbr.style.color = '#2d5a2d';
-    btnTbr.style.borderColor = 'var(--sage)';
+    activeShelf = 'tbr';
+    btnTrigger.style.background = 'var(--sage)';
+    btnTrigger.style.color = '#2d5a2d';
+    btnTrigger.style.borderColor = 'var(--sage)';
+    triggerText.textContent = 'Add to TBR';
+  } else if (store.shelves.completed && store.shelves.completed.includes(bookId)) {
+    activeShelf = 'completed';
+    btnTrigger.style.background = 'var(--sage)';
+    btnTrigger.style.color = '#2d5a2d';
+    btnTrigger.style.borderColor = 'var(--sage)';
+    triggerText.textContent = 'Read';
   } else if (store.shelves.dnf && store.shelves.dnf.includes(bookId)) {
-    btnDnf.style.background = '#ffe5e5';
-    btnDnf.style.color = '#a03030';
-    btnDnf.style.borderColor = '#ffe5e5';
+    activeShelf = 'dnf';
+    btnTrigger.style.background = '#ffe5e5';
+    btnTrigger.style.color = '#a03030';
+    btnTrigger.style.borderColor = '#ffe5e5';
+    triggerText.textContent = 'DNF';
   }
 
-  const setShelf = (shelfName) => {
-    const isAlreadyOnShelf = store.shelves[shelfName] && store.shelves[shelfName].includes(bookId);
-
-    ['reading', 'tbr', 'completed', 'dnf'].forEach(s => {
-       const filtered = store.shelves[s].filter(id => id !== bookId);
-       if (filtered.length !== store.shelves[s].length) {
-         updateShelf(s, filtered);
-       }
-    });
-
-    if (!isAlreadyOnShelf) {
-      const newShelf = [...(store.shelves[shelfName] || []), bookId];
-      updateShelf(shelfName, newShelf);
+  if (activeShelf) {
+    const selectedBtn = menu.querySelector(`[data-shelf="${activeShelf}"]`);
+    if (selectedBtn) {
+      selectedBtn.classList.add('selected');
     }
-    updateBdShelfButtons(bookId);
-    renderBookProgressWidget(store.books[bookId], bookId);
+  }
+
+  // Toggle menu on trigger click
+  btnTrigger.onclick = (e) => {
+    e.stopPropagation();
+    const isOpen = menu.style.display === 'block';
+    menu.style.display = isOpen ? 'none' : 'block';
+    triggerArrow.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+
+    if (!isOpen) {
+      const closeMenu = () => {
+        menu.style.display = 'none';
+        triggerArrow.style.transform = 'rotate(0deg)';
+        document.removeEventListener('click', closeMenu);
+      };
+      setTimeout(() => {
+        document.addEventListener('click', closeMenu);
+      }, 0);
+    }
   };
 
-  btnReading.onclick = () => setShelf('reading');
-  btnTbr.onclick = () => setShelf('tbr');
-  btnDnf.onclick = () => setShelf('dnf');
+  // Handle shelf option clicks
+  optButtons.forEach(btn => {
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      const shelfName = btn.getAttribute('data-shelf');
+      const isAlreadyOnShelf = store.shelves[shelfName] && store.shelves[shelfName].includes(bookId);
+
+      ['reading', 'tbr', 'completed', 'dnf'].forEach(s => {
+         const filtered = store.shelves[s].filter(id => id !== bookId);
+         if (filtered.length !== store.shelves[s].length) {
+           updateShelf(s, filtered);
+         }
+      });
+
+      if (!isAlreadyOnShelf) {
+        const newShelf = [...(store.shelves[shelfName] || []), bookId];
+        updateShelf(shelfName, newShelf);
+      }
+
+      menu.style.display = 'none';
+      triggerArrow.style.transform = 'rotate(0deg)';
+
+      updateBdShelfButtons(bookId);
+      renderBookProgressWidget(store.books[bookId], bookId);
+    };
+  });
 }
 
 export function initReviews() {
